@@ -2,20 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sales_management_application/views/screens/home/main_screen.dart';
 import 'package:sales_management_application/views/screens/home/overview_screen.dart';
-import 'package:sales_management_application/views/screens/home/widget_screen.dart';
-import 'package:sales_management_application/views/screens/invoices/invoice_screen.dart';
-import 'package:sales_management_application/views/screens/orders/order_screen.dart';
-import 'package:sales_management_application/views/screens/products/product_screen.dart';
+import 'package:sales_management_application/views/screens/home/widgets_screen.dart';
+import 'package:sales_management_application/views/screens/invoices/invoices_screen.dart';
+import 'package:sales_management_application/views/screens/orders/orders_screen.dart';
+import 'package:sales_management_application/views/screens/products/products_screen.dart';
+import 'package:sales_management_application/views/screens/suppliers/add_supplier_screen.dart';
+import 'package:sales_management_application/views/screens/suppliers/edit_supplier_screen.dart';
+import 'package:sales_management_application/views/screens/suppliers/suppliers_screen.dart';
+import 'package:sales_management_application/views/widgets/filter_list.dart';
 import 'views/screens/authentication/forgot_password_screen.dart';
 import 'views/screens/authentication/login_screen.dart';
 import 'views/screens/authentication/register_screen.dart';
-import 'views/screens/authentication/registration_information_screen.dart';
 import 'views/screens/authentication/reset_password_screen.dart';
 import 'views/screens/authentication/verification_code_screen.dart';
+import 'views/screens/suppliers/supplier_detail_screen.dart';
 import 'views/screens/terms_and_conditions_screen.dart';
 
 final _router = GoRouter(
-  initialLocation: '/home',
+  initialLocation: '/',
   routes: [
     ///authentication
     GoRoute(
@@ -44,10 +48,6 @@ final _router = GoRouter(
       path: '/tac',
       builder: (context, state) => const TermsAndConditionsScreen(),
     ),
-    GoRoute(
-      path: '/registration_info',
-      builder: (context, state) => RegistrationInformationScreen(),
-    ),
     ///after login
     GoRoute(
       path: '/home',
@@ -58,20 +58,48 @@ final _router = GoRouter(
       builder: (context, state) => const OverviewScreen(),
     ),
     GoRoute(
-      path: '/invoice',
+      path: '/invoices',
       builder: (context, state) => const InvoiceScreen(),
     ),
     GoRoute(
-      path: '/order',
+      path: '/orders',
       builder: (context, state) => const OrderScreen(),
     ),
     GoRoute(
-      path: '/product',
+      path: '/products',
       builder: (context, state) => const ProductScreen(),
     ),
     GoRoute(
       path: '/all',
       builder: (context, state) => const WidgetScreen(),
+    ),
+    GoRoute(
+      path: '/suppliers',
+      builder: (context, state) => const SupplierScreen(),
+      routes: [
+        GoRoute(
+          path: 'filter',
+          builder: (context, state) => FilterSupplierScreen(),
+        ),
+        GoRoute(
+          path: 'add',
+          builder: (context, state) => const AddSupplierScreen(),
+        ),
+        GoRoute(
+          path: ':id',
+          builder: (context, state) {
+            return const SupplierDetailScreen();
+          },
+          routes: [
+            GoRoute(
+              path: 'edit',
+              builder: (context, state) {
+                return EditSupplierScreen();
+              },
+            ),
+          ],
+        ),
+      ],
     ),
   ],
 );

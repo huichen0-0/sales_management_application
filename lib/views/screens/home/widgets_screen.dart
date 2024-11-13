@@ -14,7 +14,7 @@ class WidgetScreen extends StatelessWidget {
             title: 'Tài khoản',
             items: [
               {'icon': Icons.person, 'label': 'Thông tin', 'link': '/home'},
-              {'icon': Icons.lock, 'label': 'Đổi mật khẩu', 'link': '/home'},
+              {'icon': Icons.lock, 'label': 'Đổi mật khẩu', 'link': '/reset_password'},
               {'icon': Icons.logout, 'label': 'Đăng xuất', 'link': '/'},
             ],
           ),
@@ -41,7 +41,7 @@ class WidgetScreen extends StatelessWidget {
             title: 'Đối tác',
             items: [
               {'icon': Icons.person, 'label': 'Khách hàng', 'link': '/home'},
-              {'icon': Icons.group, 'label': 'Nhà cung cấp', 'link': '/home'},
+              {'icon': Icons.group, 'label': 'Nhà cung cấp', 'link': '/suppliers'},
             ],
           ),
           WidgetCard(

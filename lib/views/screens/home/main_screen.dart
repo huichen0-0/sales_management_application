@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sales_management_application/views/screens/home/overview_screen.dart';
-import 'package:sales_management_application/views/screens/home/widget_screen.dart';
-import 'package:sales_management_application/views/screens/invoices/invoice_screen.dart';
-import 'package:sales_management_application/views/screens/orders/order_screen.dart';
-import 'package:sales_management_application/views/screens/products/product_screen.dart';
+import 'package:sales_management_application/views/screens/home/widgets_screen.dart';
+import 'package:sales_management_application/views/screens/invoices/invoices_screen.dart';
+import 'package:sales_management_application/views/screens/orders/orders_screen.dart';
+import 'package:sales_management_application/views/screens/products/products_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -14,7 +13,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _pageIndex = 0; // vị trí page mặc định trên nav
+  int _pageIndex = 4; // vị trí page mặc định trên nav
   //danh sách trang trên nav
   final List<Widget> _pages = [
     const OverviewScreen(),
@@ -34,7 +33,7 @@ class _MainScreenState extends State<MainScreen> {
         selectedItemColor: Colors.yellowAccent,
         unselectedItemColor: Colors.white,
         currentIndex: _pageIndex,
-        onTap: (value){
+        onTap: (value) {
           setState(() {
             _pageIndex = value;
           });
@@ -42,16 +41,14 @@ class _MainScreenState extends State<MainScreen> {
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(Icons.insert_chart),
-              label: 'Tổng quan'
+              icon: Icon(Icons.insert_chart), label: 'Tổng quan'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.description),
+            label: 'Hóa đơn',
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.description),
-              label: 'Hóa đơn',
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_bag),
-              label: 'Bán hàng',
+            icon: Icon(Icons.shopping_bag),
+            label: 'Bán hàng',
           ),
           BottomNavigationBarItem(icon: Icon(Icons.token), label: 'Hàng hóa'),
           BottomNavigationBarItem(icon: Icon(Icons.widgets), label: 'Tất cả'),

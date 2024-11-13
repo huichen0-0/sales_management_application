@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../widgets/custom_form.dart';
 import '../../widgets/custom_form_fields.dart';
 
 class ResetPasswordScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
 
   ResetPasswordScreen({super.key});
@@ -21,7 +21,7 @@ class ResetPasswordScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            context.go('/forgot_password');
+            context.go('/home');
           },
         ),
       ),
@@ -33,15 +33,16 @@ class ResetPasswordScreen extends StatelessWidget {
             CustomForm(
               formKey: _formKey,
               fields: [
+                ///field nhập mật khẩu
+                PasswordField(controller: _passwordController, label: 'Mật khẩu hiện tại',),
                 const SizedBox(height: 16),
                 ///field nhập mật khẩu
-                //TODO: cần validate 2 mật khẩu giống nhau và đủ kí tự trước khi submit
-                PasswordField(controller: _passwordController,),
+                PasswordField(controller: _newPasswordController, label: 'Mật khẩu mới',),
                 const SizedBox(height: 16),
                 ///field nhập lại mật khẩu mới
                 PasswordConfirmationField(
                   controller: _confirmPasswordController,
-                  passwordController: _passwordController,
+                  passwordController: _newPasswordController,
                 ),
               ],
               onSubmit: (){
@@ -59,10 +60,11 @@ class ResetPasswordScreen extends StatelessWidget {
   void _showSuccessDialog(BuildContext context) {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         // Đặt thời gian chuyển hướng sau 3 giây
         Future.delayed(const Duration(seconds: 3), () {
-          context.go('/');
+          context.go('/home');
         });
 
         return const AlertDialog(

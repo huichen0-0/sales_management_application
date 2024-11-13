@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../widgets/custom_form.dart';
 import '../../widgets/custom_form_fields.dart';
@@ -7,7 +6,7 @@ import '../../widgets/custom_form_fields.dart';
 class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   LoginScreen({super.key});
 
   @override
@@ -35,13 +34,15 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 32),
-              /// field nhập SDT TODO: cần validate trước khi gửi đi
+              /// form login
               CustomForm(
                 formKey: _formKey,
                 fields: [
-                  PhoneNumberField(controller: _phoneController,),
+                  /// nhap emaik
+                  EmailField(controller: _emailController,),
                   const SizedBox(height: 16),
-                  PasswordField(controller: _passwordController,),
+                  /// nhap password
+                  PasswordField(controller: _passwordController, label: 'Mật khẩu',),
                   const SizedBox(height: 8),
                   /// link Quên mật khẩu
                   Align(
