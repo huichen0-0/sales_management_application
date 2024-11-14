@@ -22,35 +22,37 @@ class ForgotPasswordScreen extends StatelessWidget {
         ),
         title: const Text('Quên mật khẩu'),
       ),
-      body: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          margin: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('Vui lòng nhập email'),
-              const SizedBox(height: 16),
-              CustomForm(
-                  formKey: _formKey,
-                  fields: [
-                    EmailField(controller: _emailController,),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            margin: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Vui lòng nhập email'),
+                const SizedBox(height: 16),
+                CustomForm(
+                    formKey: _formKey,
+                    fields: [
+                      EmailField(controller: _emailController,),
+                    ],
+                    onSubmit: (){
+                      _showNotificationDialog(context, _emailController.text);
+                    },
+                    submitBtn: 'Tiếp tục',
+                ),
+                const Spacer(),
+                /// link hotline TODO: xử lý như bên login
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.phone, color: Colors.grey),
+                    Text('Hỗ trợ 1900 0091'),
                   ],
-                  onSubmit: (){
-                    _showNotificationDialog(context, _emailController.text);
-                  },
-                  submitBtn: 'Tiếp tục',
-              ),
-              const Spacer(),
-              /// link hotline TODO: xử lý như bên login
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.phone, color: Colors.grey),
-                  Text('Hỗ trợ 1900 0091'),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

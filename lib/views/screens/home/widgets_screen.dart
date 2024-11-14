@@ -40,7 +40,7 @@ class WidgetScreen extends StatelessWidget {
           WidgetCard(
             title: 'Đối tác',
             items: [
-              {'icon': Icons.person, 'label': 'Khách hàng', 'link': '/home'},
+              {'icon': Icons.person, 'label': 'Khách hàng', 'link': '/customers'},
               {'icon': Icons.group, 'label': 'Nhà cung cấp', 'link': '/suppliers'},
             ],
           ),

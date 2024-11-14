@@ -25,32 +25,34 @@ class ResetPasswordScreen extends StatelessWidget {
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CustomForm(
-              formKey: _formKey,
-              fields: [
-                ///field nhập mật khẩu
-                PasswordField(controller: _passwordController, label: 'Mật khẩu hiện tại',),
-                const SizedBox(height: 16),
-                ///field nhập mật khẩu
-                PasswordField(controller: _newPasswordController, label: 'Mật khẩu mới',),
-                const SizedBox(height: 16),
-                ///field nhập lại mật khẩu mới
-                PasswordConfirmationField(
-                  controller: _confirmPasswordController,
-                  passwordController: _newPasswordController,
-                ),
-              ],
-              onSubmit: (){
-                _showSuccessDialog(context);
-              },
-              submitBtn: 'Hoàn thành',
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CustomForm(
+                formKey: _formKey,
+                fields: [
+                  ///field nhập mật khẩu
+                  PasswordField(controller: _passwordController, label: 'Mật khẩu hiện tại',),
+                  const SizedBox(height: 16),
+                  ///field nhập mật khẩu
+                  PasswordField(controller: _newPasswordController, label: 'Mật khẩu mới',),
+                  const SizedBox(height: 16),
+                  ///field nhập lại mật khẩu mới
+                  PasswordConfirmationField(
+                    controller: _confirmPasswordController,
+                    passwordController: _newPasswordController,
+                  ),
+                ],
+                onSubmit: (){
+                  _showSuccessDialog(context);
+                },
+                submitBtn: 'Hoàn thành',
+              ),
+            ],
+          ),
         ),
       ),
     );

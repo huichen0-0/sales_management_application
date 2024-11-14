@@ -59,12 +59,14 @@ class WidgetCard extends StatelessWidget {
     );
   }
 }
+////////////////////////////////////////////////////////////////////////////////
+
 ///suppliers hiển thị ở trang nhà cung cấp
 class SupplierCard extends StatelessWidget {
   final Map<String, dynamic> supplier;
   final Function(String id) onTap;
 
-  SupplierCard({required this.supplier, required this.onTap});
+  const SupplierCard({super.key, required this.supplier, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -110,4 +112,57 @@ class SupplierCard extends StatelessWidget {
     );
   }
 }
+////////////////////////////////////////////////////////////////////////////////
 
+///customers hiển thị ở trang khach hang
+class CustomerCard extends StatelessWidget {
+  final Map<String, dynamic> customer;
+  final Function(String id) onTap;
+
+  const CustomerCard({super.key, required this.customer, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    //TODO: cần xử lý lấy giá trị từ db
+    return Card(
+      child: ListTile(
+        leading: const Icon(Icons.perm_identity),
+        /// ncc hoạt đông thì màu xanh, không thì xám
+        iconColor: customer['isActive'] ? Colors.blue : Colors.black54,
+        textColor: customer['isActive'] ? Colors.blue : Colors.black54,
+        /// tên
+        title: Text(
+          customer['name'],
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+
+          ),
+        ),
+        /// SDT
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(customer['phone']),
+          ],
+        ),
+        /// tổng mua (tạm thời để hiển thị) TODO: cần lấy các giá trị ở tùy chọn hiển thị
+        trailing: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              customer['amount'].toString(),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+
+              ),
+            ),
+          ],
+        ),
+        onTap: () {
+          onTap(customer['id'].toString());
+        },
+      ),
+    );
+  }
+}
+////////////////////////////////////////////////////////////////////////////////

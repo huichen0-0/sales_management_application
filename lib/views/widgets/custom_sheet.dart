@@ -12,53 +12,60 @@ class TimeFilterBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      children: [
-        ListTile(
-          title: const Text('Hôm nay'),
-          onTap: () {
-            DateTime now = DateTime.now();
-            onOptionSelected('Hôm nay', now);
-            Navigator.pop(context);
-          },
-        ),
-        ListTile(
-          title: const Text('Hôm qua'),
-          onTap: () {
-            DateTime yesterday =
-                DateTime.now().subtract(const Duration(days: 1));
-            onOptionSelected('Hôm qua', yesterday);
-            Navigator.pop(context);
-          },
-        ),
-        ListTile(
-          title: const Text('7 ngày qua'),
-          onTap: () {
-            DateTime now = DateTime.now();
-            DateTime sevenDaysAgo = now.subtract(const Duration(days: 7));
-            onOptionSelected('7 ngày qua', sevenDaysAgo, now);
-            Navigator.pop(context);
-          },
-        ),
-        ListTile(
-          title: const Text('Tháng này'),
-          onTap: () {
-            DateTime now = DateTime.now();
-            DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
-            onOptionSelected('Tháng này', firstDayOfMonth, now);
-            Navigator.pop(context);
-          },
-        ),
-        ListTile(
-          title: const Text('Tùy chỉnh'),
-          onTap: () { //TODO: cho chon khoang thoi gian
-            Navigator.pop(context);
-          },
-        ),
-      ],
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('Lọc theo thời gian', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+          ListTile(
+            title: const Text('Hôm nay'),
+            onTap: () {
+              DateTime now = DateTime.now();
+              onOptionSelected('Hôm nay', now);
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: const Text('Hôm qua'),
+            onTap: () {
+              DateTime yesterday =
+                  DateTime.now().subtract(const Duration(days: 1));
+              onOptionSelected('Hôm qua', yesterday);
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: const Text('7 ngày qua'),
+            onTap: () {
+              DateTime now = DateTime.now();
+              DateTime sevenDaysAgo = now.subtract(const Duration(days: 7));
+              onOptionSelected('7 ngày qua', sevenDaysAgo, now);
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: const Text('Tháng này'),
+            onTap: () {
+              DateTime now = DateTime.now();
+              DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
+              onOptionSelected('Tháng này', firstDayOfMonth, now);
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: const Text('Tùy chỉnh'),
+            onTap: () { //TODO: cho chon khoang thoi gian
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
     );
   }
 }
+////////////////////////////////////////////////////////////////////////////////
 
 ///bottom sheet của sắp xếp
 //TODO: mới chỉ hiển thị, chưa áp dụng lên đối tượng
@@ -71,10 +78,12 @@ class SortingBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          const Text('Sắp xếp theo', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
           ListTile(
             title: const Text('Mới nhất'),
             trailing: selectedSorting == 'Mới nhất'
@@ -115,13 +124,34 @@ class SortingBottomSheet extends StatelessWidget {
               Navigator.pop(context);
             },
           ),
+          ListTile(
+            title: const Text('A-Z'),
+            trailing: selectedSorting == 'A-Z'
+                ? const Icon(Icons.check, color: Colors.blue)
+                : null,
+            onTap: () {
+              onSelectSorting('A-Z');
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: const Text('Z-A'),
+            trailing: selectedSorting == 'Z-A'
+                ? const Icon(Icons.check, color: Colors.blue)
+                : null,
+            onTap: () {
+              onSelectSorting('Z-A');
+              Navigator.pop(context);
+            },
+          ),
         ],
       ),
     );
   }
 }
+////////////////////////////////////////////////////////////////////////////////
 
-///bottom sheet của hiển thị NCC
+///bottom sheet của hiển thị NCC theo ...
 //TODO: mới chỉ hiển thị, chưa áp dụng lên đối tượng
 class DisplaySupplierBottomSheet extends StatelessWidget {
   final String selectedDisplay;
@@ -132,6 +162,7 @@ class DisplaySupplierBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -157,6 +188,44 @@ class DisplaySupplierBottomSheet extends StatelessWidget {
             trailing: const Text('0'), //TODO: cần lấy giá trị từ db
             onTap: () {
               onSelectDisplay('Tổng mua trừ tổng trả');
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+////////////////////////////////////////////////////////////////////////////////
+
+///bottom sheet của hiển thị khach hang theo ...
+//TODO: mới chỉ hiển thị, chưa áp dụng lên đối tượng
+class DisplayCustomerBottomSheet extends StatelessWidget {
+  final String selectedDisplay;
+  final Function(String) onSelectDisplay;
+
+  DisplayCustomerBottomSheet({required this.selectedDisplay, required this.onSelectDisplay});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            title: const Text('Tổng bán'),
+            trailing: const Text('0'), //TODO: cần lấy giá trị từ db
+            onTap: () {
+              onSelectDisplay('Tổng bán');
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: const Text('Nợ cần thu'),
+            trailing: const Text('0'), //TODO: cần lấy giá trị từ db
+            onTap: () {
+              onSelectDisplay('Nợ cần thu');
               Navigator.pop(context);
             },
           ),

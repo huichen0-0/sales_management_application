@@ -37,31 +37,33 @@ class _AddSupplierScreenState extends State<AddSupplierScreen> {
         //   },
         // ),
       ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        margin: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            CustomForm(
-              formKey: _formKey,
-              fields: [
-                const SizedBox(height: 16),
-                NameField(controller: nameController,),
-                const SizedBox(height: 16),
-                PhoneNumberField(controller: phoneController,),
-                const SizedBox(height: 16),
-                InputField(controller: addressController, label: 'Địa chỉ'),
-                const SizedBox(height: 16),
-                InputField(controller: emailController, label: 'Email'),
-                const SizedBox(height: 16),
-                InputField(controller: notesController, label: 'Ghi chú'),
-              ],
-              onSubmit: (){
-                _showSuccessDialog(context);
-              },
-              submitBtn: 'Lưu',
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          margin: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              CustomForm(
+                formKey: _formKey,
+                fields: [
+                  const SizedBox(height: 16),
+                  NameField(controller: nameController,),
+                  const SizedBox(height: 16),
+                  PhoneNumberField(controller: phoneController,),
+                  const SizedBox(height: 16),
+                  InputField(controller: addressController, label: 'Địa chỉ'),
+                  const SizedBox(height: 16),
+                  InputField(controller: emailController, label: 'Email'),
+                  const SizedBox(height: 16),
+                  InputField(controller: notesController, label: 'Ghi chú'),
+                ],
+                onSubmit: (){
+                  _showSuccessDialog(context);
+                },
+                submitBtn: 'Lưu',
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -34,49 +34,51 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
         title: const Text('Tạo tài khoản miễn phí'),
       ),
-      body: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          margin: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('Vui lòng nhập thông tin đăng ký'),
-              const SizedBox(height: 16),
-              /// form nhập SDT TODO: lấy SDT để xử lý và hiển thị ở sau
-              CustomForm(
-                formKey: _formKey,
-                fields: [
-                  /// nhap email
-                  EmailField(controller: _emailController,),
-                  const SizedBox(height: 16),
-                  NameField(controller: _nameController,),
-                  const SizedBox(height: 16),
-                  ///field nhập mật khẩu
-                  //TODO: cần validate 2 mật khẩu giống nhau và đủ kí tự trước khi submit
-                  PasswordField(controller: _passwordController, label: 'Mật khẩu',),
-                  const SizedBox(height: 16),
-                  ///field nhập lại mật khẩu mới
-                  PasswordConfirmationField(
-                    controller: _confirmPasswordController,
-                    passwordController: _passwordController,
-                  ),
-                ],
-                onSubmit: (){
-                  _showSuccessDialog(context, _emailController.text);
-                },
-                submitBtn: 'Đăng ký',
-              ),
-              const Spacer(),
-              /// link hotline TODO: xử lý như bên login
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.phone, color: Colors.grey),
-                  Text('Hỗ trợ 1900 0091'),
-                ],
-              ),
-            ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            margin: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Vui lòng nhập thông tin đăng ký'),
+                const SizedBox(height: 16),
+                /// form nhập SDT TODO: lấy SDT để xử lý và hiển thị ở sau
+                CustomForm(
+                  formKey: _formKey,
+                  fields: [
+                    /// nhap email
+                    EmailField(controller: _emailController,),
+                    const SizedBox(height: 16),
+                    NameField(controller: _nameController,),
+                    const SizedBox(height: 16),
+                    ///field nhập mật khẩu
+                    //TODO: cần validate 2 mật khẩu giống nhau và đủ kí tự trước khi submit
+                    PasswordField(controller: _passwordController, label: 'Mật khẩu',),
+                    const SizedBox(height: 16),
+                    ///field nhập lại mật khẩu mới
+                    PasswordConfirmationField(
+                      controller: _confirmPasswordController,
+                      passwordController: _passwordController,
+                    ),
+                  ],
+                  onSubmit: (){
+                    _showSuccessDialog(context, _emailController.text);
+                  },
+                  submitBtn: 'Đăng ký',
+                ),
+                const Spacer(),
+                /// link hotline TODO: xử lý như bên login
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.phone, color: Colors.grey),
+                    Text('Hỗ trợ 1900 0091'),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

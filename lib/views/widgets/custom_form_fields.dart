@@ -44,6 +44,8 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
     );
   }
 }
+////////////////////////////////////////////////////////////////////////////////
+
 /// /Name field/ ///
 class NameField extends StatelessWidget {
   final TextEditingController controller;
@@ -72,6 +74,8 @@ class NameField extends StatelessWidget {
     );
   }
 }
+////////////////////////////////////////////////////////////////////////////////
+
 /// /Password field/ ///
 class PasswordField extends StatefulWidget {
   final TextEditingController controller;
@@ -122,6 +126,8 @@ class _PasswordFieldState extends State<PasswordField> {
     );
   }
 }
+////////////////////////////////////////////////////////////////////////////////
+
 /// /Password Confirmation field/ ///
 class PasswordConfirmationField extends StatefulWidget {
   final TextEditingController controller;
@@ -170,6 +176,7 @@ class _PasswordConfirmationFieldState extends State<PasswordConfirmationField> {
     );
   }
 }
+////////////////////////////////////////////////////////////////////////////////
 
 ///Email
 class EmailField extends StatelessWidget {
@@ -205,6 +212,7 @@ class EmailField extends StatelessWidget {
     );
   }
 }
+////////////////////////////////////////////////////////////////////////////////
 
 /// /Input field/ trươờng nhập k validate///
 class InputField extends StatelessWidget {
