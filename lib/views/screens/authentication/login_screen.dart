@@ -82,7 +82,6 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const Spacer(),
                 /// link hotline TODO: xử lý nhâps vào sdt hotline
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.center,

@@ -68,7 +68,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   },
                   submitBtn: 'Đăng ký',
                 ),
-                const Spacer(),
                 /// link hotline TODO: xử lý như bên login
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
