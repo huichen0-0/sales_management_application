@@ -11,10 +11,10 @@ class PhoneNumberField extends StatefulWidget {
 }
 class _PhoneNumberFieldState extends State<PhoneNumberField> {
   ///định dạng sdt
-  bool _validatePhoneNumber(String value) {
-    final phoneRegExp = RegExp(r'^(0[3|5|7|8|9])+([0-9]{8})$');
-    return phoneRegExp.hasMatch(value);
-  }
+  // bool _validatePhoneNumber(String value) {
+  //   final phoneRegExp = RegExp(r'^(0[3|5|7|8|9])+([0-9]{8})$');
+  //   return phoneRegExp.hasMatch(value);
+  // }
   ///giải phóng controller
   @override
   void dispose() {
@@ -29,20 +29,23 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
       keyboardType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       decoration: const InputDecoration(
-        labelText: 'Số điện thoại',
+        labelText: 'Số điện thoại *',
         border: OutlineInputBorder(),
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Vui lòng nhập số điện thoại';
-        } else if (!_validatePhoneNumber(value)) {
-          return 'Số điện thoại không hợp lệ';
         }
+        // else if (!_validatePhoneNumber(value)) {
+        //   return 'Số điện thoại không hợp lệ';
+        // }
         return null;
       },
     );
   }
 }
+////////////////////////////////////////////////////////////////////////////////
+
 /// /Name field/ ///
 class NameField extends StatelessWidget {
   final TextEditingController controller;
@@ -58,7 +61,6 @@ class NameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       decoration: const InputDecoration(
         labelText: 'Họ tên',
         border: OutlineInputBorder(),
@@ -72,11 +74,14 @@ class NameField extends StatelessWidget {
     );
   }
 }
+////////////////////////////////////////////////////////////////////////////////
+
 /// /Password field/ ///
 class PasswordField extends StatefulWidget {
   final TextEditingController controller;
+  final String label;
   const PasswordField({
-    super.key, required this.controller,
+    super.key, required this.controller, required this.label,
   });
 
   @override
@@ -97,7 +102,7 @@ class _PasswordFieldState extends State<PasswordField> {
       controller: widget.controller,
       obscureText: _obscureText, // Ẩn/hiện mật khẩu
       decoration: InputDecoration(
-        labelText: 'Mật khẩu',
+        labelText: widget.label,
         border: const OutlineInputBorder(),
         suffixIcon: IconButton(
           icon: Icon(
@@ -121,6 +126,8 @@ class _PasswordFieldState extends State<PasswordField> {
     );
   }
 }
+////////////////////////////////////////////////////////////////////////////////
+
 /// /Password Confirmation field/ ///
 class PasswordConfirmationField extends StatefulWidget {
   final TextEditingController controller;
@@ -164,6 +171,70 @@ class _PasswordConfirmationFieldState extends State<PasswordConfirmationField> {
         if (value != widget.passwordController.text) {
           return 'Mật khẩu không khớp';
         }
+        return null;
+      },
+    );
+  }
+}
+////////////////////////////////////////////////////////////////////////////////
+
+///Email
+class EmailField extends StatelessWidget {
+  final TextEditingController controller;
+
+  const EmailField({super.key, required this.controller});
+
+  ///giải phóng controller
+  void dispose() {
+    controller.dispose();
+  }
+  bool _validateEmail(String value) {
+      final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+      return emailRegExp.hasMatch(value);
+  }
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      decoration: const InputDecoration(
+        labelText: 'Email',
+        border: OutlineInputBorder(),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Vui lòng nhập email';
+        }
+        else if (!_validateEmail(value)) {
+          return 'Email không hợp lệ';
+        }
+        return null;
+      },
+    );
+  }
+}
+////////////////////////////////////////////////////////////////////////////////
+
+/// /Input field/ trươờng nhập k validate///
+class InputField extends StatelessWidget {
+  final TextEditingController controller;
+  final String label;
+
+  const InputField({super.key, required this.controller, required this.label});
+
+  //giải phóng controller
+  void dispose() {
+    controller.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
+      validator: (value) {
         return null;
       },
     );

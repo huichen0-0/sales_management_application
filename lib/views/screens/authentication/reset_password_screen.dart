@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../widgets/custom_form.dart';
 import '../../widgets/custom_form_fields.dart';
 
 class ResetPasswordScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
 
   ResetPasswordScreen({super.key});
@@ -21,35 +21,38 @@ class ResetPasswordScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            context.go('/forgot_password');
+            context.go('/home');
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CustomForm(
-              formKey: _formKey,
-              fields: [
-                const SizedBox(height: 16),
-                ///field nhập mật khẩu
-                //TODO: cần validate 2 mật khẩu giống nhau và đủ kí tự trước khi submit
-                PasswordField(controller: _passwordController,),
-                const SizedBox(height: 16),
-                ///field nhập lại mật khẩu mới
-                PasswordConfirmationField(
-                  controller: _confirmPasswordController,
-                  passwordController: _passwordController,
-                ),
-              ],
-              onSubmit: (){
-                _showSuccessDialog(context);
-              },
-              submitBtn: 'Hoàn thành',
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CustomForm(
+                formKey: _formKey,
+                fields: [
+                  ///field nhập mật khẩu
+                  PasswordField(controller: _passwordController, label: 'Mật khẩu hiện tại',),
+                  const SizedBox(height: 16),
+                  ///field nhập mật khẩu
+                  PasswordField(controller: _newPasswordController, label: 'Mật khẩu mới',),
+                  const SizedBox(height: 16),
+                  ///field nhập lại mật khẩu mới
+                  PasswordConfirmationField(
+                    controller: _confirmPasswordController,
+                    passwordController: _newPasswordController,
+                  ),
+                ],
+                onSubmit: (){
+                  _showSuccessDialog(context);
+                },
+                submitBtn: 'Hoàn thành',
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -59,10 +62,11 @@ class ResetPasswordScreen extends StatelessWidget {
   void _showSuccessDialog(BuildContext context) {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         // Đặt thời gian chuyển hướng sau 3 giây
         Future.delayed(const Duration(seconds: 3), () {
-          context.go('/');
+          context.go('/home');
         });
 
         return const AlertDialog(

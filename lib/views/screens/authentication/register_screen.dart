@@ -15,7 +15,10 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -31,46 +34,100 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
         title: const Text('Tạo tài khoản miễn phí'),
       ),
-      body: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          margin: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('Vui lòng nhập số điện thoại của bạn'),
-              const SizedBox(height: 16),
-              /// form nhập SDT TODO: lấy SDT để xử lý và hiển thị ở sau
-              CustomForm(
-                formKey: _formKey,
-                fields: [
-                  PhoneNumberField(controller: _phoneController,),
-                  const SizedBox(height: 8),
-                  const TermsAndConditionsRow(),
-                ],
-                onSubmit: (){
-                  context.push('/otp', extra: 'register');
-                },
-                submitBtn: 'Tiếp tục',
-              ),
-              const Spacer(),
-              /// link hotline TODO: xử lý như bên login
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.phone, color: Colors.grey),
-                  Text('Hỗ trợ 1900 0091'),
-                ],
-              ),
-            ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            margin: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Vui lòng nhập thông tin đăng ký'),
+                const SizedBox(height: 16),
+                /// form nhập SDT TODO: lấy SDT để xử lý và hiển thị ở sau
+                CustomForm(
+                  formKey: _formKey,
+                  fields: [
+                    /// nhap email
+                    EmailField(controller: _emailController,),
+                    const SizedBox(height: 16),
+                    NameField(controller: _nameController,),
+                    const SizedBox(height: 16),
+                    ///field nhập mật khẩu
+                    //TODO: cần validate 2 mật khẩu giống nhau và đủ kí tự trước khi submit
+                    PasswordField(controller: _passwordController, label: 'Mật khẩu',),
+                    const SizedBox(height: 16),
+                    ///field nhập lại mật khẩu mới
+                    PasswordConfirmationField(
+                      controller: _confirmPasswordController,
+                      passwordController: _passwordController,
+                    ),
+                  ],
+                  onSubmit: (){
+                    _showSuccessDialog(context, _emailController.text);
+                  },
+                  submitBtn: 'Đăng ký',
+                ),
+                const Spacer(),
+                /// link hotline TODO: xử lý như bên login
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.phone, color: Colors.grey),
+                    Text('Hỗ trợ 1900 0091'),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
+
   }
+  /// hàm hiển thị thông báo sau khi submit và chuyển sang trang login
+  void _showSuccessDialog(BuildContext context, String email) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        // Đặt thời gian chuyển hướng sau 5 giây
+        Future.delayed(const Duration(seconds: 5), () {
+          context.go('/');
+        });
+
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.check_circle,
+                color: Colors.green,
+                size: 60,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Kiểm tra email',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Chúng tôi đã gửi xác thực đến email $email của bạn!',
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
 
 /// widget kiểm tra chính sách điều khoản
-}
 class TermsAndConditionsRow extends StatefulWidget {
   const TermsAndConditionsRow({super.key});
 
