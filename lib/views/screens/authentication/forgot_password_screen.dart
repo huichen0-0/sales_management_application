@@ -42,7 +42,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                     },
                     submitBtn: 'Tiếp tục',
                 ),
-                const Spacer(),
+
                 /// link hotline TODO: xử lý như bên login
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
