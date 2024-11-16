@@ -32,9 +32,9 @@ class WidgetCard extends StatelessWidget {
               runSpacing: 16,
               children: items.map((item) {
                 return TextButton(
-                  onPressed: () {
-                    context.go(item['link']);
-                  },
+                  onPressed:
+                    item['action']
+                  ,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [

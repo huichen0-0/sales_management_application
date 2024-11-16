@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:sales_management_application/controllers/auth_controller.dart';
 import '../../widgets/custom_card.dart';
 
 class WidgetScreen extends StatelessWidget {
@@ -6,19 +9,36 @@ class WidgetScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //Tạo một thể hiện của AuthController
+    final authController = Provider.of<AuthController>(context);
+
     return Scaffold(
       body: ListView(
         padding: const EdgeInsets.all(16.0),
-        children: const [
+        children: [
           WidgetCard(
             title: 'Tài khoản',
             items: [
-              {'icon': Icons.person, 'label': 'Thông tin', 'link': '/home'},
-              {'icon': Icons.lock, 'label': 'Đổi mật khẩu', 'link': '/reset_password'},
-              {'icon': Icons.logout, 'label': 'Đăng xuất', 'link': '/'},
+              const {'icon': Icons.person, 'label': 'Thông tin', 'link': '/home'},
+              {
+                'icon': Icons.lock, 
+                'label': 'Đổi mật khẩu', 
+                'action': () {
+                  GoRouter.of(context).go('/reset_password');  //Khi click vào sẽ chuyển hướng đến địa chỉ trên
+                }
+              },
+              {
+                'icon': Icons.logout, 
+                'label': 'Đăng xuất', 
+                // 'link': '/',
+                'action': () async {
+                  await authController.logout();   //Đăng xuất
+                  GoRouter.of(context).go('/');    //Chuyển hướng đến trang đăng nhập
+                }
+              },
             ],
           ),
-          WidgetCard(
+          const WidgetCard(
             title: 'Giao dịch',
             items: [
               {'icon': Icons.shopping_bag, 'label': 'Bán hàng', 'link': '/order'},
@@ -27,7 +47,7 @@ class WidgetScreen extends StatelessWidget {
               {'icon': Icons.assignment_return, 'label': 'Trả hàng', 'link': '/home'},
             ],
           ),
-          WidgetCard(
+          const WidgetCard(
             title: 'Hàng hóa',
             items: [
               {'icon': Icons.inventory, 'label': 'Hàng hóa', 'link': '/product'},
@@ -37,14 +57,14 @@ class WidgetScreen extends StatelessWidget {
               {'icon': Icons.cancel, 'label': 'Xuất hủy', 'link': '/home'},
             ],
           ),
-          WidgetCard(
+          const WidgetCard(
             title: 'Đối tác',
             items: [
               {'icon': Icons.person, 'label': 'Khách hàng', 'link': '/customers'},
               {'icon': Icons.group, 'label': 'Nhà cung cấp', 'link': '/suppliers'},
             ],
           ),
-          WidgetCard(
+          const WidgetCard(
             title: 'Báo cáo',
             items: [
               {'icon': Icons.insert_chart_outlined, 'label': 'Cuối ngày', 'link': '/home'},
@@ -52,7 +72,7 @@ class WidgetScreen extends StatelessWidget {
               {'icon': Icons.area_chart, 'label': 'Bán hàng', 'link': '/home'},
             ],
           ),
-          WidgetCard(
+          const WidgetCard(
             title: 'Cài đặt',
             items: [
               {'icon': Icons.inventory, 'label': 'Hàng hóa', 'link': '/product'},
@@ -61,7 +81,7 @@ class WidgetScreen extends StatelessWidget {
               {'icon': Icons.devices_other, 'label': 'Ứng dụng & thiết bị', 'link': '/home'},
             ],
           ),
-          WidgetCard(
+          const WidgetCard(
             title: 'Về chúng tôi',
             items: [
               {'icon': Icons.menu_book, 'label': 'Hướng dẫn sử dụng', 'link': '/product'},
