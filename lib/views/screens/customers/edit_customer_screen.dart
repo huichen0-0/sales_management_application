@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sales_management_application/views/widgets/sheets/display_bottom_sheet.dart';
+import 'package:sales_management_application/controllers/customer_controller.dart';
+import 'package:sales_management_application/models/Customer.dart';
 
 import '../../widgets/forms/custom_form.dart';
 import '../../widgets/forms/custom_form_fields.dart';
@@ -20,26 +22,46 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController sexController = TextEditingController();
-  final TextEditingController customerCodeController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController notesController = TextEditingController();
+  final CustomerController _customerController = CustomerController();
+  bool _isLoading = true; // Biến để theo dõi trạng thái loading
+  Customer _customer = Customer(name: '', phoneNumber: '', amountSell: 0, amountReturn: 0);
 
-  @override
-  void initState() {
-    super.initState();
-    // Giả sử các giá trị ban đầu của khách hàng
-    nameController.text = 'KH'; // Tên khách hàng
-    phoneController.text = '0123456789'; // Số điện thoại
-    sexController.text = 'Nam'; //Giới tính
-    customerCodeController.text = 'KH000001'; // Mã khách hàng
-    addressController.text = '123 Đường ABC, Quận 1, TP.HCM'; // Địa chỉ
-    emailController.text = 'kh@example.com'; // Email
-    notesController.text = 'KH vip'; //ghi chú
+  Future<void> _loadCustomerInfo() async {
+    String customerId = GoRouterState.of(context).pathParameters['id']!;
+    await _customerController.getCustomerInfo(customerId);
+    
+    setState(() {
+      _customer = _customerController.customerDetail;
+      String sex = '';
+      if(_customer.gender == 1){
+        sex = 'Nam';
+      } else if (_customer.gender == 2){
+        sex = 'Nữ';
+      } else if (_customer.gender == 3){
+        sex = 'Khác';
+      } else {
+        sex = '';
+      }
+      
+      nameController.text = _customer.name;
+      phoneController.text = _customer.phoneNumber;
+      sexController.text = sex;
+      addressController.text = _customer.address!;
+      emailController.text = _customer.email!;
+      notesController.text = _customer.note!;
+      _isLoading = false; // Đặt trạng thái loading là false
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    // Kiểm tra trạng thái loading
+    if (_isLoading) {
+      _loadCustomerInfo();
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -89,8 +111,24 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
                   const SizedBox(height: 16),
                   InputField(controller: notesController, label: 'Ghi chú'),
                 ],
-                onSubmit: (){
-                  _showSuccessDialog(context);
+                onSubmit: () async {
+                  if(await _customerController.editCustomerInfo(
+                    _customer.id,
+                    nameController.text,
+                    phoneController.text,
+                    sexController.text,
+                    addressController.text,
+                    emailController.text,
+                    notesController.text
+                  )){
+                    //Sửa thành công
+                    _showSuccessDialog(context);
+                  } else {
+                    //Sửa thất bại
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Lỗi khi sửa thông tin khách hàng, vui lòng thử lại sau!')),
+                    );
+                  }
                 },
                 submitBtn: 'Lưu',
               ),
@@ -100,7 +138,7 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
       ),
     );
   }
-  /// hàm hiển thị thông báo sau khi submit và TODO: chuyển về trang customers/:id trước đó
+  /// hàm hiển thị thông báo sau khi submit và TODO: chuyển về trang /customers (DONE)
   void _showSuccessDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -108,7 +146,7 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
       builder: (BuildContext context) {
         // Đặt thời gian chuyển hướng sau 2 giây
         Future.delayed(const Duration(seconds: 2), () {
-          context.go('/customers');
+          Navigator.of(context).popUntil((route) => route.settings.name == '/customers');
         });
 
         return const AlertDialog(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sales_management_application/controllers/auth_controller.dart';
+import 'package:sales_management_application/models/FilterCustomer.dart';
 import 'package:sales_management_application/views/screens/authentication/forgot_password_screen.dart';
 import 'package:sales_management_application/views/screens/authentication/login_screen.dart';
 import 'package:sales_management_application/views/screens/authentication/register_screen.dart';
@@ -33,7 +34,8 @@ import 'package:sales_management_application/views/screens/suppliers/filter_supp
 import 'package:sales_management_application/views/screens/suppliers/supplier_detail_screen.dart';
 import 'package:sales_management_application/views/screens/suppliers/suppliers_screen.dart';
 import 'package:sales_management_application/views/screens/terms_and_conditions_screen.dart';
-import 'package:sales_management_application/views/widgets/filter_list.dart';
+// import 'package:sales_management_application/views/widgets/filter_list.dart';
+// import 'package:sales_management_application/views/widgets/search_bar.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -96,7 +98,6 @@ class MyApp extends StatelessWidget {
           path: '/tac',
           builder: (context, state) => const TermsAndConditionsScreen(),
         ),
-
         /// after login ///
         GoRoute(
           path: '/home',
@@ -105,30 +106,6 @@ class MyApp extends StatelessWidget {
         GoRoute(
           path: '/overview',
           builder: (context, state) => const OverviewScreen(),
-          routes: [
-        GoRoute(
-          path: 'filter',
-          builder: (context, state) => const FilterProductScreen(),
-        ),
-        GoRoute(
-          path: 'add',
-          builder: (context, state) => const AddProductScreen(),
-        ),
-        GoRoute(
-          path: ':id',
-          builder: (context, state) {
-            return const ProductDetailScreen();
-          },
-          routes: [
-            GoRoute(
-              path: 'edit',
-              builder: (context, state) {
-                return const EditProductScreen();
-              },
-            ),
-          ],
-        ),
-      ],
         ),
         GoRoute(
           path: '/invoices',
@@ -141,12 +118,35 @@ class MyApp extends StatelessWidget {
         GoRoute(
           path: '/products',
           builder: (context, state) => const ProductScreen(),
+          routes: [
+            GoRoute(
+              path: 'filter',
+              builder: (context, state) => const FilterProductScreen(),
+            ),
+            GoRoute(
+              path: 'add',
+              builder: (context, state) => const AddProductScreen(),
+            ),
+            GoRoute(
+              path: ':id',
+              builder: (context, state) {
+                return const ProductDetailScreen();
+              },
+              routes: [
+                GoRoute(
+                  path: 'edit',
+                  builder: (context, state) {
+                    return const EditProductScreen();
+                  },
+                ),
+              ],
+            ),
+          ],
         ),
         GoRoute(
           path: '/all',
           builder: (context, state) => const WidgetScreen(),
         ),
-
         /// supplier
         GoRoute(
           path: '/suppliers',
@@ -176,7 +176,6 @@ class MyApp extends StatelessWidget {
             ),
           ],
         ),
-
         /// customer
         GoRoute(
           path: '/customers',
@@ -184,7 +183,10 @@ class MyApp extends StatelessWidget {
           routes: [
             GoRoute(
               path: 'filter',
-              builder: (context, state) => const FilterCustomerScreen(),
+              builder: (context, state) {
+                final filterCustomer = state.extra as FilterCustomer?;
+                return FilterCustomerScreen(filterCustomer: filterCustomer);
+              },
             ),
             GoRoute(
               path: 'add',
@@ -207,34 +209,34 @@ class MyApp extends StatelessWidget {
           ],
         ),
         /// inventory
-    GoRoute(
-      path: '/inventory',
-      builder: (context, state) => const InventoryScreen(),
-      routes: [
         GoRoute(
-          path: 'filter',
-          builder: (context, state) => const FilterInventoryScreen(),
-        ),
-        GoRoute(
-          path: 'add',
-          builder: (context, state) => const AddInventoryScreen(),
-        ),
-        GoRoute(
-          path: ':id',
-          builder: (context, state) {
-            return const InventoryDetailScreen();
-          },
+          path: '/inventory',
+          builder: (context, state) => const InventoryScreen(),
           routes: [
             GoRoute(
-              path: 'edit',
+              path: 'filter',
+              builder: (context, state) => const FilterInventoryScreen(),
+            ),
+            GoRoute(
+              path: 'add',
+              builder: (context, state) => const AddInventoryScreen(),
+            ),
+            GoRoute(
+              path: ':id',
               builder: (context, state) {
-                return const EditInventoryScreen();
+                return const InventoryDetailScreen();
               },
+              routes: [
+                GoRoute(
+                  path: 'edit',
+                  builder: (context, state) {
+                    return const EditInventoryScreen();
+                  },
+                ),
+              ],
             ),
           ],
         ),
-      ],
-    ),
       ],
       redirect: (context, state) {
         final isLoggedIn = authController.isLoggedIn;

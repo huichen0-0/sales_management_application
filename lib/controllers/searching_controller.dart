@@ -1,8 +1,4 @@
-import 'package:sales_management_application/services/searching_service.dart';
-
-
 class SearchingController {
-  final SearchService _searchService = SearchService();
   final List<Map<String, dynamic>> searchData; // Dữ liệu tìm kiếm cho trang cụ thể
   String? selectedSearchKey; //thuôc tính tim kiếm
   String currentTag; //tag hiện tại
@@ -26,7 +22,25 @@ class SearchingController {
   // Hàm cập nhật kết quả tìm kiếm với `searchKey`
   void updateSearchResults(String query) {
     if (selectedSearchKey != null) {
-      searchResults = _searchService.filterSearchResults(query, searchData, selectedSearchKey!);
+      searchResults = filterSearchResults(query, searchData, selectedSearchKey!);
     }
+  }
+
+  // Hàm lọc kết quả tìm kiếm từ dữ liệu đầu vào
+  List<Map<String, dynamic>> filterSearchResults(
+      String query, List<Map<String, dynamic>> searchingData, String searchKey) {
+    if (query.isEmpty) {
+      return [];
+    }
+
+    // Lọc kết quả dựa trên giá trị của `searchKey`
+    return searchingData
+        .where((item) =>
+            item[searchKey]
+                ?.toString()
+                .toLowerCase()
+                .contains(query.toLowerCase()) ??
+            false)
+        .toList();
   }
 }

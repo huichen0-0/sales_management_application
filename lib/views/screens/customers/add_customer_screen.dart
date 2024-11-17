@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sales_management_application/controllers/customer_controller.dart';
 import 'package:sales_management_application/views/widgets/sheets/display_bottom_sheet.dart';
 
 import '../../widgets/forms/custom_form.dart';
@@ -16,11 +17,13 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
   // Tạo GlobalKey để quản lý trạng thái của Form
   final _formKey = GlobalKey<FormState>();
 
+  // Thêm biến CustomerController
+  final CustomerController _customerController = CustomerController();
+
   // Các TextEditingController để điều khiển giá trị của các trường nhập
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController sexController = TextEditingController();
-  final TextEditingController customerCodeController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController notesController = TextEditingController();
@@ -75,8 +78,25 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                   const SizedBox(height: 16),
                   InputField(controller: notesController, label: 'Ghi chú'),
                 ],
-                onSubmit: (){
-                  _showSuccessDialog(context);
+                onSubmit: () async {
+                  //Lấy dữ liệu từ text
+                  String name = nameController.text;
+                  String phoneNumber = phoneController.text;
+                  String sex = sexController.text;
+                  String address = addressController.text;
+                  String email = emailController.text;
+                  String note = notesController.text;
+
+                  //Thêm khách hàng
+                  if(await _customerController.addCustomer(name, phoneNumber, sex, address, email, note)){
+                    //Thêm khách hàng thành công
+                    _showSuccessDialog(context);
+                  } else {
+                    //Thêm khách hàng thất bại
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Lỗi khi thêm khách hàng, vui lòng thử lại sau!')),
+                    );
+                  }
                 },
                 submitBtn: 'Lưu',
               ),
@@ -86,7 +106,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
       ),
     );
   }
-  /// hàm hiển thị thông báo sau khi submit và TODO: chuyển về trang customers/:id trước đó
+  /// hàm hiển thị thông báo sau khi submit và chuyển về trang /customers
   void _showSuccessDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -94,7 +114,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
       builder: (BuildContext context) {
         // Đặt thời gian chuyển hướng sau 2 giây
         Future.delayed(const Duration(seconds: 2), () {
-          context.go('/customers');
+          context.pop('/customers');
+          context.pop('/customers');
         });
 
         return const AlertDialog(
