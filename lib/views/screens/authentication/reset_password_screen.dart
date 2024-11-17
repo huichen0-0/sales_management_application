@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:sales_management_application/controllers/auth_controller.dart';
 import '../../widgets/forms/custom_form.dart';
 import '../../widgets/forms/custom_form_fields.dart';
 
@@ -13,6 +15,9 @@ class ResetPasswordScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //Tạo một thể hiện của AuthController
+    final authController = Provider.of<AuthController>(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -46,8 +51,19 @@ class ResetPasswordScreen extends StatelessWidget {
                     passwordController: _newPasswordController,
                   ),
                 ],
-                onSubmit: (){
-                  _showSuccessDialog(context);
+                onSubmit: () async {
+                    final success = await authController.changePassword( //Đổi mật khẩu
+                    _passwordController.text,
+                    _newPasswordController.text
+                  );
+                  //TODO: Sửa lại giao diện hiển thị thông báo lỗi nếu cần
+                  if (success) { //Đổi mật khẩu hành công
+                    _showSuccessDialog(context);
+                  } else { // Thất bại, thông báo lỗi
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Đổi mật khẩu thất bại. Vui lòng kiểm tra lại mật khẩu hiện tại của bạn!')),
+                    );
+                  }
                 },
                 submitBtn: 'Hoàn thành',
               ),

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "580063029367",
+    "firebase_url": "https://datn-2024-af1a7-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "datn-2024-af1a7",
+    "storage_bucket": "datn-2024-af1a7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:580063029367:android:230872dc2993339fb8fe72",
+        "android_client_info": {
+          "package_name": "com.example.sales_management_application"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "580063029367-ggn409hlkovds9l0ue7ok9i5p3h0afkj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sales_management_application",
+            "certificate_hash": "bc29ac2773e6603dd5890337973fedc86bc1475a"
+          }
+        },
+        {
+          "client_id": "580063029367-cvr3c3rubcc1mtive4nukgpdjjf8n07q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXdDaZqJXb6G2Wn4pDLiTHoiI5jXh_z4g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "580063029367-cvr3c3rubcc1mtive4nukgpdjjf8n07q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
