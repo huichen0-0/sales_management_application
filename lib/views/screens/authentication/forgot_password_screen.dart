@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:sales_management_application/controllers/auth_controller.dart';
 import '../../widgets/custom_form.dart';
 import '../../widgets/custom_form_fields.dart';
 
@@ -10,6 +12,9 @@ class ForgotPasswordScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //Tạo một thể hiện của AuthController
+    final authController = Provider.of<AuthController>(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -37,7 +42,8 @@ class ForgotPasswordScreen extends StatelessWidget {
                     fields: [
                       EmailField(controller: _emailController,),
                     ],
-                    onSubmit: (){
+                    onSubmit: () async {
+                      await authController.resetPassword(_emailController.text); //Gửi email xác thực và tạo mật khẩu mới
                       _showNotificationDialog(context, _emailController.text);
                     },
                     submitBtn: 'Tiếp tục',

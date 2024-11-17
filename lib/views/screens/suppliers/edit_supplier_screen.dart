@@ -38,7 +38,7 @@ class _EditSupplierScreenState extends State<EditSupplierScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: const Text('Thông tin cơ bản'),
+        title: const Text('Chỉnh sửa thông tin nhà cung cấp'),
         // leading: IconButton(
         //   icon: const Icon(Icons.arrow_back),
         //   onPressed: () {
