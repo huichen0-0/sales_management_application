@@ -27,7 +27,7 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: const Text('Thông tin cơ bản'),
+        title: const Text('Chi tiết nhà cung cấp'),
         actions: [
           ///nút sửa
           IconButton(
