@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sales_management_application/views/widgets/custom_sheet.dart';
 
 /// hiển thị tùy chọn lọc cho trang /suppliers
 /// TODO: cần xử lý áp dung
@@ -47,6 +48,7 @@ class _FilterSupplierScreenState extends State<FilterSupplierScreen> {
               // Trạng thái
               _buildStatusSection(),
               const SizedBox(height: 16),
+
               // Nút Đặt lại và Áp dụng
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -194,10 +196,13 @@ class _FilterCustomerScreenState extends State<FilterCustomerScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
+              // Ngày giao dịch cuối
+              _buildRangeDateSection('Ngày giao dịch cuối'),
+              const SizedBox(height: 16),
               // Tổng mua
               _buildRangeInputSection('Tổng bán', purchaseFromController, purchaseToController),
               const SizedBox(height: 16),
-        
+
               // Nợ hiện tại
               _buildRangeInputSection('Nợ hiện tại', debtFromController, debtToController),
               const SizedBox(height: 16),
@@ -228,6 +233,17 @@ class _FilterCustomerScreenState extends State<FilterCustomerScreen> {
           ),
         ),
       ),
+    );
+  }
+// hàm tạo phần chọn khoảng thời gian cho Ngày giao dịch cuối
+  Widget _buildRangeDateSection(String title) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        const DateRangePickerField(),
+      ],
     );
   }
 

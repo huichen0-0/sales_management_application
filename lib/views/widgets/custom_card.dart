@@ -32,9 +32,7 @@ class WidgetCard extends StatelessWidget {
               runSpacing: 16,
               children: items.map((item) {
                 return TextButton(
-                  onPressed: () {
-                    context.go(item['link']);
-                  },
+                  onPressed: item['action'],
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -74,17 +72,19 @@ class SupplierCard extends StatelessWidget {
     return Card(
       child: ListTile(
         leading: const Icon(Icons.perm_identity),
+
         /// ncc hoạt đông thì màu xanh, không thì xám
         iconColor: supplier['isActive'] ? Colors.blue : Colors.black54,
         textColor: supplier['isActive'] ? Colors.blue : Colors.black54,
+
         /// tên
         title: Text(
           supplier['name'],
           style: const TextStyle(
             fontWeight: FontWeight.bold,
-
           ),
         ),
+
         /// SDT
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,6 +92,7 @@ class SupplierCard extends StatelessWidget {
             Text(supplier['phone']),
           ],
         ),
+
         /// tổng mua (tạm thời để hiển thị) TODO: cần lấy các giá trị ở tùy chọn hiển thị
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -100,7 +101,6 @@ class SupplierCard extends StatelessWidget {
               supplier['amount'].toString(),
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-
               ),
             ),
           ],
@@ -127,17 +127,19 @@ class CustomerCard extends StatelessWidget {
     return Card(
       child: ListTile(
         leading: const Icon(Icons.perm_identity),
+
         /// ncc hoạt đông thì màu xanh, không thì xám
         iconColor: customer['isActive'] ? Colors.blue : Colors.black54,
         textColor: customer['isActive'] ? Colors.blue : Colors.black54,
+
         /// tên
         title: Text(
           customer['name'],
           style: const TextStyle(
             fontWeight: FontWeight.bold,
-
           ),
         ),
+
         /// SDT
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,6 +147,7 @@ class CustomerCard extends StatelessWidget {
             Text(customer['phone']),
           ],
         ),
+
         /// tổng mua (tạm thời để hiển thị) TODO: cần lấy các giá trị ở tùy chọn hiển thị
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -153,7 +156,6 @@ class CustomerCard extends StatelessWidget {
               customer['amount'].toString(),
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-
               ),
             ),
           ],
