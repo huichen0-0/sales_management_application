@@ -52,7 +52,7 @@ class AuthController extends ChangeNotifier{
       
         // Lưu access token vào Secure Storage
         await _storage.write(key: 'access_token', value: accessToken);
-
+        
         _isLoggedIn = true;
         notifyListeners(); // Thông báo để cập nhật UI
       }
