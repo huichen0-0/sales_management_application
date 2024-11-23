@@ -50,7 +50,8 @@ Future<void> main() async {
   // runApp(const MyApp());
   runApp(
     ChangeNotifierProvider( //Kiểm tra trạng thái đăng nhập và thực hiện chuyển hướng cho tất cả giao diện
-      create: (context) => AuthController(),
+      // create: (context) => AuthController(),
+      create: (context) => AuthController()..checkLogin(), //Chạy checkLogin() trước khi khởi tạo ứng dụng và sau khi khởi tạo AuthController
       child: MyApp(),
     ),
   );
