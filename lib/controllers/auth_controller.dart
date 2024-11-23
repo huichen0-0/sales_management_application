@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sales_management_application/models/Users.dart';
 
 class AuthController extends ChangeNotifier{
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final DatabaseReference _database = FirebaseDatabase.instance.ref();
+  final FlutterSecureStorage _storage = FlutterSecureStorage(); //Biến hỗ trợ lưu trữ token
 
   bool _isLoggedIn = false;
 
@@ -43,7 +45,14 @@ class AuthController extends ChangeNotifier{
   Future<User?> login(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
-      if(userCredential.user!.emailVerified){
+      if(userCredential.user!.emailVerified){//Nếu email người dùng đã xác nhận
+
+        //Lấy access token của user
+        String? accessToken = await userCredential.user!.getIdToken();
+      
+        // Lưu access token vào Secure Storage
+        await _storage.write(key: 'access_token', value: accessToken);
+        
         _isLoggedIn = true;
         notifyListeners(); // Thông báo để cập nhật UI
       }
@@ -54,9 +63,32 @@ class AuthController extends ChangeNotifier{
     }
   }
 
+  //Kiểm tra xem có người dùng đang đăng nhập hay không và làm mới access token
+  Future<void> checkAndRefreshToken() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      // Lấy access token mới
+      String? newAccessToken = await user.getIdToken(true);
+      await _storage.write(key: 'access_token', value: newAccessToken);
+    }
+  }
+
+  //Kiểm tra lần cuối thoát khỏi ứng dụng đang đăng nhập hay đã đăng xuất
+  Future<void> checkLogin() async {
+    String? accessToken = await _storage.read(key: 'access_token');
+    if (accessToken != null) { //Nếu access token vẫn được lưu
+      checkAndRefreshToken();
+      _isLoggedIn = true;
+    } else { //Nếu đã xóa access token
+      _isLoggedIn = false;
+    }
+    notifyListeners(); // Thông báo để cập nhật UI
+  }
+
   //Đăng xuất
   Future<void> logout() async {
     await _auth.signOut();
+    await _storage.delete(key: 'access_token'); //Xóa access token khỏi Secure Storage 
     _isLoggedIn = false;
     notifyListeners(); // Thông báo để cập nhật UI
   }
