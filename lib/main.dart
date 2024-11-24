@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sales_management_application/controllers/auth_controller.dart';
+import 'package:sales_management_application/models/Supplier.dart';
 import 'package:sales_management_application/views/screens/authentication/forgot_password_screen.dart';
 import 'package:sales_management_application/views/screens/authentication/login_screen.dart';
 import 'package:sales_management_application/views/screens/authentication/register_screen.dart';
@@ -24,6 +25,7 @@ import 'package:sales_management_application/views/screens/suppliers/suppliers_s
 import 'package:sales_management_application/views/screens/terms_and_conditions_screen.dart';
 import 'package:sales_management_application/views/widgets/filter_list.dart';
 
+<<<<<<< Updated upstream
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

@@ -1,28 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sales_management_application/models/Supplier.dart';
+
+import 'edit_supplier_screen.dart';
 
 class SupplierDetailScreen extends StatefulWidget {
-  const SupplierDetailScreen({super.key});
+  const SupplierDetailScreen({required this.id, required this.supplier});
+  final Supplier supplier;
+  final String id;
 
   @override
-  State<SupplierDetailScreen> createState() => _SupplierDetailScreenState();
+  State<SupplierDetailScreen> createState() => _SupplierDetailScreenState(id: this.id, supplier: this.supplier);
 }
 
 class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
-  bool isActive =
-      true; // biến check trạng thái hoạt động TODO: lấy từ thuộc tính của ncc
+  bool isActive = true; // biến check trạng thái hoạt động TODO: lấy từ thuộc tính của ncc
+  final Supplier supplier;
+  final String id;
+
+  _SupplierDetailScreenState({required this.id, required this.supplier});
+
   @override
   Widget build(BuildContext context) {
     ///fake dữ liệu
-    final Map<String, dynamic> supplier = {
-      'id': 1,
-      'name': 'ABC1',
-      'phone': '0987654321',
-      'amount': 1000000,
-      'address': '123 Đường ABC, Quận 1, TP.HCM',
-      'email': 'ncc@example.com',
-      'notes': 'NCC vip',
-    };
+    // final Map<String, dynamic> supplier = {
+    //   'id': 1,
+    //   'name': 'ABC1',
+    //   'phone': '0987654321',
+    //   'amount': 1000000,
+    //   'address': '123 Đường ABC, Quận 1, TP.HCM',
+    //   'email': 'ncc@example.com',
+    //   'notes': 'NCC vip',
+    // };
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -32,7 +41,12 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
           ///nút sửa
           IconButton(
             onPressed: () {
-              context.push('/suppliers/:id/edit');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditSupplierScreen(id: id, supplier: supplier),
+                ),
+              );
             },
             icon: const Icon(Icons.edit),
           ),
@@ -58,7 +72,7 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
                   'Tên nhà cung cấp',
                 ),
                 trailing: Text(
-                  supplier['name'],
+                  supplier.name,
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
@@ -71,9 +85,9 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
                   'Số điện thoại',
                 ),
                 trailing: TextButton.icon(
-                  label: const Text(
-                    '0987654321',
-                    style: TextStyle(
+                  label: Text(
+                    supplier.phone,
+                    style: const TextStyle(
                         color: Colors.blue,
                         fontSize: 14,
                         fontWeight: FontWeight.bold),
@@ -137,7 +151,7 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
                   'Địa chỉ',
                 ),
                 trailing: Text(
-                  supplier['address'],
+                  supplier.address,
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
@@ -150,7 +164,7 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
                   'Email',
                 ),
                 trailing: Text(
-                  supplier['email'],
+                  supplier.email,
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
@@ -163,7 +177,7 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
                   'Ghi chú',
                 ),
                 trailing: Text(
-                  supplier['notes'],
+                  supplier.note,
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
