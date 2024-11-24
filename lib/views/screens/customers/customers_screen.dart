@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:sales_management_application/views/widgets/custom_card.dart';
-import '../../widgets/custom_sheet.dart';
-
+import 'package:sales_management_application/controllers/sorting_controller.dart';
+import 'package:sales_management_application/views/widgets/cards/custom_card.dart';
+import 'package:sales_management_application/views/widgets/search_bar.dart';
+import 'package:sales_management_application/views/widgets/sheets/display_bottom_sheet.dart';
+import 'package:sales_management_application/views/widgets/sheets/sorting_bottom_sheet.dart';
+import 'package:sales_management_application/views/widgets/sheets/time_filter_bottom_sheet.dart';
+import 'package:sales_management_application/config/constants.dart';
 class CustomerScreen extends StatefulWidget {
   const CustomerScreen({super.key});
 
@@ -12,79 +16,120 @@ class CustomerScreen extends StatefulWidget {
 }
 
 class _CustomerScreenState extends State<CustomerScreen> {
-  String selectedSorting = 'Mới nhất'; // Giá trị mặc định của sắp xếp
-  String selectedDisplay = 'Tổng mua'; // Giá trị mặc định của tổng mua
-  String selectedOption = 'Hôm nay'; //giá trị mặc định của lọc thời gian
+  SortingController? _sortingController;
+  String selectedSorting = AppSort.newest; // Giá trị mặc định của sắp xếp
+  String selectedDisplay = AppDisplay.totalSale; // Giá trị mặc định của tổng mua
+  String selectedOption = AppTime.today; //giá trị mặc định của lọc thời gian
   ///fake dữ liệu
   final List<Map<String, dynamic>> items = [
     {
       'id': 1,
       'name': 'ABC1',
       'phone': '0987654321',
+      'sex': 'Nam',
       'amount': 1000000,
+      'address': '123 Đường ABC, Quận 1, TP.HCM',
+      'email': 'kh@example.com',
+      'notes': 'KH vip',
       'isActive': true,
     },
     {
-      'id': 2,
-      'name': 'ABC2',
+      'id': 1,
+      'name': 'ABC11',
       'phone': '0987654321',
-      'amount': 2000000,
+      'sex': 'Nam',
+      'amount': 1100000,
+      'address': '123 Đường ABC, Quận 1, TP.HCM',
+      'email': 'kh@example.com',
+      'notes': 'KH vip',
       'isActive': true,
     },
     {
-      'id': 3,
-      'name': 'ABC3',
+      'id': 1,
+      'name': 'ABC12',
       'phone': '0987654321',
-      'amount': 3000000,
+      'sex': 'Nam',
+      'amount': 1200000,
+      'address': '123 Đường ABC, Quận 1, TP.HCM',
+      'email': 'kh@example.com',
+      'notes': 'KH vip',
       'isActive': true,
     },
     {
-      'id': 4,
-      'name': 'ABC4',
+      'id': 1,
+      'name': 'ABC21',
       'phone': '0987654321',
-      'amount': 3000000,
-      'isActive': false,
-    },
-    {
-      'id': 5,
-      'name': 'ABC5',
-      'phone': '0987654321',
-      'amount': 3000000,
-      'isActive': false,
-    },
-    {
-      'id': 6,
-      'name': 'ABC6',
-      'phone': '0987654321',
-      'amount': 3000000,
+      'sex': 'Nam',
+      'amount': 100000,
+      'address': '123 Đường ABC, Quận 1, TP.HCM',
+      'email': 'kh@example.com',
+      'notes': 'KH vip',
       'isActive': true,
     },
     {
-      'id': 7,
-      'name': 'ABC7',
+      'id': 1,
+      'name': 'BC1',
       'phone': '0987654321',
-      'amount': 3000000,
+      'sex': 'Nam',
+      'amount': 4000000,
+      'address': '123 Đường ABC, Quận 1, TP.HCM',
+      'email': 'kh@example.com',
+      'notes': 'KH vip',
       'isActive': true,
     },
     {
-      'id': 8,
-      'name': 'ABC8',
+      'id': 1,
+      'name': 'A1',
       'phone': '0987654321',
-      'amount': 3000000,
+      'sex': 'Nam',
+      'amount': 10000,
+      'address': '123 Đường ABC, Quận 1, TP.HCM',
+      'email': 'kh@example.com',
+      'notes': 'KH vip',
       'isActive': true,
     },
     {
-      'id': 9,
-      'name': 'ABC9',
+      'id': 1,
+      'name': 'C1',
       'phone': '0987654321',
-      'amount': 3000000,
+      'sex': 'Nam',
+      'amount': 10050,
+      'address': '123 Đường ABC, Quận 1, TP.HCM',
+      'email': 'kh@example.com',
+      'notes': 'KH vip',
       'isActive': true,
     },
     {
-      'id': 10,
-      'name': 'ABC10',
+      'id': 1,
+      'name': 'AB4C1',
       'phone': '0987654321',
-      'amount': 3000000,
+      'sex': 'Nam',
+      'amount': 10023,
+      'address': '123 Đường ABC, Quận 1, TP.HCM',
+      'email': 'kh@example.com',
+      'notes': 'KH vip',
+      'isActive': true,
+    },
+    {
+      'id': 1,
+      'name': 'ABC1',
+      'phone': '0987654321',
+      'sex': 'Nam',
+      'amount': 12000,
+      'address': '123 Đường ABC, Quận 1, TP.HCM',
+      'email': 'kh@example.com',
+      'notes': 'KH vip',
+      'isActive': true,
+    },
+    {
+      'id': 1,
+      'name': 'ABC1',
+      'phone': '0987654321',
+      'sex': 'Nam',
+      'amount': 1000000,
+      'address': '123 Đường ABC, Quận 1, TP.HCM',
+      'email': 'kh@example.com',
+      'notes': 'KH vip',
       'isActive': true,
     },
   ];
@@ -94,9 +139,15 @@ class _CustomerScreenState extends State<CustomerScreen> {
     final formatter = NumberFormat('#,###');
     return formatter.format(amount);
   }
-
+//khởi tạo
+  @override
+  void initState() {
+    super.initState();
+    _sortingController = SortingController(items);
+  }
   @override
   Widget build(BuildContext context) {
+    final items = _sortingController?.currentData;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -113,7 +164,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              // TODO: Xử lý tìm kiếm
+              _openSearchPage();
             },
           ),
 
@@ -138,7 +189,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
         ],
       ),
       body:
-      items.isNotEmpty ? _buildItemList(context, items) : _buildEmptyView(),
+      items!.isNotEmpty ? _buildItemList(context, items) : _buildEmptyView(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           context.push('/customers/add');
@@ -259,10 +310,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
       context: context,
       builder: (context) {
         return TimeFilterBottomSheet(
+          selectedOption: selectedOption,
           onOptionSelected: (option, startDate, [endDate]) {
-            // String formattedDate = endDate != null
-            //     ? '${DateFormat('dd/MM/yyyy').format(startDate)} - ${DateFormat('dd/MM/yyyy').format(endDate)}'
-            //     : DateFormat('dd/MM/yyyy').format(startDate);
             setState(() {
               selectedOption = option;
             });
@@ -278,14 +327,42 @@ class _CustomerScreenState extends State<CustomerScreen> {
       context: context,
       builder: (BuildContext context) {
         return SortingBottomSheet(
+          //đang tắt mới, cũ nhất
+          showNewest: false,
+          showOldest: false,
           selectedSorting: selectedSorting,
           onSelectSorting: (option) {
             setState(() {
               selectedSorting = option;
+              _sortingController?.updateSorting(option, 'amount');
             });
           },
         );
       },
+    );
+  }
+  // Hàm mở trang tìm kiếm
+  Future<void> _openSearchPage() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SearchBarScreen(
+          searchOptions: const [
+            {'searchKey': 'name', 'tag': 'Tên', 'hint': 'Tìm theo tên'},
+            {'searchKey': 'phone', 'tag': 'SĐT', 'hint': 'Tìm theo SĐT'},
+            {'searchKey': 'email', 'tag': 'Email', 'hint': 'Tìm theo email'},
+            {'searchKey': 'address', 'tag': 'Địa chỉ', 'hint': 'Tìm theo địa chỉ'},
+            {'searchKey': 'notes', 'tag': 'Ghi chú', 'hint': 'Tìm theo ghi chú'},
+          ],
+          searchData: items,
+          dataType: 'customers',
+          onCancel: () {
+            // Hủy tìm kiếm và đóng trang tìm kiếm
+            Navigator.pop(context);
+          },
+          title: 'Tìm kiếm khách hàng',
+        ),
+      ),
     );
   }
 }

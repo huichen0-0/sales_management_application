@@ -4,7 +4,7 @@ import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
-import '../../widgets/custom_form.dart';
+import '../../widgets/forms/custom_form.dart';
 
 class VerificationCodeScreen extends StatefulWidget {
   final String? previousPage;

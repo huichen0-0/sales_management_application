@@ -14,7 +14,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
   @override
   Widget build(BuildContext context) {
     ///fake dữ liệu
-    final Map<String, dynamic> supplier = {
+    final Map<String, dynamic> customer = {
       'id': 1,
       'name': 'ABC1',
       'phone': '0987654321',
@@ -23,6 +23,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
       'address': '123 Đường ABC, Quận 1, TP.HCM',
       'email': 'kh@example.com',
       'notes': 'KH vip',
+      'isActive': true,
     };
     return Scaffold(
       backgroundColor: Colors.white,
@@ -59,7 +60,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                   'Tên khách hàng',
                 ),
                 trailing: Text(
-                  supplier['name'],
+                  customer['name'],
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
@@ -95,7 +96,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                   'Giới tính',
                 ),
                 trailing: Text(
-                  supplier['sex'],
+                  customer['sex'],
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
@@ -123,26 +124,6 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                 ),
               ),
               const Divider(),
-              ListTile(
-                title: const Text('Công nợ'),
-                trailing: TextButton.icon(
-                  label: const Text(
-                    '0',
-                    style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  icon: const Icon(
-                    Icons.arrow_forward_ios,
-                    size: 14,
-                    color: Colors.blue,
-                  ),
-                  iconAlignment: IconAlignment.end,
-                  onPressed: () {},
-                ),
-              ),
-              const Divider(),
 
               /// Địa chỉ
               ListTile(
@@ -150,7 +131,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                   'Địa chỉ',
                 ),
                 trailing: Text(
-                  supplier['address'],
+                  customer['address'],
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
@@ -163,7 +144,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                   'Email',
                 ),
                 trailing: Text(
-                  supplier['email'],
+                  customer['email'],
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
@@ -176,7 +157,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                   'Ghi chú',
                 ),
                 trailing: Text(
-                  supplier['notes'],
+                  customer['notes'],
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),

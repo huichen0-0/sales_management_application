@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sales_management_application/views/widgets/custom_sheet.dart';
+import 'package:sales_management_application/views/widgets/sheets/display_bottom_sheet.dart';
 
-import '../../widgets/custom_form.dart';
-import '../../widgets/custom_form_fields.dart';
+import '../../widgets/forms/custom_form.dart';
+import '../../widgets/forms/custom_form_fields.dart';
 
 class AddCustomerScreen extends StatefulWidget {
   const AddCustomerScreen({super.key});

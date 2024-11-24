@@ -2,30 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 /// /Phone number field/ ///
-class PhoneNumberField extends StatefulWidget {
+class PhoneNumberField extends StatelessWidget {
   final TextEditingController controller;
   const PhoneNumberField({super.key, required this.controller});
 
-  @override
-  _PhoneNumberFieldState createState() => _PhoneNumberFieldState();
-}
-class _PhoneNumberFieldState extends State<PhoneNumberField> {
   ///định dạng sdt
   // bool _validatePhoneNumber(String value) {
   //   final phoneRegExp = RegExp(r'^(0[3|5|7|8|9])+([0-9]{8})$');
   //   return phoneRegExp.hasMatch(value);
   // }
   ///giải phóng controller
-  @override
   void dispose() {
-    widget.controller.dispose();
-    super.dispose();
+    controller.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: widget.controller,
+      controller: controller,
       keyboardType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       decoration: const InputDecoration(
@@ -49,7 +43,6 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
 /// /Name field/ ///
 class NameField extends StatelessWidget {
   final TextEditingController controller;
-
   const NameField({super.key, required this.controller});
 
   ///giải phóng controller
@@ -189,7 +182,7 @@ class EmailField extends StatelessWidget {
     controller.dispose();
   }
   bool _validateEmail(String value) {
-      final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+      final emailRegExp = RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$');
       return emailRegExp.hasMatch(value);
   }
   @override
@@ -240,3 +233,72 @@ class InputField extends StatelessWidget {
     );
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+/// /Input field/ trươờng nhập validate bỏ trống///
+class NotNullField extends StatelessWidget {
+  final TextEditingController controller;
+  final String label;
+
+  const NotNullField({super.key, required this.controller, required this.label});
+
+  //giải phóng controller
+  void dispose() {
+    controller.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Vui lòng không để trống';
+        }
+        return null;
+      },
+    );
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// /Barcode field/ ///
+class BarcodeField extends StatelessWidget {
+  final TextEditingController controller;
+  const BarcodeField({super.key, required this.controller});
+
+  ///giải phóng controller
+  void dispose() {
+    controller.dispose();
+  }
+  // Hàm xử lý khi nhấn vào icon quét mã vạch
+  void _onBarcodeScanPressed() {
+    print('Quét mã vạch');
+    // TODO: Thêm mã quét mã vạch thực tế ở đây
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      decoration: InputDecoration(
+        labelText: 'Mã vạch',
+        border: const OutlineInputBorder(),
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.qr_code_scanner),
+          onPressed: _onBarcodeScanPressed,
+        )
+      ),
+      validator: (value) {
+        return null;
+      },
+    );
+  }
+}
+////////////////////////////////////////////////////////////////////////////////

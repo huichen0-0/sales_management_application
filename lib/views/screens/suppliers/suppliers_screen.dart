@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:sales_management_application/views/widgets/custom_card.dart';
-import 'package:sales_management_application/views/widgets/filter_list.dart';
-
-import '../../widgets/custom_sheet.dart';
+import 'package:sales_management_application/config/constants.dart';
+import 'package:sales_management_application/controllers/sorting_controller.dart';
+import 'package:sales_management_application/views/widgets/cards/custom_card.dart';
+import 'package:sales_management_application/views/widgets/search_bar.dart';
+import 'package:sales_management_application/views/widgets/sheets/display_bottom_sheet.dart';
+import 'package:sales_management_application/views/widgets/sheets/sorting_bottom_sheet.dart';
+import 'package:sales_management_application/views/widgets/sheets/time_filter_bottom_sheet.dart';
 
 class SupplierScreen extends StatefulWidget {
   const SupplierScreen({super.key});
@@ -14,80 +17,81 @@ class SupplierScreen extends StatefulWidget {
 }
 
 class _SupplierScreenState extends State<SupplierScreen> {
-  String selectedSorting = 'Mới nhất'; // Giá trị mặc định của sắp xếp
-  String selectedDisplay = 'Tổng mua'; // Giá trị mặc định của tổng mua
-  String selectedOption = 'Hôm nay'; //giá trị mặc định của lọc thời gian
+  SortingController? _sortingController;
+  String selectedSorting = AppSort.newest; // Giá trị mặc định của sắp xếp
+  String selectedDisplay = AppDisplay.totalPurchase; // Giá trị mặc định của tổng mua
+  String selectedOption = AppTime.today; //giá trị mặc định của lọc thời gian
   ///fake dữ liệu
   final List<Map<String, dynamic>> items = [
     {
       'id': 1,
-      'name': 'ABC1',
-      'phone': '0987654321',
-      'amount': 1000000,
+      'name': 'ABC555',
+      'phone': '0955555',
+      'amount': 120000,
+      'address': '123 Đường ABC, Quận 1, TP.HCM',
+      'email': 'ncc@example.com',
+      'notes': 'NCC vip 5',
       'isActive': true,
-    },
-    {
-      'id': 2,
-      'name': 'ABC2',
-      'phone': '0987654321',
-      'amount': 2000000,
-      'isActive': true,
-    },
-    {
-      'id': 3,
-      'name': 'ABC3',
-      'phone': '0987654321',
-      'amount': 3000000,
-      'isActive': true,
-    },
-    {
-      'id': 4,
-      'name': 'ABC4',
-      'phone': '0987654321',
-      'amount': 3000000,
-      'isActive': false,
-    },
-    {
-      'id': 5,
-      'name': 'ABC5',
-      'phone': '0987654321',
-      'amount': 3000000,
-      'isActive': false,
     },
     {
       'id': 6,
-      'name': 'ABC6',
-      'phone': '0987654321',
-      'amount': 3000000,
+      'name': 'ABC66666',
+      'phone': '0666666666',
+      'amount': 10020,
+      'address': '123 Đường ABC, Quận 1, TP.HCM',
+      'email': 'ncc@example.com',
+      'notes': 'NCC vip 6',
       'isActive': true,
     },
     {
       'id': 7,
-      'name': 'ABC7',
-      'phone': '0987654321',
-      'amount': 3000000,
+      'name': 'ABC7777777',
+      'phone': '09777777',
+      'amount': 1020,
+      'address': '123 Đường ABC, Quận 1, TP.HCM',
+      'email': 'ncc@example.com',
+      'notes': 'NCC vip 7',
       'isActive': true,
     },
     {
       'id': 8,
-      'name': 'ABC8',
-      'phone': '0987654321',
-      'amount': 3000000,
+      'name': 'ABC888',
+      'phone': '09888888888',
+      'amount':200,
+      'address': '123 Đường ABC, Quận 1, TP.HCM',
+      'email': 'ncc@example.com',
+      'notes': 'NCC vip 8',
       'isActive': true,
     },
     {
       'id': 9,
       'name': 'ABC9',
-      'phone': '0987654321',
-      'amount': 3000000,
+      'phone': '09090909',
+      'amount': 1000000,
+      'address': '123 Đường ABC, Quận 1, TP.HCM',
+      'email': 'ncc@example.com',
+      'notes': 'NCC vip 9',
       'isActive': true,
     },
     {
       'id': 10,
-      'name': 'ABC10',
-      'phone': '0987654321',
-      'amount': 3000000,
-      'isActive': true,
+      'name': 'ABC1010',
+      'phone': '1010101010',
+      'amount': 1000000,
+      'address': '123 Đường ABC, Quận 1, TP.HCM',
+      'email': 'ncc@example.com',
+      'notes': 'NCC vip 10',
+      'isActive': false,
+    },
+    {
+      'id': 11,
+      'name': 'A11111',
+      'phone': '1111111111',
+      'amount': 1000000,
+      'address': '123 Đường ABC, Quận 1, TP.HCM',
+      'email': 'ncc@example.com',
+      'notes': 'NCC vip 11',
+      'isActive': false,
     },
   ];
 
@@ -96,9 +100,15 @@ class _SupplierScreenState extends State<SupplierScreen> {
     final formatter = NumberFormat('#,###');
     return formatter.format(amount);
   }
-
+  //khởi tạo
+  @override
+  void initState() {
+    super.initState();
+    _sortingController = SortingController(items);
+  }
   @override
   Widget build(BuildContext context) {
+    final items = _sortingController?.currentData;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -115,7 +125,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              // TODO: Xử lý tìm kiếm
+              _openSearchPage();
             },
           ),
 
@@ -140,7 +150,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
         ],
       ),
       body:
-          items.isNotEmpty ? _buildItemList(context, items) : _buildEmptyView(),
+          items!.isNotEmpty ? _buildListView(context, items) : _buildEmptyView(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           context.push('/suppliers/add');
@@ -169,7 +179,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
   }
 
   // Widget hiển thị danh sách nhà cung cấp
-  Widget _buildItemList(
+  Widget _buildListView(
       BuildContext context, List<Map<String, dynamic>> items) {
     // Tính tổng mua từ danh sách nhà cung cấp TODO: thực hiện ở tầng logic
     double totalPurchase = items.fold(0, (sum, item) => sum + item['amount']);
@@ -248,6 +258,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
           onSelectDisplay: (option) {
             setState(() {
               selectedDisplay = option;
+              _sortingController?.updateSorting(option, 'amount');
             });
           },
         );
@@ -280,14 +291,43 @@ class _SupplierScreenState extends State<SupplierScreen> {
       context: context,
       builder: (BuildContext context) {
         return SortingBottomSheet(
+          //đang tắt mới, cũ nhất
+          showNewest: false,
+          showOldest: false,
           selectedSorting: selectedSorting,
           onSelectSorting: (option) {
             setState(() {
               selectedSorting = option;
+              //cập nhật ui đã sắp xếp
+              _sortingController?.updateSorting(option, 'amount');
             });
           },
         );
       },
+    );
+  }
+  // Hàm mở trang tìm kiếm
+  Future<void> _openSearchPage() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SearchBarScreen(
+          searchOptions: const [
+            {'searchKey': 'name', 'tag': 'Tên', 'hint': 'Tìm theo tên'},
+            {'searchKey': 'phone', 'tag': 'SĐT', 'hint': 'Tìm theo SĐT'},
+            {'searchKey': 'email', 'tag': 'Email', 'hint': 'Tìm theo email'},
+            {'searchKey': 'address', 'tag': 'Địa chỉ', 'hint': 'Tìm theo địa chỉ'},
+            {'searchKey': 'notes', 'tag': 'Ghi chú', 'hint': 'Tìm theo ghi chú'},
+          ],
+          searchData: items,
+          dataType: 'suppliers',
+          onCancel: () {
+            // Hủy tìm kiếm và đóng trang tìm kiếm
+            Navigator.pop(context);
+          },
+          title: 'Tìm kiếm nhà cung cấp',
+        ),
+      ),
     );
   }
 }

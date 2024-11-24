@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-import '../../widgets/custom_sheet.dart';
+import 'package:sales_management_application/config/constants.dart';
+import 'package:sales_management_application/views/widgets/sheets/time_filter_bottom_sheet.dart';
 
 class OverviewScreen extends StatefulWidget {
   const OverviewScreen({super.key});
@@ -12,7 +12,7 @@ class OverviewScreen extends StatefulWidget {
 
 class _OverviewScreenState extends State<OverviewScreen> {
   String selectedOption =
-      'Hôm nay, ${DateFormat('dd/MM/yyyy').format(DateTime.now())}';
+      '${AppTime.today}, ${DateFormat('dd/MM/yyyy').format(DateTime.now())}';
 
   /// hàm gọi hiển thị tùy chọn lọc thời gian
   void _showBottomSheet(BuildContext context) {
@@ -22,8 +22,8 @@ class _OverviewScreenState extends State<OverviewScreen> {
         return TimeFilterBottomSheet(
           onOptionSelected: (option, startDate, [endDate]) {
             String formattedDate = endDate != null
-                ? '${DateFormat('dd/MM/yyyy').format(startDate)} - ${DateFormat('dd/MM/yyyy').format(endDate)}'
-                : DateFormat('dd/MM/yyyy').format(startDate);
+                ? '${DateFormat('dd/MM/yyyy').format(startDate!)} - ${DateFormat('dd/MM/yyyy').format(endDate)}'
+                : DateFormat('dd/MM/yyyy').format(startDate!);
             setState(() {
               selectedOption = '$option, $formattedDate';
             });

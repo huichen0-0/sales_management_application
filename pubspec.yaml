@@ -43,6 +43,10 @@ dependencies:
   go_router: ^14.3.0
   #format quốc tế
   intl: ^0.19.0
+  #xử lý ảnh
+  image_picker: ^1.1.2
+  #xử lý collection
+  collection: ^1.18.0
 
 dev_dependencies:
   flutter_test:

@@ -8,19 +8,28 @@ import 'package:sales_management_application/views/screens/customers/add_custome
 import 'package:sales_management_application/views/screens/customers/customer_detail_screen.dart';
 import 'package:sales_management_application/views/screens/customers/customers_screen.dart';
 import 'package:sales_management_application/views/screens/customers/edit_customer_screen.dart';
+import 'package:sales_management_application/views/screens/customers/filter_customer_screen.dart';
 import 'package:sales_management_application/views/screens/home/main_screen.dart';
 import 'package:sales_management_application/views/screens/home/overview_screen.dart';
 import 'package:sales_management_application/views/screens/home/widgets_screen.dart';
+import 'package:sales_management_application/views/screens/inventory/add_inventory_screen.dart';
+import 'package:sales_management_application/views/screens/inventory/edit_inventory_screen.dart';
+import 'package:sales_management_application/views/screens/inventory/filter_inventory_screen.dart';
+import 'package:sales_management_application/views/screens/inventory/inventory_detail_screen.dart';
+import 'package:sales_management_application/views/screens/inventory/inventory_screen.dart';
 import 'package:sales_management_application/views/screens/invoices/invoices_screen.dart';
 import 'package:sales_management_application/views/screens/orders/orders_screen.dart';
+import 'package:sales_management_application/views/screens/products/add_product_screen.dart';
+import 'package:sales_management_application/views/screens/products/edit_product_screen.dart';
+import 'package:sales_management_application/views/screens/products/filter_product_screen.dart';
+import 'package:sales_management_application/views/screens/products/product_detail_screen.dart';
 import 'package:sales_management_application/views/screens/products/products_screen.dart';
 import 'package:sales_management_application/views/screens/suppliers/add_supplier_screen.dart';
 import 'package:sales_management_application/views/screens/suppliers/edit_supplier_screen.dart';
+import 'package:sales_management_application/views/screens/suppliers/filter_supplier_screen.dart';
 import 'package:sales_management_application/views/screens/suppliers/supplier_detail_screen.dart';
 import 'package:sales_management_application/views/screens/suppliers/suppliers_screen.dart';
 import 'package:sales_management_application/views/screens/terms_and_conditions_screen.dart';
-import 'package:sales_management_application/views/widgets/filter_list.dart';
-
 
 final _router = GoRouter(
   initialLocation: '/',
@@ -72,6 +81,30 @@ final _router = GoRouter(
     GoRoute(
       path: '/products',
       builder: (context, state) => const ProductScreen(),
+      routes: [
+        GoRoute(
+          path: 'filter',
+          builder: (context, state) => const FilterProductScreen(),
+        ),
+        GoRoute(
+          path: 'add',
+          builder: (context, state) => const AddProductScreen(),
+        ),
+        GoRoute(
+          path: ':id',
+          builder: (context, state) {
+            return const ProductDetailScreen();
+          },
+          routes: [
+            GoRoute(
+              path: 'edit',
+              builder: (context, state) {
+                return const EditProductScreen();
+              },
+            ),
+          ],
+        ),
+      ],
     ),
     GoRoute(
       path: '/all',
@@ -129,6 +162,35 @@ final _router = GoRouter(
               path: 'edit',
               builder: (context, state) {
                 return const EditCustomerScreen();
+              },
+            ),
+          ],
+        ),
+      ],
+    ),
+    /// inventory
+    GoRoute(
+      path: '/inventory',
+      builder: (context, state) => const InventoryScreen(),
+      routes: [
+        GoRoute(
+          path: 'filter',
+          builder: (context, state) => const FilterInventoryScreen(),
+        ),
+        GoRoute(
+          path: 'add',
+          builder: (context, state) => const AddInventoryScreen(),
+        ),
+        GoRoute(
+          path: ':id',
+          builder: (context, state) {
+            return const InventoryDetailScreen();
+          },
+          routes: [
+            GoRoute(
+              path: 'edit',
+              builder: (context, state) {
+                return const EditInventoryScreen();
               },
             ),
           ],
