@@ -1,38 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:sales_management_application/config/constants.dart';
 
-class SupplierDetailScreen extends StatefulWidget {
-  const SupplierDetailScreen({super.key});
+class ProductDetailScreen extends StatefulWidget {
+  const ProductDetailScreen({super.key});
 
   @override
-  State<SupplierDetailScreen> createState() => _SupplierDetailScreenState();
+  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
 }
 
-class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
+class _ProductDetailScreenState extends State<ProductDetailScreen> {
   bool isActive =
-      true; // biến check trạng thái hoạt động TODO: lấy từ thuộc tính của ncc
+  true; // biến check trạng thái hoạt động TODO: lấy từ thuộc tính của ncc
+  ///fake dữ liệu
+  final Map<String, dynamic> product = {
+    'id': 1,
+    'name': 'ABC1',
+    'selling_price': 2000000,
+    'capital_price': 1000000,
+    'quantity': 400,
+    'unit': 'Kg',
+    'minLimit': 10,
+    'maxLimit': 1000,
+    'barcode': '1314124212',
+    'description': '100% thịt heo rừng',
+    'notes': 'hàng vip',
+    'isActive': true,
+  };
+  /// Hàm format số tiền
+  String formatCurrency(num amount) {
+    final formatter = NumberFormat('#,###');
+    return formatter.format(amount);
+  }
   @override
   Widget build(BuildContext context) {
-    ///fake dữ liệu
-    final Map<String, dynamic> supplier = {
-      'id': 1,
-      'name': 'ABC1',
-      'phone': '0987654321',
-      'amount': 1000000,
-      'address': '123 Đường ABC, Quận 1, TP.HCM',
-      'email': 'ncc@example.com',
-      'notes': 'NCC vip',
-    };
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: const Text('Chi tiết nhà cung cấp'),
+        title: const Text('Chi tiết hàng hóa'),
         actions: [
+
           ///nút sửa
           IconButton(
             onPressed: () {
-              context.push('/suppliers/:id/edit');
+              context.push('/products/:id/edit');
             },
             icon: const Icon(Icons.edit),
           ),
@@ -40,7 +54,7 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
           ///nút xóa
           IconButton(
             onPressed: () {
-              _showDeleteSupplierDialog();
+              _showDeleteProductDialog();
             },
             icon: const Icon(Icons.delete),
           ),
@@ -52,85 +66,80 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// Tên nhà cung cấp
+
+              /// Tên hàng hóa
+              ListTile(
+                leading: const Icon(
+                  Icons.image,
+                  size: 40,
+                ),
+                title: Text(
+                  product['name'],
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+                trailing:
+                Text(
+                  'Đơn vị: ${product['unit']}',
+                  style: const TextStyle(
+                    color: Colors.blue,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+              const Divider(),
+              /// Mã vạch
               ListTile(
                 title: const Text(
-                  'Tên nhà cung cấp',
+                  'Mã vạch',
                 ),
                 trailing: Text(
-                  supplier['name'],
+                  product['barcode'],
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const Divider(),
+              ListTile(
+                title: const Text(
+                  AppDisplay.sellingPrice,
+                ),
+                trailing: Text(
+                  formatCurrency(product['selling_price']),
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const Divider(),
+              ListTile(
+                title: const Text(
+                  AppDisplay.capitalPrice,
+                ),
+                trailing: Text(
+                  formatCurrency(product['capital_price']),
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
               ),
               const Divider(),
 
-              /// Điện thoại TODO: xử lý gọi khi click vào
+              /// Tồn kho
               ListTile(
-                title: const Text(
-                  'Số điện thoại',
-                ),
-                trailing: TextButton.icon(
-                  label: const Text(
-                    '0987654321',
-                    style: TextStyle(
-                        color: Colors.blue,
+                title: const Text('Tồn kho'),
+                trailing: Text(
+                    product['quantity'].toString(),
+                    style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold),
-                  ),
-                  icon: const Icon(
-                    Icons.phone_enabled,
-                    size: 14,
-                    color: Colors.blue,
-                  ),
-                  iconAlignment: IconAlignment.end,
-                  onPressed: () {},
                 ),
               ),
               const Divider(),
-
-              /// Lịch sử giao dịch và Công nợ TODO: xử lý xem chi tiết
-              ListTile(
-                title: const Text('Lịch sử giao dịch'),
-                trailing: TextButton.icon(
-                  label: const Text(
-                    '0',
-                    style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  icon: const Icon(
-                    Icons.arrow_forward_ios,
-                    size: 14,
-                    color: Colors.blue,
-                  ),
-                  iconAlignment: IconAlignment.end,
-                  onPressed: () {},
-                ),
-              ),
-              const Divider(),
-
-              /// Địa chỉ
               ListTile(
                 title: const Text(
-                  'Địa chỉ',
+                  'Định mức tồn',
                 ),
                 trailing: Text(
-                  supplier['address'],
-                  style: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-              ),
-              const Divider(),
-
-              /// Email
-              ListTile(
-                title: const Text(
-                  'Email',
-                ),
-                trailing: Text(
-                  supplier['email'],
+                  '${product['minLimit']} - ${product['maxLimit']}',
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
@@ -143,7 +152,7 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
                   'Ghi chú',
                 ),
                 trailing: Text(
-                  supplier['notes'],
+                  product['notes'],
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
@@ -153,11 +162,11 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
               /// trạng thái hoạt động TODO: xử lý bật tắt hoạt động
               ListTile(
                 title: const Text(
-                  'Trạng thái hoạt động',
+                  'Trạng thái kinh doanh',
                   style: TextStyle(color: Colors.black),
                 ),
                 trailing: Switch(
-                  value: isActive,
+                  value: product['isActive'],
                   onChanged: (bool value) {
                     _showConfirmationDialog(value);
                   },
@@ -170,8 +179,8 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
     );
   }
 
-  /// Hàm hiển thị hộp thoại xác nhận xóa nhà cung cấp
-  void _showDeleteSupplierDialog() {
+  /// Hàm hiển thị hộp thoại xác nhận xóa hàng hóa
+  void _showDeleteProductDialog() {
     // Hiển thị hộp thoại xác nhận
     showDialog(
       context: context,
@@ -188,7 +197,7 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
               ),
               SizedBox(height: 16),
               Text(
-                'Bạn chắc chắn muốn xóa nhà cung cấp này?',
+                'Bạn chắc chắn muốn xóa hàng hóa này?',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -197,6 +206,7 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
             ],
           ),
           actions: [
+
             /// Nút Hủy
             IconButton(
               icon: const Icon(
@@ -219,7 +229,7 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
               ),
               onPressed: () {
                 //TODO: thực hiện thao tác xóa
-                context.go('/suppliers');
+                context.go('/products');
               },
             ),
           ],
@@ -233,8 +243,8 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
   void _showConfirmationDialog(bool newValue) {
     // Nội dung thông báo tùy thuộc vào trạng thái mới
     String dialogMessage = newValue
-        ? 'Bật hoạt động của nhà cung cấp này?'
-        : 'Tắt hoạt động của nhà cung cấp này?';
+        ? 'Bật kinh doanh của hàng hóa này?'
+        : 'Ngừng kinh doanh của hàng hóa này?';
 
     // Hiển thị hộp thoại xác nhận
     showDialog(
@@ -261,6 +271,7 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
             ],
           ),
           actions: [
+
             /// Nút Hủy (không thay đổi trạng thái)
             IconButton(
               icon: const Icon(

@@ -19,7 +19,7 @@ class _MainScreenState extends State<MainScreen> {
     const OverviewScreen(),
     const InvoiceScreen(),
     const OrderScreen(),
-    const ProductScreen(),
+    ProductScreen(),
     const WidgetScreen(),
   ];
 

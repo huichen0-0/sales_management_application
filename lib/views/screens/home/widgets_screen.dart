@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../widgets/custom_card.dart';
+import '../../widgets/cards/custom_card.dart';
 
 class WidgetScreen extends StatelessWidget {
   const WidgetScreen({super.key});
@@ -70,14 +70,14 @@ class WidgetScreen extends StatelessWidget {
                 'icon': Icons.inventory,
                 'label': 'Hàng hóa',
                 'action': () {
-                  context.go('/products');
+                  context.push('/products');
                 },
               },
               {
                 'icon': Icons.check_box,
                 'label': 'Kiểm kho',
                 'action': () {
-                  context.go('/home');
+                  context.push('/inventory');
                 },
               },
               {
@@ -243,9 +243,7 @@ class WidgetScreen extends StatelessWidget {
               runSpacing: 16,
               children: items.map((item) {
                 return TextButton(
-                  onPressed: () {
-                    item['action'];
-                  },
+                  onPressed: item['action'],
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [

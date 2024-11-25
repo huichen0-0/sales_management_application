@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 ///widgets hiển thị ở trang chức năng
 class WidgetCard extends StatelessWidget {
@@ -162,6 +162,60 @@ class CustomerCard extends StatelessWidget {
         ),
         onTap: () {
           onTap(customer['id'].toString());
+        },
+      ),
+    );
+  }
+}
+////////////////////////////////////////////////////////////////////////////////
+
+///products hiển thị ở trang hang hóa
+class ProductCard extends StatelessWidget {
+  final Map<String, dynamic> product;
+  final Function(String id) onTap;
+
+  const ProductCard({super.key, required this.product, required this.onTap});
+  /// Hàm format số tiền
+  String formatCurrency(num amount) {
+    final formatter = NumberFormat('#,###');
+    return formatter.format(amount);
+  }
+  @override
+  Widget build(BuildContext context) {
+    //TODO: cần xử lý lấy giá trị từ db
+    return Card(
+      child: ListTile(
+        leading: const Icon(Icons.image, size: 30,),
+        /// tên
+        title: Text(
+          product['name'],
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+
+        /// giá bán (tạm thời để hiển thị) TODO: cần lấy các giá trị ở tùy chọn hiển thị
+        trailing: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+        formatCurrency(product['price']),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 5,),
+            Text(
+              'Tồn: ${formatCurrency(product['quantity'])} ${product['unit']}',
+              style: const TextStyle(
+                fontSize: 10,
+              ),
+            ),
+          ],
+        ),
+        onTap: () {
+          onTap(product['id'].toString());
         },
       ),
     );
