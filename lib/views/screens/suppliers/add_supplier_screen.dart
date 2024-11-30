@@ -73,6 +73,7 @@ class _AddSupplierScreenState extends State<AddSupplierScreen> {
                   supplier.note = notesController.text;
                   this.supplierService.insertSupplier(supplier);
                   _showSuccessDialog(context);
+                  context.go('/suppliers');
                 },
                 submitBtn: 'Lưu',
               ),
@@ -90,9 +91,9 @@ class _AddSupplierScreenState extends State<AddSupplierScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         // Đặt thời gian chuyển hướng sau 2 giây
-        // Future.delayed(const Duration(seconds: 1), () {
-            context.go('/suppliers');
-        // });
+        Future.delayed(const Duration(seconds: 2), () {
+        //     context.go('/suppliers');
+        });
 
         return const AlertDialog(
           backgroundColor: Colors.white,
