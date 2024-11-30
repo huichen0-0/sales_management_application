@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sales_management_application/controllers/auth_controller.dart';
 import 'package:sales_management_application/models/Supplier.dart';
+import 'package:sales_management_application/services/filter/SupplierFilter.dart';
 import 'package:sales_management_application/views/screens/authentication/forgot_password_screen.dart';
 import 'package:sales_management_application/views/screens/authentication/login_screen.dart';
 import 'package:sales_management_application/views/screens/authentication/register_screen.dart';
@@ -25,7 +26,8 @@ import 'package:sales_management_application/views/screens/suppliers/suppliers_s
 import 'package:sales_management_application/views/screens/terms_and_conditions_screen.dart';
 import 'package:sales_management_application/views/widgets/filter_list.dart';
 
-<<<<<<< Updated upstream
+import 'models/Filter.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -117,11 +119,22 @@ class MyApp extends StatelessWidget {
         /// supplier
         GoRoute(
           path: '/suppliers',
-          builder: (context, state) => const SupplierScreen(),
+          builder: (context, state) {
+            Object? extraObject = state.extra;
+            if (extraObject == null) {
+              return SupplierScreen(SupplierFilter());
+            } else {
+              SupplierFilter filter = extraObject as SupplierFilter;
+              return SupplierScreen(filter);
+            }
+          },
           routes: [
             GoRoute(
               path: 'filter',
-              builder: (context, state) => const FilterSupplierScreen(),
+              builder: (context, state) {
+                SupplierFilter filter = state.extra as SupplierFilter;
+                return  FilterSupplierScreen(filter);
+              },
             ),
             GoRoute(
               path: 'add',
@@ -130,13 +143,21 @@ class MyApp extends StatelessWidget {
             GoRoute(
               path: ':id',
               builder: (context, state) {
-                return const SupplierDetailScreen();
+                List<dynamic> extraList = (state.extra as List);
+                Supplier supplier = extraList.elementAt(1);
+                final String key = extraList.elementAt(0);
+                return SupplierDetailScreen(id: key, supplier: supplier);
               },
               routes: [
                 GoRoute(
                   path: 'edit',
                   builder: (context, state) {
-                    return EditSupplierScreen();
+                    List<dynamic> extraList = (state.extra as List);
+                    // Map<dynamic, dynamic> extraValue = Map<dynamic, dynamic>.from(extraList.elementAt(1));
+                    // Supplier supplier = Supplier.fromJson(extraValue);
+                    Supplier supplier = extraList.elementAt(1);
+                    final String key = extraList.elementAt(0);
+                    return EditSupplierScreen(id: key, supplier: supplier);
                   },
                 ),
               ],

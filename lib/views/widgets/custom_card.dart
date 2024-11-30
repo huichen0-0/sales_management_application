@@ -75,14 +75,8 @@ class SupplierCard extends StatelessWidget {
         leading: const Icon(Icons.perm_identity),
 
         /// ncc hoạt đông thì màu xanh, không thì xám
-<<<<<<< Updated upstream
-        iconColor: supplier['isActive'] ? Colors.blue : Colors.black54,
-        textColor: supplier['isActive'] ? Colors.blue : Colors.black54,
-
-=======
         iconColor: supplier.isActive ? Colors.blue : Colors.black54,
         textColor: supplier.isActive ? Colors.blue : Colors.black54,
->>>>>>> Stashed changes
         /// tên
         title: Text(
           supplier.name,

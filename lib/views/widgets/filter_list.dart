@@ -1,28 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sales_management_application/services/filter/SupplierFilter.dart';
+import 'package:sales_management_application/views/screens/suppliers/suppliers_screen.dart';
 import 'package:sales_management_application/views/widgets/custom_sheet.dart';
 
 /// hiển thị tùy chọn lọc cho trang /suppliers
 /// TODO: cần xử lý áp dung
 class FilterSupplierScreen extends StatefulWidget {
-  const FilterSupplierScreen({super.key});
+  SupplierFilter filter = SupplierFilter();
+  FilterSupplierScreen(this.filter);
 
   @override
-  _FilterSupplierScreenState createState() => _FilterSupplierScreenState();
+  _FilterSupplierScreenState createState() => _FilterSupplierScreenState(this.filter);
 }
 
 class _FilterSupplierScreenState extends State<FilterSupplierScreen> {
   // Các biến lưu trữ trạng thái của các trường
+  SupplierFilter supplierFilter = SupplierFilter();
   bool isActive = true; // Trạng thái: Đang hoạt động
-  bool isInactive = false; // Trạng thái: Ngừng hoạt động
-  bool isSupplier = false; // Loại đối tác: Nhà cung cấp
-  bool isCustomerSupplier = false; // Loại đối tác: Khách hàng - Nhà cung cấp
+  bool isInactive = true; // Trạng thái: Ngừng hoạt động
 
   // Các TextEditingController cho Tổng mua và Nợ hiện tại
-  final TextEditingController purchaseFromController = TextEditingController();
-  final TextEditingController purchaseToController = TextEditingController();
-  final TextEditingController debtFromController = TextEditingController();
-  final TextEditingController debtToController = TextEditingController();
+  TextEditingController lowerbound = TextEditingController();
+  TextEditingController upperbound = TextEditingController();
+
+
+  _FilterSupplierScreenState(SupplierFilter filter) {
+    isActive = filter.isActive;
+    isInactive = filter.isInactive;
+    lowerbound.text = filter.purchaseLowerBound.toString();
+    upperbound.text = filter.purchaseUpperBound.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,11 +46,7 @@ class _FilterSupplierScreenState extends State<FilterSupplierScreen> {
           child: Column(
             children: [
               // Tổng mua
-              _buildRangeInputSection('Tổng mua', purchaseFromController, purchaseToController),
-              const SizedBox(height: 16),
-
-              // Nợ hiện tại
-              _buildRangeInputSection('Nợ hiện tại', debtFromController, debtToController),
+              _buildRangeInputSection('Tổng mua', lowerbound, upperbound),
               const SizedBox(height: 16),
 
               // Trạng thái
@@ -120,7 +124,7 @@ class _FilterSupplierScreenState extends State<FilterSupplierScreen> {
           value: isActive,
           onChanged: (bool? value) {
             setState(() {
-              isActive = value ?? false;
+              isActive = !isActive;
             });
           },
         ),
@@ -129,7 +133,7 @@ class _FilterSupplierScreenState extends State<FilterSupplierScreen> {
           value: isInactive,
           onChanged: (bool? value) {
             setState(() {
-              isInactive = value ?? false;
+              isInactive = !isInactive;
             });
           },
         ),
@@ -142,23 +146,32 @@ class _FilterSupplierScreenState extends State<FilterSupplierScreen> {
     setState(() {
       isActive = true;
       isInactive = false;
-      isSupplier = false;
-      isCustomerSupplier = false;
-      purchaseFromController.clear();
-      purchaseToController.clear();
-      debtFromController.clear();
-      debtToController.clear();
+      this.lowerbound.clear();
+      this.upperbound.clear();
     });
   }
 
   // Hàm xử lý khi nhấn nút Áp dụng TODO: áp dụng vào trang /suppliers
   void _applyFilters() {
-    // Thực hiện logic áp dụng bộ lọc
-    print('Áp dụng bộ lọc');
-    print('Tổng mua từ: ${purchaseFromController.text} đến: ${purchaseToController.text}');
-    print('Nợ hiện tại từ: ${debtFromController.text} đến: ${debtToController.text}');
-    print('Trạng thái: ${isActive ? 'Đang hoạt động' : 'Ngừng hoạt động'}');
-    print('Loại đối tác: ${isSupplier ? 'Nhà cung cấp' : ''} ${isCustomerSupplier ? 'Khách hàng - Nhà cung cấp' : ''}');
+    SupplierFilter filter = SupplierFilter();
+    filter.isActive = isActive;
+    filter.isInactive = isInactive;
+    if (lowerbound.text.isEmpty) {
+      filter.purchaseLowerBound = 0;
+    } else {
+      filter.purchaseLowerBound = int.parse(lowerbound.text);
+    }
+    if (upperbound.text.isEmpty) {
+      filter.purchaseUpperBound = 0;
+    } else {
+      filter.purchaseUpperBound = int.parse(upperbound.text);
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SupplierScreen(filter),
+      ),
+    );
   }
 }
 ////////////////////////////////////////////////////////////////////////////////

@@ -43,7 +43,7 @@ class FirebaseService {
   Future<void> updateDate(String path, String id, Map<String, dynamic> data) async {
     try {
       await _database.child(path).child(id).update(data);
-      print('Data inserted successfully at $path');
+      print('Data updated successfully at $path');
     } catch (e) {
       print('Error inserting data: $e');
     }

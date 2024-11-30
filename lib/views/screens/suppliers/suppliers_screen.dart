@@ -3,27 +3,32 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:sales_management_application/models/Filter.dart';
 import 'package:sales_management_application/models/Supplier.dart';
 import 'package:sales_management_application/repository/FirebaseService.dart';
-import 'package:sales_management_application/views/screens/suppliers/supplier_detail_screen.dart';
+import 'package:sales_management_application/services/SupplierService.dart';
+import 'package:sales_management_application/services/filter/SupplierFilter.dart';
 import 'package:sales_management_application/views/widgets/custom_card.dart';
-import 'package:sales_management_application/views/widgets/filter_list.dart';
 
 import '../../widgets/custom_sheet.dart';
-import 'add_supplier_screen.dart';
 
 class SupplierScreen extends StatefulWidget {
-  const SupplierScreen({super.key});
+  SupplierFilter filter = SupplierFilter();
+  SupplierScreen(this.filter);
 
   @override
-  _SupplierScreenState createState() => _SupplierScreenState();
+  _SupplierScreenState createState() => _SupplierScreenState(this.filter);
 }
 
 class _SupplierScreenState extends State<SupplierScreen> {
   String selectedSorting = 'Mới nhất'; // Giá trị mặc định của sắp xếp
   String selectedDisplay = 'Tổng mua'; // Giá trị mặc định của tổng mua
   String selectedOption = 'Hôm nay'; //giá trị mặc định của lọc thời gian
-  Map<String, Supplier> suppliers = new HashMap();
+  SupplierService supplierService = SupplierService();
+  Map<String, Supplier> suppliers = HashMap();
+  SupplierFilter filter = SupplierFilter();
+
+  _SupplierScreenState(this.filter);
 
   /// Hàm format số tiền
   String formatCurrency(double amount) {
@@ -68,55 +73,37 @@ class _SupplierScreenState extends State<SupplierScreen> {
             icon: const Icon(Icons.filter_alt_outlined),
             onPressed: () {
               // TODO: Xử lý lọc
-              context.push('/suppliers/filter');
+              context.push('/suppliers/filter', extra: this.filter);
             },
           ),
         ],
       ),
       body:
-          // items.isNotEmpty ? _buildItemList(context, items) : _buildEmptyView(),
         FutureBuilder<Map<String, Supplier>>(
-          future: _getData(), // Pass the Future function here
+          future: supplierService.getSupplierList(filter), // Pass the Future function here
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              // Show a loading indicator while waiting for data
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              // Handle any error that occurs during data fetching
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else if (snapshot.hasData && snapshot.data!.isNotEmpty && suppliers.isNotEmpty) {
-              // When data is available, display the items list
-              // items = snapshot.data!;
-              return _buildItemList(context, suppliers);
-            } else {
-              // Handle case when no data is available
-              return _buildEmptyView();
-            }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                // Show a loading indicator while waiting for data
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                // Handle any error that occurs during data fetching
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                suppliers = snapshot.data!;
+                return _buildItemList(context, suppliers);
+              } else {
+                return _buildEmptyView();
+              }
           },
         ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddSupplierScreen(),
-            ),
-          );
+          context.go('/suppliers/add');
         },
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add),
       ),
     );
-  }
-
-  Future<Map<String, Supplier>> _getData() async {
-    FirebaseService firebaseService = new FirebaseService();
-    Map<String, Object> result = await firebaseService.readData("Suppliers");
-    result.forEach((key, value) {
-      Supplier mapValue = Supplier.fromJson(Map<dynamic, dynamic>.from(value as Map));
-      suppliers[key] = mapValue;
-    });
-    return suppliers;
   }
 
   // Widget hiển thị khi không có nhà cung cấp
@@ -148,19 +135,19 @@ class _SupplierScreenState extends State<SupplierScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             /// nút lọc thời gian TODO: cần xử lý áp dụng
-            // TextButton.icon(
-            //   icon: const Icon(
-            //     Icons.calendar_today,
-            //     color: Colors.black,
-            //   ),
-            //   label: Text(
-            //     selectedOption,
-            //     style: const TextStyle(color: Colors.black),
-            //   ),
-            //   onPressed: () {
-            //     _showTimeFilterOptions(context);
-            //   },
-            // ),
+            TextButton.icon(
+              icon: const Icon(
+                Icons.calendar_today,
+                color: Colors.black,
+              ),
+              label: Text(
+                selectedOption,
+                style: const TextStyle(color: Colors.black),
+              ),
+              onPressed: () {
+                _showTimeFilterOptions(context);
+              },
+            ),
 
             ///nút lọc hiển thị TODO: cần xử lý áp dụng
             TextButton.icon(
@@ -198,18 +185,13 @@ class _SupplierScreenState extends State<SupplierScreen> {
 
         ///hiển thị danh sách nhà cung cấp
         for (var entry in suppliers.entries)
-          SupplierCard(
-            supplier: entry.value,
-            onTap: (id) {
-              context.push('/',)
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SupplierDetailScreen(id: entry.key, supplier: entry.value,),
-                ),
-              );
-            },
-          )
+          if (entry.value.isDeleted == false)
+            SupplierCard(
+              supplier: entry.value,
+              onTap: (id) {
+                context.push('/suppliers/${entry.key}', extra: [entry.key, entry.value]);
+              },
+            )
       ],
     );
   }
@@ -238,9 +220,6 @@ class _SupplierScreenState extends State<SupplierScreen> {
       builder: (context) {
         return TimeFilterBottomSheet(
           onOptionSelected: (option, startDate, [endDate]) {
-            // String formattedDate = endDate != null
-            //     ? '${DateFormat('dd/MM/yyyy').format(startDate)} - ${DateFormat('dd/MM/yyyy').format(endDate)}'
-            //     : DateFormat('dd/MM/yyyy').format(startDate);
             setState(() {
               selectedOption = option;
             });
@@ -266,4 +245,5 @@ class _SupplierScreenState extends State<SupplierScreen> {
       },
     );
   }
+
 }
