@@ -63,7 +63,7 @@ class _AddSupplierScreenState extends State<AddSupplierScreen> {
                   InputField(controller: notesController, label: 'Ghi chú'),
                 ],
                 onSubmit: (){
-                  Supplier supplier = new Supplier(amount: 0, name: 'name', address: 'address', isActive: true, isDeleted: false, phone: 'phone', email: 'email', note: 'note', uid: 'uid');
+                  Supplier supplier = new Supplier(amount: 0, name: 'name', address: 'address', isActive: true, isDeleted: false, phone: 'phone', email: 'email', note: 'note', uid: 'uid', id: "");
                   DateTime now = DateTime.now();
                   supplier.id = DateFormat('yyMMddHHmmss').format(now);
                   supplier.name = nameController.text;

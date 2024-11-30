@@ -28,10 +28,10 @@ class Supplier { // Nhà cung cấp
 
 
   Supplier({required this.amount, required this.name, required this.address, required this.isActive,
-      required this.isDeleted, required this.phone, required this.email, required this.note, required this.uid});
+      required this.isDeleted, required this.phone, required this.email, required this.note, required this.uid, required id});
 
   factory Supplier.fromJson(Map<dynamic, dynamic> json) => Supplier(
-    // id: json['id'],
+    id: json['id'],
     name: json['name'],
     address: json['address'],
     isActive: json['isActive'],
@@ -44,7 +44,7 @@ class Supplier { // Nhà cung cấp
   );
 
   Map<String, dynamic> toJson() => {
-    // 'id': id,
+    'id': id,
     'name': name,
     'address': address,
     'phone': phone,
