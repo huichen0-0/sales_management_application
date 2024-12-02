@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sales_management_application/controllers/inventory_controller.dart';
+import 'package:sales_management_application/models/inventory_note.dart';
 import 'package:sales_management_application/views/screens/authentication/forgot_password_screen.dart';
 import 'package:sales_management_application/views/screens/authentication/login_screen.dart';
 import 'package:sales_management_application/views/screens/authentication/register_screen.dart';
@@ -13,7 +15,6 @@ import 'package:sales_management_application/views/screens/home/main_screen.dart
 import 'package:sales_management_application/views/screens/home/overview_screen.dart';
 import 'package:sales_management_application/views/screens/home/widgets_screen.dart';
 import 'package:sales_management_application/views/screens/inventory/add_inventory_screen.dart';
-import 'package:sales_management_application/views/screens/inventory/edit_inventory_screen.dart';
 import 'package:sales_management_application/views/screens/inventory/filter_inventory_screen.dart';
 import 'package:sales_management_application/views/screens/inventory/inventory_detail_screen.dart';
 import 'package:sales_management_application/views/screens/inventory/inventory_screen.dart';
@@ -179,18 +180,24 @@ final _router = GoRouter(
         ),
         GoRoute(
           path: 'add',
-          builder: (context, state) => const AddInventoryScreen(),
+          builder: (context, state) => const UpdateInventoryScreen(),
         ),
         GoRoute(
           path: ':id',
           builder: (context, state) {
-            return const InventoryDetailScreen();
+            print(state.pathParameters);
+            final id = int.parse(state.pathParameters['id']!); // Lấy ID từ URL
+            return InventoryDetailScreen(inventoryNoteId: id,);
           },
           routes: [
             GoRoute(
               path: 'edit',
               builder: (context, state) {
-                return const EditInventoryScreen();
+                final id = int.parse(state.pathParameters['id']!); // Lấy ID từ URL
+                final InventoryController controller = InventoryController();
+                print(id);
+                final InventoryNote? existingNote = controller.getInventoryNoteById(id); // Lấy dữ liệu
+                return UpdateInventoryScreen(existingNote: existingNote,);
               },
             ),
           ],

@@ -94,7 +94,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
       builder: (BuildContext context) {
         // Đặt thời gian chuyển hướng sau 2 giây
         Future.delayed(const Duration(seconds: 2), () {
-          context.go('/customers');
+          context.pop(true);
         });
 
         return const AlertDialog(
