@@ -31,7 +31,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
       'address': '123 Đường ABC, Quận 1, TP.HCM',
       'email': 'kh@example.com',
       'notes': 'KH vip',
-      'isActive': true,
+      'isActived': true,
     },
     {
       'id': 1,
@@ -42,7 +42,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
       'address': '123 Đường ABC, Quận 1, TP.HCM',
       'email': 'kh@example.com',
       'notes': 'KH vip',
-      'isActive': true,
+      'isActived': true,
     },
     {
       'id': 1,
@@ -53,7 +53,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
       'address': '123 Đường ABC, Quận 1, TP.HCM',
       'email': 'kh@example.com',
       'notes': 'KH vip',
-      'isActive': true,
+      'isActived': true,
     },
     {
       'id': 1,
@@ -64,7 +64,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
       'address': '123 Đường ABC, Quận 1, TP.HCM',
       'email': 'kh@example.com',
       'notes': 'KH vip',
-      'isActive': true,
+      'isActived': true,
     },
     {
       'id': 1,
@@ -75,7 +75,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
       'address': '123 Đường ABC, Quận 1, TP.HCM',
       'email': 'kh@example.com',
       'notes': 'KH vip',
-      'isActive': true,
+      'isActived': true,
     },
     {
       'id': 1,
@@ -86,7 +86,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
       'address': '123 Đường ABC, Quận 1, TP.HCM',
       'email': 'kh@example.com',
       'notes': 'KH vip',
-      'isActive': true,
+      'isActived': true,
     },
     {
       'id': 1,
@@ -97,7 +97,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
       'address': '123 Đường ABC, Quận 1, TP.HCM',
       'email': 'kh@example.com',
       'notes': 'KH vip',
-      'isActive': true,
+      'isActived': true,
     },
     {
       'id': 1,
@@ -108,7 +108,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
       'address': '123 Đường ABC, Quận 1, TP.HCM',
       'email': 'kh@example.com',
       'notes': 'KH vip',
-      'isActive': true,
+      'isActived': true,
     },
     {
       'id': 1,
@@ -119,7 +119,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
       'address': '123 Đường ABC, Quận 1, TP.HCM',
       'email': 'kh@example.com',
       'notes': 'KH vip',
-      'isActive': true,
+      'isActived': true,
     },
     {
       'id': 1,
@@ -130,7 +130,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
       'address': '123 Đường ABC, Quận 1, TP.HCM',
       'email': 'kh@example.com',
       'notes': 'KH vip',
-      'isActive': true,
+      'isActived': true,
     },
   ];
 
@@ -145,6 +145,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
     super.initState();
     _sortingController = SortingController(items);
   }
+
   @override
   Widget build(BuildContext context) {
     final items = _sortingController?.currentData;
@@ -341,7 +342,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
       },
     );
   }
-  // Hàm mở trang tìm kiếm
+  // Hàm mở trang tìm kiếm //TODO: đem vào controller?
   Future<void> _openSearchPage() async {
     await Navigator.push(
       context,

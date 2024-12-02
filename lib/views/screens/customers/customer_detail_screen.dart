@@ -9,7 +9,7 @@ class CustomerDetailScreen extends StatefulWidget {
 }
 
 class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
-  bool isActive =
+  bool isActived =
   true; // biến check trạng thái hoạt động TODO: lấy từ thuộc tính của ncc
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
       'address': '123 Đường ABC, Quận 1, TP.HCM',
       'email': 'kh@example.com',
       'notes': 'KH vip',
-      'isActive': true,
+      'isActived': true,
     };
     return Scaffold(
       backgroundColor: Colors.white,
@@ -171,7 +171,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                   style: TextStyle(color: Colors.black),
                 ),
                 trailing: Switch(
-                  value: isActive,
+                  value: isActived,
                   onChanged: (bool value) {
                     _showConfirmationDialog(value);
                   },
@@ -298,7 +298,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
               onPressed: () {
                 setState(() {
                   // Cập nhật trạng thái dựa trên lựa chọn của người dùng
-                  isActive = newValue;
+                  isActived = newValue;
                 });
                 Navigator.of(context).pop(); // Đóng hộp thoại
               },

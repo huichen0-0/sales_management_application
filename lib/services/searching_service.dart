@@ -6,7 +6,6 @@ class SearchService {
     if (query.isEmpty) {
       return [];
     }
-
     // Lọc kết quả dựa trên giá trị của `searchKey`
     return searchData
         .where((item) =>

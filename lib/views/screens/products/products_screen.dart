@@ -29,7 +29,7 @@ class _ProductScreenState extends State<ProductScreen> {
       'price': 1021000,
       'quantity': 1000,
       'unit': 'Kg',
-      'created_at': DateTime.now().subtract(const Duration(seconds: 5)),
+      'createdAt': DateTime.now().subtract(const Duration(seconds: 5)),
     },
     {
       'id': 2,
@@ -37,7 +37,7 @@ class _ProductScreenState extends State<ProductScreen> {
       'price': 1031000,
       'quantity': 500,
       'unit': 'Kg',
-      'created_at': DateTime.now().subtract(const Duration(seconds: 4)),
+      'createdAt': DateTime.now().subtract(const Duration(seconds: 4)),
     },
     {
       'id': 3,
@@ -45,7 +45,7 @@ class _ProductScreenState extends State<ProductScreen> {
       'price': 2033000,
       'quantity': 400,
       'unit': 'Kg',
-      'created_at': DateTime.now().subtract(const Duration(seconds: 1)),
+      'createdAt': DateTime.now().subtract(const Duration(seconds: 1)),
     },
     {
       'id': 4,
@@ -53,7 +53,7 @@ class _ProductScreenState extends State<ProductScreen> {
       'price': 2034000,
       'quantity': 300,
       'unit': 'Kg',
-      'created_at': DateTime.now().subtract(const Duration(seconds: 3)),
+      'createdAt': DateTime.now().subtract(const Duration(seconds: 3)),
     },
     {
       'id': 5,
@@ -61,7 +61,7 @@ class _ProductScreenState extends State<ProductScreen> {
       'price': 203200,
       'quantity': 200,
       'unit': 'Kg',
-      'created_at': DateTime.now().subtract(const Duration(seconds: 2)),
+      'createdAt': DateTime.now().subtract(const Duration(seconds: 2)),
     },
   ];
   /// Hàm format số tiền
@@ -243,7 +243,7 @@ class _ProductScreenState extends State<ProductScreen> {
       },
     );
   }
-  // Hàm mở trang tìm kiếm
+  // Hàm mở trang tìm kiếm //TODO: đem vào controller?
   Future<void> _openSearchPage() async {
     await Navigator.push(
       context,

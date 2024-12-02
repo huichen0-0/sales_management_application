@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sales_management_application/models/inventory_note.dart';
+import 'package:sales_management_application/models/inventory_note_detail.dart';
 
 class InventoryNoteCard extends StatelessWidget {
-  final Map<String, dynamic> inventoryNote;
+  final InventoryNote inventoryNote;
   final Function(String id) onTap;
 
   const InventoryNoteCard(
@@ -11,13 +13,11 @@ class InventoryNoteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //danh sách sản phẩm được kiểm
-    List products = inventoryNote['products'];
-    // Tính tổng lương sản phẩm
-    num totalCheckedQuantity = products
-        .map((product) => product['checked_quantity'] as num)
-        .reduce((sum, element) => sum + element);
+    List<InventoryNoteDetail> products = inventoryNote.products;
+    // Tính tổng lương sản phẩm đã kiểm
+    num totalCheckedQuantity = inventoryNote.totalMatchedQuantity;
     // format thơì gian tạo
-    String createdAt = DateFormat('HH:mm').format(inventoryNote['created_at']);
+    String createdAt = DateFormat('HH:mm').format(inventoryNote.createdAt!);
 
     return Card(
       child: ListTile(
@@ -28,19 +28,19 @@ class InventoryNoteCard extends StatelessWidget {
               const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
         ),
         trailing: Text(
-          inventoryNote['status'], // Hiển thị trạng thái trực tiếp
+          inventoryNote.getStatusLabel(), // Hiển thị trạng thái trực tiếp
           style: TextStyle(
-            color: inventoryNote['status'] == 'Đã cân bằng'
+            color: inventoryNote.status == 2
                 ? Colors.blue
-                : inventoryNote['status'] == 'Phiếu tạm'
+                : inventoryNote.status == 1
                   ? Colors.orange
                   : Colors.grey, // Thay đổi màu sắc của văn bản
           ),
         ),
         subtitle: Text(
           products
-              .map((product) =>
-                  '${product["name"]} x${product["checked_quantity"]}')
+              .map((item) =>
+                  '${item.product.name} x${item.matchedQuantity}')
               .join(', '),
           style: const TextStyle(
             fontSize: 10,
@@ -48,7 +48,9 @@ class InventoryNoteCard extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
         ),
-        onTap: () {},
+        onTap: () {
+          onTap(inventoryNote.id.toString());
+        },
       ),
     );
   }

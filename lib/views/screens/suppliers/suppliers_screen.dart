@@ -306,7 +306,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
       },
     );
   }
-  // Hàm mở trang tìm kiếm
+  // Hàm mở trang tìm kiếm //TODO: đem vào controller?
   Future<void> _openSearchPage() async {
     await Navigator.push(
       context,

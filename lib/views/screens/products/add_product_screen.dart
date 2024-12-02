@@ -23,8 +23,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final Map<String, TextEditingController> controllers = {
     'name': TextEditingController(),
     'barcode': TextEditingController(),
-    'selling_price': TextEditingController(),
-    'capital_price': TextEditingController(),
+    'sellingPrice': TextEditingController(),
+    'capitalPrice': TextEditingController(),
     'quantity': TextEditingController(),
     'unit': TextEditingController(),
     'minLimit': TextEditingController(),
@@ -71,12 +71,12 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   const SizedBox(height: 16),
 
                   ///giá vốn
-                  PriceField(controller: controllers['capital_price']!,
+                  PriceField(controller: controllers['capitalPrice']!,
                       label: AppDisplay.capitalPrice),
                   const SizedBox(height: 16),
 
                   ///giá bán
-                  PriceField(controller: controllers['selling_price']!,
+                  PriceField(controller: controllers['sellingPrice']!,
                       label: AppDisplay.sellingPrice),
                   const SizedBox(height: 16),
 

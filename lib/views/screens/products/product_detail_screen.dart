@@ -17,8 +17,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   final Map<String, dynamic> product = {
     'id': 1,
     'name': 'ABC1',
-    'selling_price': 2000000,
-    'capital_price': 1000000,
+    'sellingPrice': 2000000,
+    'capitalPrice': 1000000,
     'quantity': 400,
     'unit': 'Kg',
     'minLimit': 10,
@@ -26,7 +26,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     'barcode': '1314124212',
     'description': '100% thịt heo rừng',
     'notes': 'hàng vip',
-    'isActive': true,
+    'isActived': true,
+    'createdAt': DateTime.now().subtract(const Duration(seconds: 5)),
   };
   /// Hàm format số tiền
   String formatCurrency(num amount) {
@@ -105,7 +106,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   AppDisplay.sellingPrice,
                 ),
                 trailing: Text(
-                  formatCurrency(product['selling_price']),
+                  formatCurrency(product['sellingPrice']),
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
@@ -116,7 +117,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   AppDisplay.capitalPrice,
                 ),
                 trailing: Text(
-                  formatCurrency(product['capital_price']),
+                  formatCurrency(product['capitalPrice']),
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
@@ -166,7 +167,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   style: TextStyle(color: Colors.black),
                 ),
                 trailing: Switch(
-                  value: product['isActive'],
+                  value: product['isActived'],
                   onChanged: (bool value) {
                     _showConfirmationDialog(value);
                   },

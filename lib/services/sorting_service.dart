@@ -6,9 +6,9 @@ class SortingService {
       List<Map<String, dynamic>> data, String sortingType, String? sortValue) {
     switch (sortingType) {
       case AppSort.newest:
-        return data.sorted((a, b) => b['created_at'].compareTo(a['created_at']));
+        return data.sorted((a, b) => b['createdAt'].compareTo(a['createdAt']));
       case AppSort.oldest:
-        return data.sorted((a, b) => a['created_at'].compareTo(b['created_at']));
+        return data.sorted((a, b) => a['createdAt'].compareTo(b['createdAt']));
       case AppSort.ascValue:
         return data.sorted((a, b) => (a[sortValue] as num).compareTo(b[sortValue] as num));
       case AppSort.descValue:
