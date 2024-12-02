@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sales_management_application/models/Supplier.dart';
 
 ///widgets hiển thị ở trang chức năng
 class WidgetCard extends StatelessWidget {
@@ -61,7 +63,7 @@ class WidgetCard extends StatelessWidget {
 
 ///suppliers hiển thị ở trang nhà cung cấp
 class SupplierCard extends StatelessWidget {
-  final Map<String, dynamic> supplier;
+  final Supplier supplier;
   final Function(String id) onTap;
 
   const SupplierCard({super.key, required this.supplier, required this.onTap});
@@ -74,12 +76,11 @@ class SupplierCard extends StatelessWidget {
         leading: const Icon(Icons.perm_identity),
 
         /// ncc hoạt đông thì màu xanh, không thì xám
-        iconColor: supplier['isActive'] ? Colors.blue : Colors.black54,
-        textColor: supplier['isActive'] ? Colors.blue : Colors.black54,
-
+        iconColor: supplier.isActive ? Colors.blue : Colors.black54,
+        textColor: supplier.isActive ? Colors.blue : Colors.black54,
         /// tên
         title: Text(
-          supplier['name'],
+          supplier.name,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -89,7 +90,7 @@ class SupplierCard extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(supplier['phone']),
+            Text(supplier.phone),
           ],
         ),
 
@@ -98,7 +99,7 @@ class SupplierCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              supplier['amount'].toString(),
+              supplier.amount.toString(),
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
               ),
@@ -106,7 +107,7 @@ class SupplierCard extends StatelessWidget {
           ],
         ),
         onTap: () {
-          onTap(supplier['id'].toString());
+          onTap(supplier.id.toString());
         },
       ),
     );

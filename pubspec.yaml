@@ -30,6 +30,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # Firebase
+  firebase_core: ^3.7.0
+  # Firebase realtime database
+  firebase_database: ^11.1.5
+  # Firebase authentication
+  firebase_auth: ^5.3.2
+  #Tạo thể hiện cho controller trong các class khác
+  provider: ^6.1.2
+  # Lưu trữ token user
+  flutter_secure_storage: ^9.2.2
 
 
   # The following adds the Cupertino Icons font to your application.

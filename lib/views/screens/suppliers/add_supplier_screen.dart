@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:sales_management_application/models/Supplier.dart';
+import 'package:sales_management_application/repository/FirebaseService.dart';
+import 'package:sales_management_application/services/SupplierService.dart';
 
 import '../../widgets/forms/custom_form.dart';
 import '../../widgets/forms/custom_form_fields.dart';
@@ -14,6 +18,7 @@ class AddSupplierScreen extends StatefulWidget {
 class _AddSupplierScreenState extends State<AddSupplierScreen> {
   // Tạo GlobalKey để quản lý trạng thái của Form
   final _formKey = GlobalKey<FormState>();
+  SupplierService supplierService = SupplierService();
 
   // Các TextEditingController để điều khiển giá trị của các trường nhập
   final TextEditingController nameController = TextEditingController();
@@ -58,7 +63,17 @@ class _AddSupplierScreenState extends State<AddSupplierScreen> {
                   InputField(controller: notesController, label: 'Ghi chú'),
                 ],
                 onSubmit: (){
+                  Supplier supplier = new Supplier(amount: 0, name: 'name', address: 'address', isActive: true, isDeleted: false, phone: 'phone', email: 'email', note: 'note', uid: 'uid', id: "");
+                  DateTime now = DateTime.now();
+                  supplier.id = DateFormat('yyMMddHHmmss').format(now);
+                  supplier.name = nameController.text;
+                  supplier.phone = phoneController.text.toString();
+                  supplier.address = addressController.text;
+                  supplier.email = emailController.text;
+                  supplier.note = notesController.text;
+                  this.supplierService.insertSupplier(supplier);
                   _showSuccessDialog(context);
+                  context.go('/suppliers');
                 },
                 submitBtn: 'Lưu',
               ),
@@ -68,6 +83,7 @@ class _AddSupplierScreenState extends State<AddSupplierScreen> {
       ),
     );
   }
+
   /// hàm hiển thị thông báo sau khi submit và TODO: chuyển về trang suppliers/:id trước đó
   void _showSuccessDialog(BuildContext context) {
     showDialog(
@@ -76,7 +92,7 @@ class _AddSupplierScreenState extends State<AddSupplierScreen> {
       builder: (BuildContext context) {
         // Đặt thời gian chuyển hướng sau 2 giây
         Future.delayed(const Duration(seconds: 2), () {
-          context.go('/suppliers');
+        //     context.go('/suppliers');
         });
 
         return const AlertDialog(

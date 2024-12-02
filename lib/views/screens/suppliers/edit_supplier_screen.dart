@@ -1,17 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sales_management_application/repository/FirebaseService.dart';
+import 'package:sales_management_application/views/screens/suppliers/supplier_detail_screen.dart';
 
 import '../../widgets/forms/custom_form.dart';
 import '../../widgets/forms/custom_form_fields.dart';
+import '../../../models/Supplier.dart';
 
 class EditSupplierScreen extends StatefulWidget {
+  const EditSupplierScreen({required this.id, required this.supplier});
+  final Supplier supplier;
+  final String id;
+
   @override
-  _EditSupplierScreenState createState() => _EditSupplierScreenState();
+  _EditSupplierScreenState createState() => _EditSupplierScreenState(id: this.id, supplier: this.supplier);
 }
 
 class _EditSupplierScreenState extends State<EditSupplierScreen> {
   // Tạo GlobalKey để quản lý trạng thái của Form
   final _formKey = GlobalKey<FormState>();
+  Supplier supplier;
+  String id;
+
+  _EditSupplierScreenState({required this.id, required this.supplier});
 
   // Các TextEditingController để điều khiển giá trị của các trường nhập
   final TextEditingController nameController = TextEditingController();
@@ -25,11 +36,11 @@ class _EditSupplierScreenState extends State<EditSupplierScreen> {
   void initState() {
     super.initState();
     // Giả sử các giá trị ban đầu của nhà cung cấp
-    nameController.text = 'NCC'; // Tên nhà cung cấp
-    phoneController.text = '0123456789'; // Số điện thoại
-    supplierCodeController.text = 'NCC000001'; // Mã nhà cung cấp
-    addressController.text = '123 Đường ABC, Quận 1, TP.HCM'; // Địa chỉ
-    emailController.text = 'ncc@example.com'; // Email
+    nameController.text = supplier.name; // Tên nhà cung cấp
+    phoneController.text = supplier.phone; // Số điện thoại
+    supplierCodeController.text = supplier.id.toString(); // Mã nhà cung cấp
+    addressController.text = supplier.address; // Địa chỉ
+    emailController.text = supplier.email; // Email
   }
 
   @override
@@ -39,6 +50,13 @@ class _EditSupplierScreenState extends State<EditSupplierScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: const Text('Chỉnh sửa thông tin nhà cung cấp'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            // context.go('/suppliers');
+            context.pop();
+          },
+        ),
         // leading: IconButton(
         //   icon: const Icon(Icons.arrow_back),
         //   onPressed: () {
@@ -67,6 +85,14 @@ class _EditSupplierScreenState extends State<EditSupplierScreen> {
                   InputField(controller: notesController, label: 'Ghi chú'),
                 ],
                 onSubmit: (){
+                  Supplier updateSupplier = this.supplier;
+                  updateSupplier.name = nameController.text;
+                  updateSupplier.phone = phoneController.text;
+                  updateSupplier.address = addressController.text;
+                  updateSupplier.email = emailController.text;
+                  updateSupplier.note = notesController.text;
+                  _updateSupplierInfo(id, updateSupplier);
+                  this.supplier = updateSupplier;
                   _showSuccessDialog(context);
                 },
                 submitBtn: 'Lưu',
@@ -77,6 +103,12 @@ class _EditSupplierScreenState extends State<EditSupplierScreen> {
       ),
     );
   }
+
+  void _updateSupplierInfo(String id, Supplier supplier) async {
+    FirebaseService firebaseService = new FirebaseService();
+    firebaseService.updateDate('Suppliers',  id, supplier.toJson());
+  }
+
   /// hàm hiển thị thông báo sau khi submit và TODO: chuyển về trang suppliers/:id trước đó
   void _showSuccessDialog(BuildContext context) {
     showDialog(
@@ -85,7 +117,12 @@ class _EditSupplierScreenState extends State<EditSupplierScreen> {
       builder: (BuildContext context) {
         // Đặt thời gian chuyển hướng sau 2 giây
         Future.delayed(const Duration(seconds: 2), () {
-          context.go('/suppliers');
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SupplierDetailScreen(id: id, supplier: supplier),
+            ),
+          );
         });
 
         return const AlertDialog(

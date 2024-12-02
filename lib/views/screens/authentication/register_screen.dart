@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:sales_management_application/controllers/auth_controller.dart';
 
 import '../../widgets/forms/custom_form.dart';
 import '../../widgets/forms/custom_form_fields.dart';
@@ -14,6 +16,8 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  //Bổ sung Auth Controller
+  // final AuthController _authController = AuthController(); 
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
@@ -22,6 +26,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //Tạo một thể hiện của AuthController
+    final authController = Provider.of<AuthController>(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -63,8 +70,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       passwordController: _passwordController,
                     ),
                   ],
-                  onSubmit: (){
-                    _showSuccessDialog(context, _emailController.text);
+                  onSubmit: () async {
+                    if(await authController.register(// Đăng ký
+                        _emailController.text,
+                        _nameController.text,
+                        _passwordController.text
+                      )){ //Nếu email chưa được đăng ký
+                      _showSuccessDialog(context, _emailController.text);
+                    } else {
+                      // TODO: Sửa lại giao diện thông báo lỗi nếu cần
+                      //Nếu email đã được đăng ký hoặc email không hợp lệ hay lỗi khác
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Email không hợp lệ hoặc email đã được đăng ký')),
+                      );
+                    }
                   },
                   submitBtn: 'Đăng ký',
                 ),
