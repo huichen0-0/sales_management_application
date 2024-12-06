@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sales_management_application/controllers/inventory_controller.dart';
-import 'package:sales_management_application/models/inventory_note.dart';
-import 'package:sales_management_application/models/inventory_note_detail.dart';
+import 'package:sales_management_application/models/inventory_check_receipt.dart';
+import 'package:sales_management_application/models/inventory_check_receipt_detail.dart';
 import 'package:sales_management_application/views/widgets/search_bars/search_product.dart';
-import 'package:sales_management_application/views/widgets/thousands_formatter.dart';
 
 class UpdateInventoryScreen extends StatefulWidget {
-  final InventoryNote? existingNote; // Tham số cho phiếu kiểm kho hiện có
+  final InventoryCheckReceipt?
+      existingNote; // Tham số cho phiếu kiểm kho hiện có
 
   const UpdateInventoryScreen({super.key, this.existingNote});
 
@@ -18,7 +18,7 @@ class UpdateInventoryScreen extends StatefulWidget {
 
 class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
   //phiếu kiểm kho
-  InventoryNote inventoryNote = InventoryNote();
+  InventoryCheckReceipt inventoryCheckReceipt = InventoryCheckReceipt();
 
   //kiểm kho controller
   final InventoryController _controller = InventoryController();
@@ -26,9 +26,9 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
   @override
   void initState() {
     super.initState();
-    // Nếu đang cập nhật phiếu kiểm kho, gán dữ liệu vào `inventoryNote`
+    // Nếu đang cập nhật phiếu kiểm kho, gán dữ liệu vào `inventoryCheckReceipt`
     if (widget.existingNote != null) {
-      inventoryNote = widget.existingNote!;
+      inventoryCheckReceipt = widget.existingNote!;
     }
   }
 
@@ -45,20 +45,23 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
       body: SingleChildScrollView(
         child: ProductSearchBar(
           onProductTap: (product) {
-            InventoryNoteDetail inventoryNoteDetail;
+            InventoryCheckReceiptDetail inventoryCheckReceiptDetail;
             //kiểm tra hàng hóa đã trong phiếu kiểm chưa
-            if (inventoryNote.isInInventoryNote(product)) {
+            if (inventoryCheckReceipt.isInInventoryCheckReceipt(product)) {
               // rồi sẽ lấy ra tiếp tục kiểm
-              inventoryNoteDetail =
-                  inventoryNote.getInventoryNoteDetailByProduct(product);
-              _showInventoryNoteDetailDialog(inventoryNoteDetail, false);
+              inventoryCheckReceiptDetail = inventoryCheckReceipt
+                  .getInventoryCheckReceiptDetailByProduct(product);
+              _showInventoryCheckReceiptDetailDialog(
+                  inventoryCheckReceiptDetail, false);
             } else {
               //chưa sẽ tạo hàng kiểm mới
-              inventoryNoteDetail = InventoryNoteDetail(product: product);
-              _showInventoryNoteDetailDialog(inventoryNoteDetail, true);
+              inventoryCheckReceiptDetail =
+                  InventoryCheckReceiptDetail(product: product);
+              _showInventoryCheckReceiptDetailDialog(
+                  inventoryCheckReceiptDetail, true);
             }
           },
-          backgroundWidget: inventoryNote.products.isNotEmpty
+          backgroundWidget: inventoryCheckReceipt.products.isNotEmpty
               ? _buildTableView()
               : _buildEmptyView(),
         ),
@@ -70,8 +73,8 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
           children: [
             ElevatedButton(
               onPressed: () async {
-                await _controller.updateInventoryNote(
-                    newNote: inventoryNote, status: 0);
+                await _controller.updateInventoryCheckReceipt(
+                    newNote: inventoryCheckReceipt, status: 0);
                 context.pop(true);
               }, // TODO: xử lý nút
               style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
@@ -79,8 +82,8 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
             ),
             ElevatedButton(
               onPressed: () async {
-                await _controller.updateInventoryNote(
-                    newNote: inventoryNote, status: 1);
+                await _controller.updateInventoryCheckReceipt(
+                    newNote: inventoryCheckReceipt, status: 1);
                 context.pop(true);
               }, // TODO: xử lý nút
               style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
@@ -113,8 +116,9 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
 
   Widget _buildTableView() {
     return SingleChildScrollView(
-      scrollDirection: Axis.horizontal, // Nếu cần cuộn ngang
+      scrollDirection: Axis.horizontal,
       child: DataTable(
+        showCheckboxColumn: false, // Ẩn ô vuông chọn
         columns: const [
           DataColumn(
             label: Text(
@@ -127,31 +131,74 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
               'Tồn kho',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
+            numeric: true, // Đánh dấu cột là kiểu số
           ),
           DataColumn(
             label: Text(
               'Thực tế',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
+            numeric: true, // Đánh dấu cột là kiểu số
           ),
           DataColumn(
             label: Text(
               'Lệch',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
+            numeric: true, // Đánh dấu cột là kiểu số
           ),
         ],
         rows: [
-          for (var item in inventoryNote.products) _buildDataRow(item),
+          // Thêm một hàng để hiển thị tổng
+          DataRow(
+            cells: [
+              DataCell(
+                Text(
+                  '${inventoryCheckReceipt.products.length} mặt hàng',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              DataCell(
+                Text(
+                  '${inventoryCheckReceipt.totalStockQuantity}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              DataCell(
+                Text(
+                  '${inventoryCheckReceipt.totalMatchedQuantity}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              DataCell(
+                Text(
+                  '${inventoryCheckReceipt.totalQuantityDifference}',
+                  style: TextStyle(
+                    color: inventoryCheckReceipt.totalQuantityDifference >= 0
+                        ? Colors.green
+                        : Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          for (var item in inventoryCheckReceipt.products) _buildDataRow(item),
         ],
       ),
     );
   }
 
-  DataRow _buildDataRow(InventoryNoteDetail item) {
+  DataRow _buildDataRow(InventoryCheckReceiptDetail item) {
     return DataRow(
       cells: [
-        DataCell(Text(item.product.name)),
+        DataCell(Text(item.product.name!)),
         DataCell(Text('${item.stockQuantity}')),
         DataCell(Text('${item.matchedQuantity}')),
         DataCell(
@@ -164,26 +211,27 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
           ),
         ),
       ],
-      // Sử dụng `DataRow` với `GestureDetector` hoặc `InkWell` để làm toàn bộ hàng click được
-      onLongPress: () {
-        _showInventoryNoteDetailDialog(
-            item, false); // Hành động khi click vào hàng
+      // Thay thế onLongPress bằng onSelectChanged để xử lý khi nhấp vào hàng
+      onSelectChanged: (selected) {
+        if (selected != null && selected) {
+          _showInventoryCheckReceiptDetailDialog(item, false);
+        }
       },
     );
   }
 
   // Hàm hiển thị dialog chi tiết hàng hóa
-  void _showInventoryNoteDetailDialog(
-      InventoryNoteDetail inventoryNoteDetail, bool isNew) {
+  void _showInventoryCheckReceiptDetailDialog(
+      InventoryCheckReceiptDetail inventoryCheckReceiptDetail, bool isNew) {
     // Controller cho TextField để nhập số lượng kiểm
     final quantityController = TextEditingController(
-      text: inventoryNoteDetail.matchedQuantity.toString(),
+      text: inventoryCheckReceiptDetail.matchedQuantity.toString(),
     );
 
     // Hàm cập nhật số lượng đã kiểm
     void updateCheckedQuantity(int newValue) {
       setState(() {
-        inventoryNoteDetail.matchedQuantity = newValue.toDouble();
+        inventoryCheckReceiptDetail.matchedQuantity = newValue.toDouble();
         quantityController.text = newValue.toString();
       });
     }
@@ -196,31 +244,31 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
         // Nền tối cho dialog
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         contentPadding: const EdgeInsets.all(16),
-        title: _buildDialogTitle(inventoryNoteDetail, isNew),
+        title: _buildDialogTitle(inventoryCheckReceiptDetail, isNew),
         // Tiêu đề dialog
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Hiển thị thông tin về hàng hóa
             _buildProductInfoRow(
-                'Tồn kho', inventoryNoteDetail.product.quantity),
+                'Tồn kho', inventoryCheckReceiptDetail.product.quantity),
             _buildProductInfoRow(
-                'Đã kiểm', inventoryNoteDetail.matchedQuantity.toInt()),
+                'Đã kiểm', inventoryCheckReceiptDetail.matchedQuantity.toInt()),
             _buildProductInfoRow(
               'Chênh lệch',
-              inventoryNoteDetail.quantityDifference,
-              highlightColor: inventoryNoteDetail.quantityDifference < 0
+              inventoryCheckReceiptDetail.quantityDifference,
+              highlightColor: inventoryCheckReceiptDetail.quantityDifference < 0
                   ? Colors.red
                   : Colors.green,
             ),
             const SizedBox(height: 20),
             // Thành phần điều chỉnh số lượng đã kiểm
-            _buildQuantityAdjuster(
-                quantityController, inventoryNoteDetail, updateCheckedQuantity),
+            _buildQuantityAdjuster(quantityController,
+                inventoryCheckReceiptDetail, updateCheckedQuantity),
             const SizedBox(height: 20),
             // Nút hành động (Thoát, Xong)
-            _buildDialogActions(
-                context, inventoryNoteDetail, isNew, quantityController),
+            _buildDialogActions(context, inventoryCheckReceiptDetail, isNew,
+                quantityController),
           ],
         ),
       ),
@@ -229,13 +277,13 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
 
 // Tiêu đề của dialog, bao gồm tên hàng hóa và nút xóa
   Widget _buildDialogTitle(
-      InventoryNoteDetail inventoryNoteDetail, bool isNew) {
+      InventoryCheckReceiptDetail inventoryCheckReceiptDetail, bool isNew) {
     return Row(
       children: [
         CircleAvatar(
           backgroundColor: Colors.grey,
           child: Text(
-            inventoryNoteDetail.product.name[0].toUpperCase(),
+            inventoryCheckReceiptDetail.product.name![0].toUpperCase(),
             // Chữ cái đầu tên sản phẩm
             style: const TextStyle(color: Colors.white),
           ),
@@ -244,7 +292,7 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
         // Tên sản phẩm
         Expanded(
           child: Text(
-            inventoryNoteDetail.product.name,
+            inventoryCheckReceiptDetail.product.name!,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -259,7 +307,7 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
             onPressed: () {
               Navigator.of(context).pop(); // Đóng dialog hiện tại
               _showDeleteConfirmationDialog(
-                  inventoryNoteDetail); // Mở dialog xác nhận xóa
+                  inventoryCheckReceiptDetail); // Mở dialog xác nhận xóa
             },
           ),
       ],
@@ -288,7 +336,7 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
 // Thành phần điều chỉnh số lượng kiểm (gồm giảm, nhập số, tăng)
   Widget _buildQuantityAdjuster(
       TextEditingController controller,
-      InventoryNoteDetail inventoryNoteDetail,
+      InventoryCheckReceiptDetail inventoryCheckReceiptDetail,
       void Function(int) updateCheckedQuantity) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -300,9 +348,9 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
             IconButton(
               icon: const Icon(Icons.remove, color: Colors.white),
               onPressed: () {
-                if (inventoryNoteDetail.matchedQuantity > 0) {
+                if (inventoryCheckReceiptDetail.matchedQuantity > 0) {
                   updateCheckedQuantity(
-                      inventoryNoteDetail.matchedQuantity.toInt() - 1);
+                      inventoryCheckReceiptDetail.matchedQuantity.toInt() - 1);
                 }
               },
             ),
@@ -317,7 +365,7 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
                   // Chỉ cho phép nhập số
-                  ThousandsFormatter(),
+                  // ThousandsFormatter(),
                 ],
                 decoration: InputDecoration(
                   isDense: true,
@@ -343,7 +391,7 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
               icon: const Icon(Icons.add, color: Colors.white),
               onPressed: () {
                 updateCheckedQuantity(
-                    inventoryNoteDetail.matchedQuantity.toInt() + 1);
+                    inventoryCheckReceiptDetail.matchedQuantity.toInt() + 1);
               },
             ),
           ],
@@ -355,7 +403,7 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
 // Hành động phía dưới dialog (Thoát, Xong)
   Widget _buildDialogActions(
     BuildContext context,
-    InventoryNoteDetail inventoryNoteDetail,
+    InventoryCheckReceiptDetail inventoryCheckReceiptDetail,
     bool isNew,
     TextEditingController controller,
   ) {
@@ -377,14 +425,15 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
           ),
           onPressed: () {
             setState(() {
-              inventoryNoteDetail.matchedQuantity =
+              inventoryCheckReceiptDetail.matchedQuantity =
                   double.tryParse(controller.text) ??
                       0.0; // Cập nhật số lượng kiểm
               if (isNew) {
-                inventoryNote.products.add(inventoryNoteDetail); // Thêm mới
+                inventoryCheckReceipt.products
+                    .add(inventoryCheckReceiptDetail); // Thêm mới
               } else {
-                inventoryNote.updateInventoryNoteDetail(
-                    inventoryNoteDetail); // Cập nhật sản phẩm
+                inventoryCheckReceipt.updateInventoryCheckReceiptDetail(
+                    inventoryCheckReceiptDetail); // Cập nhật sản phẩm
               }
             });
             Navigator.of(context).pop(); // Đóng dialog
@@ -396,7 +445,8 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
   }
 
 // Dialog xác nhận xóa sản phẩm
-  void _showDeleteConfirmationDialog(InventoryNoteDetail inventoryNoteDetail) {
+  void _showDeleteConfirmationDialog(
+      InventoryCheckReceiptDetail inventoryCheckReceiptDetail) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -419,8 +469,8 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () {
               setState(() {
-                inventoryNote.products
-                    .remove(inventoryNoteDetail); // Xóa sản phẩm
+                inventoryCheckReceipt.products
+                    .remove(inventoryCheckReceiptDetail); // Xóa sản phẩm
               });
               Navigator.of(context).pop(); // Đóng dialog
             },

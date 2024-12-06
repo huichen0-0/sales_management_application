@@ -98,7 +98,7 @@ class WidgetScreen extends StatelessWidget {
                 'icon': Icons.cancel,
                 'label': 'Xuất hủy',
                 'action': () {
-                  context.go('/home');
+                  context.push('/export_cancellation');
                 },
               },
             ],

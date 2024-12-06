@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:sales_management_application/controllers/inventory_controller.dart';
-import 'package:sales_management_application/models/inventory_note.dart';
+import 'package:sales_management_application/models/inventory_check_receipt.dart';
 
 class InventoryDetailScreen extends StatefulWidget {
-  final int inventoryNoteId;
+  final int inventoryCheckReceiptId;
 
-  const InventoryDetailScreen({super.key, required this.inventoryNoteId});
+  const InventoryDetailScreen(
+      {super.key, required this.inventoryCheckReceiptId});
 
   @override
   State<InventoryDetailScreen> createState() => _InventoryDetailScreenState();
@@ -18,13 +19,14 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
   final InventoryController _controller = InventoryController();
 
   //phiếu kiểm
-  InventoryNote? item;
+  InventoryCheckReceipt? item;
 
   @override
   void initState() {
     super.initState();
     //phiếu kiểm kho
-    item = _controller.getInventoryNoteById(widget.inventoryNoteId)!;
+    item = _controller
+        .getInventoryCheckReceiptById(widget.inventoryCheckReceiptId)!;
   }
 
   /// Hàm format số tiền
@@ -42,7 +44,7 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
           ///nút sửa
           IconButton(
             onPressed: () {
-              context.push('/inventory/${widget.inventoryNoteId}/edit');
+              context.push('/inventory/${widget.inventoryCheckReceiptId}/edit');
             },
             icon: const Icon(Icons.edit),
           ),
@@ -50,7 +52,7 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
           ///nút xóa
           IconButton(
             onPressed: () {
-              _showDeleteCustomerDialog();
+              _showDeleteDialog();
             },
             icon: const Icon(Icons.delete),
           ),
@@ -65,9 +67,9 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  '09/11/2024 19:49',
-                  style: TextStyle(color: Colors.grey),
+                Text(
+                  DateFormat('dd/MM/yyyy HH:mm').format(item!.createdAt),
+                  style: const TextStyle(color: Colors.grey),
                 ),
                 Container(
                   padding:
@@ -118,7 +120,7 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
                 ],
                 rows: [
                   for (var i in item!.products)
-                    _buildDataRow(i.product.name, i.stockQuantity,
+                    _buildDataRow(i.product.name!, i.stockQuantity,
                         i.matchedQuantity, i.quantityDifference)
                 ],
               ),
@@ -205,7 +207,7 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
   }
 
   /// Hàm hiển thị hộp thoại xác nhận xóa khách hàng
-  void _showDeleteCustomerDialog() {
+  void _showDeleteDialog() {
     // Hiển thị hộp thoại xác nhận
     showDialog(
       context: context,

@@ -5,8 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:sales_management_application/config/constants.dart';
 import 'package:sales_management_application/controllers/inventory_controller.dart';
 import 'package:sales_management_application/controllers/sorting_controller.dart';
-import 'package:sales_management_application/models/inventory_note.dart';
-import 'package:sales_management_application/views/widgets/cards/inventory_note_card.dart';
+import 'package:sales_management_application/models/inventory_check_receipt.dart';
+import 'package:sales_management_application/views/widgets/cards/inventory_check_receipt_card.dart';
 import 'package:sales_management_application/views/widgets/sheets/sorting_bottom_sheet.dart';
 import 'package:sales_management_application/views/widgets/sheets/time_filter_bottom_sheet.dart';
 
@@ -19,18 +19,19 @@ class InventoryScreen extends StatefulWidget {
 
 class _InventoryScreenState extends State<InventoryScreen> {
   String selectedSorting = AppSort.newest; // Giá trị mặc định của sắp xếp
-  String selectedOption = AppTime.thisMonth; //giá trị mặc định của lọc thời gian
+  String selectedOption =
+      AppTime.thisMonth; //giá trị mặc định của lọc thời gian
   //controller sắp xếp
   SortingController? _sortingController;
   //kiểm kho controller
   final InventoryController _controller = InventoryController();
-
 
   /// Hàm format số tiền
   String formatCurrency(double amount) {
     final formatter = NumberFormat('#,###');
     return formatter.format(amount);
   }
+
   //khởi tạo
   @override
   void initState() {
@@ -41,7 +42,9 @@ class _InventoryScreenState extends State<InventoryScreen> {
 
   Future<void> _loadData() async {
     await _controller.getData();
-    setState(() {}); // Cập nhật lại giao diện sau khi có dữ liệu
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -85,7 +88,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
         ],
       ),
       body:
-      items.isNotEmpty ? _buildItemList(context, items) : _buildEmptyView(),
+          items.isNotEmpty ? _buildItemList(context, items) : _buildEmptyView(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _goToAddingScreen();
@@ -115,11 +118,11 @@ class _InventoryScreenState extends State<InventoryScreen> {
 
   // Widget hiển thị danh sách phiếu kiểm kho
   Widget _buildItemList(
-      BuildContext context, List<InventoryNote> items) {
+      BuildContext context, List<InventoryCheckReceipt> items) {
     // Nhóm danh sách theo ngày
     final groupedItems = groupBy(items, (item) {
       // Chuyển `DateTime` thành chuỗi định dạng ngày
-      return DateFormat('yyyy/MM/dd').format(item.createdAt!);
+      return DateFormat('yyyy/MM/dd').format(item.createdAt);
     });
     return ListView(
       padding: const EdgeInsets.all(8.0),
@@ -152,11 +155,13 @@ class _InventoryScreenState extends State<InventoryScreen> {
         for (var group in groupedItems.entries)
           Column(
             children: [
-              Text(group.key, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              Text(group.key,
+                  style: const TextStyle(
+                      fontSize: 12, fontWeight: FontWeight.bold)),
               //hiển thị danh sách phiếu kiểm kho nhóm theo ngày
               for (var item in group.value)
-                InventoryNoteCard(
-                  inventoryNote: item,
+                InventoryCheckReceiptCard(
+                  inventoryCheckReceipt: item,
                   onTap: (id) {
                     print(id);
                     return context.push('/inventory/$id');
@@ -213,10 +218,11 @@ class _InventoryScreenState extends State<InventoryScreen> {
       },
     );
   }
+
   ///các hàm gọi chuyển hướng
-  Future<void> _goToAddingScreen() async{
+  Future<void> _goToAddingScreen() async {
     final check = await context.push<bool>('/inventory/add');
-    if(check!) {
+    if (check!) {
       setState(() {
         _loadData();
       });

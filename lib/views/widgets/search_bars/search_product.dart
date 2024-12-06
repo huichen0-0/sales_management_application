@@ -44,7 +44,7 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
     },
     {
       'id': 2,
-      'name': 'ABC2',
+      'name': 'Giò heo X',
       'sellingPrice': 2010000,
       'capitalPrice': 1000000,
       'quantity': 100,
@@ -59,7 +59,7 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
     },
     {
       'id': 3,
-      'name': 'ABC3',
+      'name': 'Giò heo Y',
       'sellingPrice': 2110000,
       'capitalPrice': 1000000,
       'quantity': 200,
@@ -73,8 +73,8 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       'createdAt': DateTime.now().subtract(const Duration(seconds: 25)),
     },
     {
-      'id': 3,
-      'name': 'ABC2',
+      'id': 4,
+      'name': 'Giò heo Z',
       'sellingPrice': 201000,
       'capitalPrice': 102000,
       'quantity': 800,
@@ -88,8 +88,8 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
     },
     {
-      'id': 3,
-      'name': 'ABC2',
+      'id': 5,
+      'name': 'Giò hổ',
       'sellingPrice': 201000,
       'capitalPrice': 102000,
       'quantity': 800,
@@ -103,8 +103,8 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
     },
     {
-      'id': 3,
-      'name': 'ABC2',
+      'id': 6,
+      'name': 'Giò hổ VN',
       'sellingPrice': 201000,
       'capitalPrice': 102000,
       'quantity': 800,
@@ -118,8 +118,8 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
     },
     {
-      'id': 3,
-      'name': 'ABC2',
+      'id': 7,
+      'name': 'Giò hổ US',
       'sellingPrice': 201000,
       'capitalPrice': 102000,
       'quantity': 800,
@@ -133,8 +133,8 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
     },
     {
-      'id': 3,
-      'name': 'ABC2',
+      'id': 8,
+      'name': 'Giò bò UK',
       'sellingPrice': 201000,
       'capitalPrice': 102000,
       'quantity': 800,
@@ -148,8 +148,8 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
     },
     {
-      'id': 3,
-      'name': 'ABC2',
+      'id': 9,
+      'name': 'Giò bò Ấn Độ',
       'sellingPrice': 201000,
       'capitalPrice': 102000,
       'quantity': 800,
@@ -163,8 +163,8 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
     },
     {
-      'id': 3,
-      'name': 'ABC2',
+      'id': 10,
+      'name': 'Giò gà China',
       'sellingPrice': 201000,
       'capitalPrice': 102000,
       'quantity': 800,
@@ -178,8 +178,8 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
     },
     {
-      'id': 3,
-      'name': 'ABC2',
+      'id': 11,
+      'name': 'Chả lụa',
       'sellingPrice': 201000,
       'capitalPrice': 102000,
       'quantity': 800,
@@ -311,7 +311,7 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
 
                         return ListTile(
                           // Hiển thị tên sản phẩm
-                          title: Text(product.name),
+                          title: Text(product.name!),
                           leading: const Icon(
                             Icons.image,
                             size: 30,

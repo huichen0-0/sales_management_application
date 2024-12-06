@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sales_management_application/controllers/inventory_controller.dart';
-import 'package:sales_management_application/models/inventory_note.dart';
+import 'package:sales_management_application/models/inventory_check_receipt.dart';
 import 'package:sales_management_application/views/screens/authentication/forgot_password_screen.dart';
 import 'package:sales_management_application/views/screens/authentication/login_screen.dart';
 import 'package:sales_management_application/views/screens/authentication/register_screen.dart';
@@ -14,10 +14,10 @@ import 'package:sales_management_application/views/screens/customers/filter_cust
 import 'package:sales_management_application/views/screens/home/main_screen.dart';
 import 'package:sales_management_application/views/screens/home/overview_screen.dart';
 import 'package:sales_management_application/views/screens/home/widgets_screen.dart';
-import 'package:sales_management_application/views/screens/inventory/add_inventory_screen.dart';
-import 'package:sales_management_application/views/screens/inventory/filter_inventory_screen.dart';
-import 'package:sales_management_application/views/screens/inventory/inventory_detail_screen.dart';
-import 'package:sales_management_application/views/screens/inventory/inventory_screen.dart';
+import 'package:sales_management_application/views/screens/inventory_check/inventory_update_screen.dart';
+import 'package:sales_management_application/views/screens/inventory_check/inventory_filter_screen.dart';
+import 'package:sales_management_application/views/screens/inventory_check/inventory_detail_screen.dart';
+import 'package:sales_management_application/views/screens/inventory_check/inventory_screen.dart';
 import 'package:sales_management_application/views/screens/invoices/invoices_screen.dart';
 import 'package:sales_management_application/views/screens/orders/orders_screen.dart';
 import 'package:sales_management_application/views/screens/products/add_product_screen.dart';
@@ -31,6 +31,12 @@ import 'package:sales_management_application/views/screens/suppliers/filter_supp
 import 'package:sales_management_application/views/screens/suppliers/supplier_detail_screen.dart';
 import 'package:sales_management_application/views/screens/suppliers/suppliers_screen.dart';
 import 'package:sales_management_application/views/screens/terms_and_conditions_screen.dart';
+import 'package:sales_management_application/xuathuy/controllers/ec_controller.dart';
+import 'package:sales_management_application/xuathuy/models/ec_receipt.dart';
+import 'package:sales_management_application/xuathuy/views/screens/export_cancellation/ec_detail_screen.dart';
+import 'package:sales_management_application/xuathuy/views/screens/export_cancellation/ec_filter_screen.dart';
+import 'package:sales_management_application/xuathuy/views/screens/export_cancellation/ec_home_screen.dart';
+import 'package:sales_management_application/xuathuy/views/screens/export_cancellation/ec_update_screen.dart';
 
 final _router = GoRouter(
   initialLocation: '/',
@@ -62,6 +68,7 @@ final _router = GoRouter(
       path: '/tac',
       builder: (context, state) => const TermsAndConditionsScreen(),
     ),
+
     /// after login ///
     GoRoute(
       path: '/home',
@@ -111,6 +118,7 @@ final _router = GoRouter(
       path: '/all',
       builder: (context, state) => const WidgetScreen(),
     ),
+
     /// supplier
     GoRoute(
       path: '/suppliers',
@@ -140,6 +148,7 @@ final _router = GoRouter(
         ),
       ],
     ),
+
     /// customer
     GoRoute(
       path: '/customers',
@@ -169,6 +178,7 @@ final _router = GoRouter(
         ),
       ],
     ),
+
     /// inventory
     GoRoute(
       path: '/inventory',
@@ -185,19 +195,66 @@ final _router = GoRouter(
         GoRoute(
           path: ':id',
           builder: (context, state) {
-            print(state.pathParameters);
             final id = int.parse(state.pathParameters['id']!); // Lấy ID từ URL
-            return InventoryDetailScreen(inventoryNoteId: id,);
+            return InventoryDetailScreen(
+              inventoryCheckReceiptId: id,
+            );
           },
           routes: [
             GoRoute(
               path: 'edit',
               builder: (context, state) {
-                final id = int.parse(state.pathParameters['id']!); // Lấy ID từ URL
+                final id =
+                    int.parse(state.pathParameters['id']!); // Lấy ID từ URL
                 final InventoryController controller = InventoryController();
-                print(id);
-                final InventoryNote? existingNote = controller.getInventoryNoteById(id); // Lấy dữ liệu
-                return UpdateInventoryScreen(existingNote: existingNote,);
+                final InventoryCheckReceipt? existingNote =
+                    controller.getInventoryCheckReceiptById(id); // Lấy dữ liệu
+                return UpdateInventoryScreen(
+                  existingNote: existingNote,
+                );
+              },
+            ),
+          ],
+        ),
+      ],
+    ),
+
+    /// export cancellation
+    GoRoute(
+      path: '/export_cancellation',
+      builder: (context, state) => const ExportCancellationScreen(),
+      routes: [
+        GoRoute(
+          path: 'filter',
+          builder: (context, state) => const FilterExportCancellationScreen(),
+        ),
+        GoRoute(
+          path: 'add',
+          builder: (context, state) => const UpdateExportCancellationScreen(),
+        ),
+        GoRoute(
+          path: ':id',
+          builder: (context, state) {
+            final id = int.parse(state.pathParameters['id']!); // Lấy ID từ URL
+
+            return ExportCancellationDetailScreen(
+              receiptId: id,
+            );
+          },
+          routes: [
+            GoRoute(
+              path: 'edit',
+              builder: (context, state) {
+                final id =
+                    int.parse(state.pathParameters['id']!); // Lấy ID từ URL
+                final ExportCancellationController controller =
+                    ExportCancellationController();
+
+                final ExportCancellationReceipt? existingReceipt =
+                    controller.getReceiptById(id); // Lấy dữ liệu
+                return UpdateExportCancellationScreen(
+                  existingReceipt: existingReceipt,
+                );
               },
             ),
           ],
@@ -225,4 +282,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

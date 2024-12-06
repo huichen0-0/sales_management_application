@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sales_management_application/views/widgets/forms/ratio_field.dart';
 
 class FilterInventoryScreen extends StatefulWidget {
@@ -70,5 +71,6 @@ class _FilterInventoryScreenState extends State<FilterInventoryScreen> {
 
   void _applyFilters() {
     // TODO: áp dụng bộ lọc
+    context.pop();
   }
 }

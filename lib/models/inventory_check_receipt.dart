@@ -1,23 +1,23 @@
-import 'package:sales_management_application/models/inventory_note_detail.dart';
+import 'package:sales_management_application/models/inventory_check_receipt_detail.dart';
 import 'package:sales_management_application/models/product.dart';
 
-class InventoryNote {
+class InventoryCheckReceipt {
   // Đơn kiểm kho
   int? _id; // Mã phiếu kiểm kho
   int? _status; // Trạng thái phiếu kiểm kho
-  DateTime? _createdAt; // Ngày tạo phiếu kiểm kho
-  List<InventoryNoteDetail>
+  DateTime _createdAt; // Ngày tạo phiếu kiểm kho
+  List<InventoryCheckReceiptDetail>
       _products; // Danh sách sản phẩm trong phiếu kiểm kho
 
   // Constructor
-  InventoryNote({
+  InventoryCheckReceipt({
     int? id,
     int? status,
     DateTime? createdAt,
-    List<InventoryNoteDetail>? products,
+    List<InventoryCheckReceiptDetail>? products,
   })  : _id = id,
         _status = status,
-        _createdAt = createdAt,
+        _createdAt = createdAt ?? DateTime.now(),
         _products = products ?? [];
 
   // Getter và Setter
@@ -29,13 +29,13 @@ class InventoryNote {
 
   set status(int? value) => _status = value;
 
-  DateTime? get createdAt => _createdAt;
+  DateTime get createdAt => _createdAt;
 
-  set createdAt(DateTime? value) => _createdAt = value;
+  set createdAt(DateTime value) => _createdAt = value;
 
-  List<InventoryNoteDetail> get products => _products;
+  List<InventoryCheckReceiptDetail> get products => _products;
 
-  set products(List<InventoryNoteDetail> value) => _products = value;
+  set products(List<InventoryCheckReceiptDetail> value) => _products = value;
 
   // Tính toán các thuộc tính tổng hợp
   num get totalStockQuantity {
@@ -56,15 +56,16 @@ class InventoryNote {
   num get totalValueMatched {
     return _products.fold(0, (sum, product) => sum + (product.matchedValue));
   }
+
   //tổng hàng hóa lệch
-  num get totalProductDiv{
+  num get totalProductDiv {
     return _products.fold(
       0,
-          (sum, product) =>
-      sum + (product.quantityDifference != 0 ? 1 : 0),
+      (sum, product) => sum + (product.quantityDifference != 0 ? 1 : 0),
     );
   }
-///lệch tăng
+
+  ///lệch tăng
   List<num> get totalIncrements {
     num totalDeviationInc = 0;
     num totalProductInc = 0;
@@ -80,11 +81,12 @@ class InventoryNote {
 
     return [totalDeviationInc, totalProductInc, totalQuantityInc];
   }
-/// lệch giảm
+
+  /// lệch giảm
   List<num> get totalDecrements {
     num totalDeviationDec = 0; // Tổng lệch giảm
-    num totalProductDec = 0;   // Tổng hàng hóa lệch giảm
-    num totalQuantityDec = 0;  // Tổng số lượng hàng hóa lệch giảm
+    num totalProductDec = 0; // Tổng hàng hóa lệch giảm
+    num totalQuantityDec = 0; // Tổng số lượng hàng hóa lệch giảm
 
     for (var product in _products) {
       if (product.quantityDifference < 0) {
@@ -94,29 +96,29 @@ class InventoryNote {
       }
     }
 
-    return [totalDeviationDec,totalProductDec,totalQuantityDec];
+    return [totalDeviationDec, totalProductDec, totalQuantityDec];
   }
 
-
   // kiểm tra hàng hóa đã trong phiếu kiểm chưa
-  bool isInInventoryNote(Product productToCheck) {
+  bool isInInventoryCheckReceipt(Product productToCheck) {
     return _products.any((item) => item.product.id == productToCheck.id);
   }
 
   //lấy phiếu kiểm chi tiết (hàng hóa kiểm) trong phiếu kiểm
-  InventoryNoteDetail getInventoryNoteDetailByProduct(Product productToFind) {
+  InventoryCheckReceiptDetail getInventoryCheckReceiptDetailByProduct(
+      Product productToFind) {
     return _products.firstWhere(
       (item) => item.product.id == productToFind.id,
     );
   }
 
-  void updateInventoryNoteDetail(InventoryNoteDetail item) {
-    // Tìm InventoryNoteDetail theo Product
-    InventoryNoteDetail inventoryNoteDetail =
-        getInventoryNoteDetailByProduct(item.product);
+  void updateInventoryCheckReceiptDetail(InventoryCheckReceiptDetail item) {
+    // Tìm InventoryCheckReceiptDetail theo Product
+    InventoryCheckReceiptDetail inventoryCheckReceiptDetail =
+        getInventoryCheckReceiptDetailByProduct(item.product);
 
     //cập nhật giá trị
-    inventoryNoteDetail.matchedQuantity = item.matchedQuantity;
+    inventoryCheckReceiptDetail.matchedQuantity = item.matchedQuantity;
   }
 
   // Lấy nhãn trạng thái
@@ -143,13 +145,13 @@ class InventoryNote {
     };
   }
 
-  factory InventoryNote.fromJSON(Map<String, dynamic> json) {
-    return InventoryNote(
+  factory InventoryCheckReceipt.fromJSON(Map<String, dynamic> json) {
+    return InventoryCheckReceipt(
       id: json['id'],
       status: json['status'],
       createdAt: json['createdAt'],
       products: (json['products'] as List<dynamic>)
-          .map((product) => InventoryNoteDetail.fromJSON(product))
+          .map((product) => InventoryCheckReceiptDetail.fromJSON(product))
           .toList(),
     );
   }

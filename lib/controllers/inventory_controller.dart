@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sales_management_application/models/inventory_note.dart';
-import 'package:sales_management_application/models/inventory_note_detail.dart';
+import 'package:sales_management_application/models/inventory_check_receipt.dart';
+import 'package:sales_management_application/models/inventory_check_receipt_detail.dart';
 import 'package:sales_management_application/models/product.dart';
-import 'package:sales_management_application/views/widgets/cards/inventory_note_card.dart';
+import 'package:sales_management_application/views/widgets/cards/inventory_check_receipt_card.dart';
 import 'package:sales_management_application/views/widgets/search_bars/search_note_screen.dart';
 
 class InventoryController {
   // Danh sách sản phẩm
-  List<InventoryNote> items = [
-    InventoryNote(
+  List<InventoryCheckReceipt> items = [
+    InventoryCheckReceipt(
       id: 1,
       products: [
-        InventoryNoteDetail(
+        InventoryCheckReceiptDetail(
           product: Product(
             id: 1,
             name: 'Giò heo',
@@ -26,10 +26,10 @@ class InventoryController {
       status: 2,
       createdAt: DateTime.now(),
     ),
-    InventoryNote(
+    InventoryCheckReceipt(
       id: 2,
       products: [
-        InventoryNoteDetail(
+        InventoryCheckReceiptDetail(
           product: Product(
             id: 2,
             name: 'Giò hổ Châu Phi',
@@ -48,7 +48,7 @@ class InventoryController {
           ),
           matchedQuantity: 209,
         ),
-        InventoryNoteDetail(
+        InventoryCheckReceiptDetail(
           product: Product(
             id: 3,
             name: 'Giò gà Ấn Độ',
@@ -63,7 +63,6 @@ class InventoryController {
       createdAt: DateTime.now().subtract(const Duration(days: 1)),
     ),
   ];
-
 
   // Hàm lấy dữ liệu kiểm kho
   Future<void> getData() async {
@@ -96,8 +95,9 @@ class InventoryController {
           },
           title: 'Tìm kiếm phiếu kiểm kho',
           itemBuilder: (item) {
-            return InventoryNoteCard(
-              inventoryNote: InventoryNote.fromJSON(item), //chuyển về object
+            return InventoryCheckReceiptCard(
+              inventoryCheckReceipt:
+                  InventoryCheckReceipt.fromJSON(item), //chuyển về object
               onTap: (id) => context.push('/inventory/$id'),
             );
           },
@@ -107,8 +107,8 @@ class InventoryController {
   }
 
   // Hàm thêm mới/cập nhật phiếu kiểm kho
-  Future<void> updateInventoryNote({
-    required InventoryNote newNote,
+  Future<void> updateInventoryCheckReceipt({
+    required InventoryCheckReceipt newNote,
     required int status,
   }) async {
     try {
@@ -119,8 +119,7 @@ class InventoryController {
         items.add(newNote);
       } else {
         // Cập nhật
-        final index =
-            items.indexWhere((note) => note.id == newNote.id);
+        final index = items.indexWhere((note) => note.id == newNote.id);
         if (index != -1) {
           items[index] = newNote;
         }
@@ -131,8 +130,8 @@ class InventoryController {
     }
   }
 
-  /// Hàm lấy InventoryNote theo ID
-  InventoryNote? getInventoryNoteById(int id) {
+  /// Hàm lấy InventoryCheckReceipt theo ID
+  InventoryCheckReceipt? getInventoryCheckReceiptById(int id) {
     try {
       final note = items.firstWhere(
         (note) => note.id == id,
@@ -140,18 +139,20 @@ class InventoryController {
 
       return note;
     } catch (e) {
-      print('Lỗi khi tìm kiếm InventoryNote: $e');
+      print('Lỗi khi tìm kiếm InventoryCheckReceipt: $e');
       return null;
     }
   }
+
   /// lấy dữ liệu dạng MAP
-  List<Map<String, dynamic>> getJSON(){
+  List<Map<String, dynamic>> getJSON() {
     return items.map((note) => note.toJSON()).toList();
   }
+
   ///chuyển sang danh sách object
-  List<InventoryNote> toObjects(List<Map<String, dynamic>> json){
+  List<InventoryCheckReceipt> toObjects(List<Map<String, dynamic>> json) {
     return json
-        .map((noteJson) => InventoryNote.fromJSON(noteJson))
+        .map((noteJson) => InventoryCheckReceipt.fromJSON(noteJson))
         .toList();
   }
 }

@@ -1,12 +1,12 @@
 class Product {
   // Thuộc tính của sản phẩm
   int? id; // ID sản phẩm
-  String name; // Tên sản phẩm
+  String? name; // Tên sản phẩm
   String? barcode; // Mã vạch
   String? imageUrl; // URL hình ảnh sản phẩm
-  num capitalPrice; // Giá vốn
-  num sellingPrice; // Giá bán
-  num quantity; // Tồn kho
+  num? capitalPrice; // Giá vốn
+  num? sellingPrice; // Giá bán
+  num? quantity; // Tồn kho
   num? minLimit; // Tồn ít nhất
   num? maxLimit; // Tồn nhiều nhất
   String? unit; // Đơn vị
@@ -18,12 +18,12 @@ class Product {
   // Constructor
   Product({
     this.id,
-    required this.name,
+     this.name,
     this.barcode,
     this.imageUrl,
-    required this.capitalPrice,
-    required this.sellingPrice,
-    required this.quantity,
+    this.capitalPrice,
+     this.sellingPrice,
+     this.quantity,
     this.minLimit,
     this.maxLimit,
     this.unit,
@@ -34,14 +34,10 @@ class Product {
   });
 
   // Kiểm tra xem sản phẩm có tồn kho dưới mức tối thiểu không
-  bool isBelowMinLimit() {
-    return quantity < minLimit!;
-  }
+  bool isBelowMinLimit() => quantity! < minLimit!;
 
   // Kiểm tra xem sản phẩm có tồn kho vượt mức tối đa không
-  bool isAboveMaxLimit() {
-    return quantity > maxLimit!;
-  }
+  bool isAboveMaxLimit() => quantity! > maxLimit!;
   // Hàm toJSON
   Map<String, dynamic> toJSON() {
     return {
