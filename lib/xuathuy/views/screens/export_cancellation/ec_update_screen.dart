@@ -67,7 +67,7 @@ class _UpdateExportCancellationScreenState
               : _buildEmptyView(),
         ),
       ),
-      bottomNavigationBar: Padding(
+      bottomNavigationBar: receipt.products.isNotEmpty ? Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -92,7 +92,7 @@ class _UpdateExportCancellationScreenState
             ),
           ],
         ),
-      ),
+      ) : null,
     );
   }
 
