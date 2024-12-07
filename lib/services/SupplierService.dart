@@ -1,7 +1,4 @@
-import 'dart:collection';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:sales_management_application/controllers/auth_controller.dart';
 import 'package:sales_management_application/repository/FirebaseService.dart';
 
 import '../models/Supplier.dart';
@@ -17,21 +14,22 @@ class SupplierService {
   }
 
   void updateActive(String id, bool newActive) {
-    this.firebaseService.updateDate('Suppliers', id, {'isActive': newActive});
+    this.firebaseService.updateData('Suppliers', id, {'isActive': newActive});
   }
 
   void deleteSupplier(String id) {
-    this.firebaseService.updateDate('Suppliers', id, {'isDeleted': false});
+    this.firebaseService.updateData('Suppliers', id, {'isDeleted': false});
   }
 
-  Future<Map<String, Supplier>> getSupplierList(SupplierFilter filter) async {
-    Map<String, Supplier> suppliers = HashMap();
+  Future<List<Supplier>> getSupplierList(SupplierFilter filter) async {
+    List<Supplier> suppliers = [];
     FirebaseService firebaseService = FirebaseService();
     Map<String, Object> result = await firebaseService.readData("Suppliers");
     result.forEach((key, value) {
       Supplier mapValue = Supplier.fromJson(Map<dynamic, dynamic>.from(value as Map));
+      mapValue.id = key;
       if (isFilterd(mapValue, filter) && isBelonged(mapValue, _auth.currentUser!.uid)) {
-        suppliers[key] = mapValue;
+        suppliers.add(mapValue);
       }
     });
     return suppliers;
@@ -58,5 +56,21 @@ class SupplierService {
       return true;
     }
     return false;
+  }
+
+  List<Supplier> convertToSupplier(List<Map<String, dynamic>> items) {
+    List<Supplier> suppliers = [];
+    for(Map<String, dynamic> i in items) {
+      suppliers.add(Supplier.fromJson(i));
+    }
+    return suppliers;
+  }
+
+  List<Map<String, dynamic>> convertToJson(List<Supplier> suppliers) {
+    List<Map<String, dynamic>> items = [];
+    for(Supplier i in suppliers) {
+      items.add(i.toJson());
+    }
+    return items;
   }
 }

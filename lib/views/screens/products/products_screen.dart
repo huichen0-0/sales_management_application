@@ -3,67 +3,33 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:sales_management_application/config/constants.dart';
 import 'package:sales_management_application/controllers/sorting_controller.dart';
+import 'package:sales_management_application/models/Product.dart';
+import 'package:sales_management_application/services/ProductService.dart';
+import 'package:sales_management_application/services/filter/ProductFilter.dart';
 import 'package:sales_management_application/views/widgets/cards/custom_card.dart';
 import 'package:sales_management_application/views/widgets/search_bar.dart';
 import 'package:sales_management_application/views/widgets/sheets/display_bottom_sheet.dart';
 import 'package:sales_management_application/views/widgets/sheets/sorting_bottom_sheet.dart';
 
 class ProductScreen extends StatefulWidget {
-  const ProductScreen({super.key});
+  ProductFilter filter = ProductFilter();
+  ProductScreen(this.filter);
 
   @override
-  State<ProductScreen> createState() => _ProductScreenState();
+  State<ProductScreen> createState() => _ProductScreenState(this.filter);
 }
 
 class _ProductScreenState extends State<ProductScreen> {
   String selectedSorting = AppSort.newest;
-
-  // Giá trị mặc định của sắp xếp
   String selectedDisplay = AppDisplay.sellingPrice;
-  SortingController? _sortingController;
-  ///fake dữ liệu
-  List<Map<String, dynamic>> items = [
-    {
-      'id': 1,
-      'name': 'Giò heo 1KG',
-      'price': 1021000,
-      'quantity': 1000,
-      'unit': 'Kg',
-      'created_at': DateTime.now().subtract(const Duration(seconds: 5)),
-    },
-    {
-      'id': 2,
-      'name': 'Giò heo 500g',
-      'price': 1031000,
-      'quantity': 500,
-      'unit': 'Kg',
-      'created_at': DateTime.now().subtract(const Duration(seconds: 4)),
-    },
-    {
-      'id': 3,
-      'name': 'Giò bò 500g',
-      'price': 2033000,
-      'quantity': 400,
-      'unit': 'Kg',
-      'created_at': DateTime.now().subtract(const Duration(seconds: 1)),
-    },
-    {
-      'id': 4,
-      'name': 'Giò bò 1kg',
-      'price': 2034000,
-      'quantity': 300,
-      'unit': 'Kg',
-      'created_at': DateTime.now().subtract(const Duration(seconds: 3)),
-    },
-    {
-      'id': 5,
-      'name': 'Chả heo',
-      'price': 203200,
-      'quantity': 200,
-      'unit': 'Kg',
-      'created_at': DateTime.now().subtract(const Duration(seconds: 2)),
-    },
-  ];
+  SortingController _sortingController = SortingController([]);
+  ProductService productService = ProductService();
+  List<Product> products = [];
+  List<Map<String, dynamic>> items = [];
+  ProductFilter filter = ProductFilter();
+
+  _ProductScreenState(this.filter);
+
   /// Hàm format số tiền
   String formatCurrency(num amount) {
     final formatter = NumberFormat('#,###');
@@ -71,14 +37,8 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _sortingController = SortingController(items);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final items = _sortingController?.currentData;
+    print('here3');
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -95,7 +55,9 @@ class _ProductScreenState extends State<ProductScreen> {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              // TODO: Xử lý tìm kiếm
+              if (items.isEmpty) {
+                items = productService.convertToJson(products);
+              }
               _openSearchPage();
             },
           ),
@@ -104,7 +66,6 @@ class _ProductScreenState extends State<ProductScreen> {
           IconButton(
             icon: const Icon(Icons.sort),
             onPressed: () {
-              // TODO: Xử lý sắp xếp
               // Mở Bottom Sheet để chọn sắp xếp
               _showSortingOptions();
             },
@@ -114,18 +75,35 @@ class _ProductScreenState extends State<ProductScreen> {
           IconButton(
             icon: const Icon(Icons.filter_alt_outlined),
             onPressed: () {
-              // TODO: Xử lý lọc
-              context.push('/products/filter');
+              context.push('/products/filter', extra: this.filter);
             },
           ),
         ],
       ),
-      body: items!.isNotEmpty
-          ? _buildListView(context, items)
-          : _buildEmptyView(),
+      body: FutureBuilder<List<Product>>(
+        future: productService.getProductList(filter), // Pass the Future function here
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Show a loading indicator while waiting for data
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            // Handle any error that occurs during data fetching
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+            products = snapshot.data!;
+            if (_sortingController.currentData.isNotEmpty) {
+              products = productService.convertToProduct(
+                  _sortingController.currentData);
+            }
+            return _buildItemList(context, products);
+          } else {
+            return _buildEmptyView();
+          }
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.push('/products/add');
+          context.go('/products/add');
         },
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add),
@@ -151,17 +129,17 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   /// widget hiển thị khi có hàng hóa
-  Widget _buildListView(
-      BuildContext context, List<Map<String, dynamic>> items) {
-// Tính tổng mua từ danh sách hàng hóa TODO: thực hiện ở tầng logic
-    num totalQuantity = items.fold(0, (sum, item) => sum + item['quantity']);
+  Widget _buildItemList(
+      BuildContext context, List<Product> items) {
+// Tính tổng mua từ danh sách hàng hóa
+    num totalQuantity = items.fold(0, (sum, item) => sum + item.quantity);
     return ListView(
       padding: const EdgeInsets.all(8.0),
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            ///nút lọc hiển thị TODO: cần xử lý áp dụng
+            ///nút lọc hiển thị
             TextButton.icon(
               onPressed: () {
                 // Mở Bottom Sheet để chọn hiển thị
@@ -179,7 +157,7 @@ class _ProductScreenState extends State<ProductScreen> {
             ),
             const Spacer(),
 
-            //tổng tồn theo hiển thị TODO: thay đổi theo tùy chọn
+            //tổng tồn theo hiển thị
             Text(
               'Tổng tồn: ${formatCurrency(totalQuantity)}',
               style: const TextStyle(
@@ -200,7 +178,9 @@ class _ProductScreenState extends State<ProductScreen> {
         for (var item in items)
           ProductCard(
             product: item,
-            onTap: (id) => context.push('/products/$id'),
+            onTap: (id) {
+              context.push('/products/${item.id}', extra: [item.id, item]);
+            },
           ),
       ],
     );
@@ -236,7 +216,13 @@ class _ProductScreenState extends State<ProductScreen> {
             setState(() {
               selectedSorting = option;
               // 'price' ở đây biểu thị cho giá trị hiển thị
-              _sortingController?.updateSorting(option, 'price');
+              items = productService.convertToJson(products);
+              _sortingController = SortingController(items);
+              if (selectedDisplay == AppDisplay.sellingPrice) {
+                _sortingController.updateSorting(option, 'sellingPrice');
+              } else if (selectedDisplay == AppDisplay.capitalPrice) {
+                _sortingController.updateSorting(option, 'capitalPrice');
+              }
             });
           },
         );

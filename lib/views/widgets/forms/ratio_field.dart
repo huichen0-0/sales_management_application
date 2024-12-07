@@ -4,26 +4,33 @@ class RatioField extends StatefulWidget {
   final String title;
   final List<String> options; // Danh sách các tùy chọn
   final ValueChanged<String> onChanged;
+  final String initialValue;
 
   const RatioField({
     super.key,
     required this.title,
     required this.options,
-    required this.onChanged,
+    required this.onChanged, required this.initialValue,
   });
 
   @override
-  RatioFieldState createState() => RatioFieldState();
+  RatioFieldState createState() => RatioFieldState(this.initialValue);
 }
 
 class RatioFieldState extends State<RatioField> {
   late String _selectedValue;
 
+
+  RatioFieldState(String initialValue) {
+    _selectedValue = initialValue;
+  }
+
   @override
   void initState() {
     super.initState();
     // Sử dụng giá trị đầu tiên trong options làm giá trị mặc định
-    _selectedValue = widget.options.isNotEmpty ? widget.options.first : '';
+    // _selectedValue = widget.options.isNotEmpty ? widget.options.first : '';
+    // _selectedValue = this.initialValue;
   }
 
   // Hàm reset để đặt lại giá trị về giá trị đầu tiên trong danh sách options

@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:sales_management_application/config/constants.dart';
+import 'package:sales_management_application/models/Product.dart';
+import 'package:sales_management_application/services/ProductService.dart';
 import 'package:sales_management_application/views/widgets/forms/image_input_field.dart';
 import 'package:sales_management_application/views/widgets/forms/number_range_field.dart';
 import 'package:sales_management_application/views/widgets/forms/price_field.dart';
@@ -16,6 +19,7 @@ class AddProductScreen extends StatefulWidget {
 }
 
 class _AddProductScreenState extends State<AddProductScreen> {
+  ProductService productService = ProductService();
   // Tạo GlobalKey để quản lý trạng thái của Form
   final _formKey = GlobalKey<FormState>();
 
@@ -103,7 +107,22 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       controller: controllers['notes']!, label: 'Ghi chú'),
                 ],
                 onSubmit: () {
+                  Product product = Product(name: 'name', capitalPrice: 0, sellingPrice: 0, quantity: 0, minLimit: 0, maxLimit: 0, barcode: '', notes: '');
+                  DateTime now = DateTime.now();
+                  product.id = DateFormat('yyMMddHHmmss').format(now);
+                  product.barcode = '';
+                  product.name = controllers['name']!.text;
+                  product.sellingPrice = num.parse(controllers['selling_price']!.text.replaceAll(',', ''));
+                  product.capitalPrice = num.parse(controllers['capital_price']!.text.replaceAll(',', ''));
+                  product.quantity = num.parse(controllers['quantity']!.text.replaceAll(',', ''));
+                  product.unit = controllers['unit']?.text;
+                  product.minLimit = num.parse(controllers['minLimit']!.text.replaceAll(',', ''));
+                  product.maxLimit = num.parse(controllers['maxLimit']!.text.replaceAll(',', ''));
+                  product.description = controllers['description']?.text;
+                  product.notes = controllers['notes']!.text;
+                  this.productService.insertProduct(product);
                   _showSuccessDialog(context);
+                  context.go('/products');
                 },
                 submitBtn: 'Lưu',
               ),
@@ -122,7 +141,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
       builder: (BuildContext context) {
         // Đặt thời gian chuyển hướng sau 2 giây
         Future.delayed(const Duration(seconds: 2), () {
-          context.go('/products');
         });
 
         return const AlertDialog(

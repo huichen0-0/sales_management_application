@@ -33,12 +33,6 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => SupplierScreen(null),
-              //   ),
-              // );
               context.go('/suppliers', extra: null);
             },
           ),
@@ -47,8 +41,7 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
             ///nút sửa
             IconButton(
               onPressed: () {
-                context.go('/suppliers/${this.id}/edit', extra: [id, supplier]);
-                print("Still here");
+                context.push('/suppliers/${this.id}/edit', extra: [id, supplier]);
               },
               icon: const Icon(Icons.edit),
             ),

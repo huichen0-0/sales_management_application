@@ -35,7 +35,7 @@ class _FilterInventoryScreenState extends State<FilterInventoryScreen> {
                 ],
                 onChanged: (value) {
                   selectedStatus = value;
-                },
+                }, initialValue: '',
               ),
               const SizedBox(height: 20),
 

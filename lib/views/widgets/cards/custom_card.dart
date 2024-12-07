@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sales_management_application/models/Product.dart';
 import 'package:sales_management_application/models/Supplier.dart';
 
 ///widgets hiển thị ở trang chức năng
@@ -172,7 +173,7 @@ class CustomerCard extends StatelessWidget {
 
 ///products hiển thị ở trang hang hóa
 class ProductCard extends StatelessWidget {
-  final Map<String, dynamic> product;
+  final Product product;
   final Function(String id) onTap;
 
   const ProductCard({super.key, required this.product, required this.onTap});
@@ -189,7 +190,7 @@ class ProductCard extends StatelessWidget {
         leading: const Icon(Icons.image, size: 30,),
         /// tên
         title: Text(
-          product['name'],
+          product.name,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -200,7 +201,7 @@ class ProductCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-        formatCurrency(product['price']),
+        formatCurrency(product.sellingPrice),
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
@@ -208,7 +209,7 @@ class ProductCard extends StatelessWidget {
             ),
             const SizedBox(height: 5,),
             Text(
-              'Tồn: ${formatCurrency(product['quantity'])} ${product['unit']}',
+              'Tồn: ${formatCurrency(product.quantity)} ${product.unit}',
               style: const TextStyle(
                 fontSize: 10,
               ),
@@ -216,7 +217,7 @@ class ProductCard extends StatelessWidget {
           ],
         ),
         onTap: () {
-          onTap(product['id'].toString());
+          onTap(product.id.toString());
         },
       ),
     );

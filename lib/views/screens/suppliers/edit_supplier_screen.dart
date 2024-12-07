@@ -57,12 +57,6 @@ class _EditSupplierScreenState extends State<EditSupplierScreen> {
             context.pop();
           },
         ),
-        // leading: IconButton(
-        //   icon: const Icon(Icons.arrow_back),
-        //   onPressed: () {
-        //     Navigator.pop(context); // Quay lại trang trước đó
-        //   },
-        // ),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -94,6 +88,12 @@ class _EditSupplierScreenState extends State<EditSupplierScreen> {
                   _updateSupplierInfo(id, updateSupplier);
                   this.supplier = updateSupplier;
                   _showSuccessDialog(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SupplierDetailScreen(id: id, supplier: supplier),
+                    ),
+                  );
                 },
                 submitBtn: 'Lưu',
               ),
@@ -106,7 +106,7 @@ class _EditSupplierScreenState extends State<EditSupplierScreen> {
 
   void _updateSupplierInfo(String id, Supplier supplier) async {
     FirebaseService firebaseService = new FirebaseService();
-    firebaseService.updateDate('Suppliers',  id, supplier.toJson());
+    firebaseService.updateData('Suppliers',  id, supplier.toJson());
   }
 
   /// hàm hiển thị thông báo sau khi submit và TODO: chuyển về trang suppliers/:id trước đó
@@ -117,12 +117,6 @@ class _EditSupplierScreenState extends State<EditSupplierScreen> {
       builder: (BuildContext context) {
         // Đặt thời gian chuyển hướng sau 2 giây
         Future.delayed(const Duration(seconds: 2), () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SupplierDetailScreen(id: id, supplier: supplier),
-            ),
-          );
         });
 
         return const AlertDialog(

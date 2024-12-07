@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sales_management_application/controllers/auth_controller.dart';
 import 'package:sales_management_application/models/Supplier.dart';
+import 'package:sales_management_application/services/filter/ProductFilter.dart';
 import 'package:sales_management_application/services/filter/SupplierFilter.dart';
 import 'package:sales_management_application/views/screens/authentication/forgot_password_screen.dart';
 import 'package:sales_management_application/views/screens/authentication/login_screen.dart';
@@ -13,29 +14,23 @@ import 'package:sales_management_application/views/screens/customers/add_custome
 import 'package:sales_management_application/views/screens/customers/customer_detail_screen.dart';
 import 'package:sales_management_application/views/screens/customers/customers_screen.dart';
 import 'package:sales_management_application/views/screens/customers/edit_customer_screen.dart';
-import 'package:sales_management_application/views/screens/customers/filter_customer_screen.dart';
 import 'package:sales_management_application/views/screens/home/main_screen.dart';
 import 'package:sales_management_application/views/screens/home/overview_screen.dart';
 import 'package:sales_management_application/views/screens/home/widgets_screen.dart';
-import 'package:sales_management_application/views/screens/inventory/add_inventory_screen.dart';
-import 'package:sales_management_application/views/screens/inventory/edit_inventory_screen.dart';
-import 'package:sales_management_application/views/screens/inventory/filter_inventory_screen.dart';
-import 'package:sales_management_application/views/screens/inventory/inventory_detail_screen.dart';
-import 'package:sales_management_application/views/screens/inventory/inventory_screen.dart';
 import 'package:sales_management_application/views/screens/invoices/invoices_screen.dart';
 import 'package:sales_management_application/views/screens/orders/orders_screen.dart';
 import 'package:sales_management_application/views/screens/products/add_product_screen.dart';
 import 'package:sales_management_application/views/screens/products/edit_product_screen.dart';
-import 'package:sales_management_application/views/screens/products/filter_product_screen.dart';
 import 'package:sales_management_application/views/screens/products/product_detail_screen.dart';
 import 'package:sales_management_application/views/screens/products/products_screen.dart';
 import 'package:sales_management_application/views/screens/suppliers/add_supplier_screen.dart';
 import 'package:sales_management_application/views/screens/suppliers/edit_supplier_screen.dart';
-import 'package:sales_management_application/views/screens/suppliers/filter_supplier_screen.dart';
 import 'package:sales_management_application/views/screens/suppliers/supplier_detail_screen.dart';
 import 'package:sales_management_application/views/screens/suppliers/suppliers_screen.dart';
 import 'package:sales_management_application/views/screens/terms_and_conditions_screen.dart';
 import 'package:sales_management_application/views/widgets/filter_list.dart';
+
+import 'models/Product.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -118,7 +113,48 @@ class MyApp extends StatelessWidget {
         ),
         GoRoute(
           path: '/products',
-          builder: (context, state) => const ProductScreen(),
+          builder: (context, state) {
+            Object? extraObject = state.extra;
+            if (extraObject == null) {
+              return ProductScreen(ProductFilter());
+            } else {
+              ProductFilter filter = extraObject as ProductFilter;
+              return ProductScreen(filter);
+            }
+          },
+          routes: [
+            GoRoute(
+              path: 'filter',
+              builder: (context, state) {
+                ProductFilter filter = state.extra as ProductFilter;
+                return FilterProductScreen(filter);
+              },
+            ),
+            GoRoute(
+              path: 'add',
+              builder: (context, state) => const AddProductScreen(),
+            ),
+            GoRoute(
+              path: ':id',
+              builder: (context, state) {
+                List<dynamic> extraList = (state.extra as List);
+                Product product = extraList.elementAt(1);
+                final String key = extraList.elementAt(0);
+                return ProductDetailScreen(id: key, product: product);
+              },
+              routes: [
+                GoRoute(
+                  path: 'edit',
+                  builder: (context, state) {
+                    List<dynamic> extraList = (state.extra as List);
+                    Product product = extraList.elementAt(1);
+                    final String key = extraList.elementAt(0);
+                    return EditProductScreen(id: key, product: product);
+                  },
+                ),
+              ],
+            ),
+          ],
         ),
         GoRoute(
           path: '/all',
@@ -162,8 +198,6 @@ class MyApp extends StatelessWidget {
                   path: 'edit',
                   builder: (context, state) {
                     List<dynamic> extraList = (state.extra as List);
-                    // Map<dynamic, dynamic> extraValue = Map<dynamic, dynamic>.from(extraList.elementAt(1));
-                    // Supplier supplier = Supplier.fromJson(extraValue);
                     Supplier supplier = extraList.elementAt(1);
                     final String key = extraList.elementAt(0);
                     return EditSupplierScreen(id: key, supplier: supplier);

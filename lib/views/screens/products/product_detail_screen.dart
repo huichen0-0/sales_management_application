@@ -2,32 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:sales_management_application/config/constants.dart';
+import 'package:sales_management_application/models/Product.dart';
+import 'package:sales_management_application/services/ProductService.dart';
 
 class ProductDetailScreen extends StatefulWidget {
-  const ProductDetailScreen({super.key});
+  const ProductDetailScreen({required this.id, required this.product});
+  final Product product;
+  final String id;
 
   @override
-  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+  State<ProductDetailScreen> createState() => _ProductDetailScreenState(id, product);
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
-  bool isActive =
-  true; // biến check trạng thái hoạt động TODO: lấy từ thuộc tính của ncc
-  ///fake dữ liệu
-  final Map<String, dynamic> product = {
-    'id': 1,
-    'name': 'ABC1',
-    'selling_price': 2000000,
-    'capital_price': 1000000,
-    'quantity': 400,
-    'unit': 'Kg',
-    'minLimit': 10,
-    'maxLimit': 1000,
-    'barcode': '1314124212',
-    'description': '100% thịt heo rừng',
-    'notes': 'hàng vip',
-    'isActive': true,
-  };
+  final Product product;
+  final String id;
+  ProductService productService = ProductService();
+  bool isActive = true; // biến check trạng thái hoạt động TODO: lấy từ thuộc tính của ncc
+
+  _ProductDetailScreenState(this.id, this.product);
+
   /// Hàm format số tiền
   String formatCurrency(num amount) {
     final formatter = NumberFormat('#,###');
@@ -41,12 +35,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: const Text('Chi tiết hàng hóa'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            context.go('/products', extra: null);
+          },
+        ),
         actions: [
-
           ///nút sửa
           IconButton(
             onPressed: () {
-              context.push('/products/:id/edit');
+              context.push('/products/${this.id}/edit', extra: [id, product]);
             },
             icon: const Icon(Icons.edit),
           ),
@@ -74,13 +73,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   size: 40,
                 ),
                 title: Text(
-                  product['name'],
+                  product.name,
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
                 trailing:
                 Text(
-                  'Đơn vị: ${product['unit']}',
+                  'Đơn vị: ${product.unit}',
                   style: const TextStyle(
                     color: Colors.blue,
                     fontSize: 14,
@@ -94,7 +93,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   'Mã vạch',
                 ),
                 trailing: Text(
-                  product['barcode'],
+                  product.barcode,
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
@@ -105,7 +104,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   AppDisplay.sellingPrice,
                 ),
                 trailing: Text(
-                  formatCurrency(product['selling_price']),
+                  formatCurrency(product.sellingPrice),
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
@@ -116,7 +115,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   AppDisplay.capitalPrice,
                 ),
                 trailing: Text(
-                  formatCurrency(product['capital_price']),
+                  formatCurrency(product.capitalPrice),
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
@@ -127,7 +126,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ListTile(
                 title: const Text('Tồn kho'),
                 trailing: Text(
-                    product['quantity'].toString(),
+                    product.quantity.toString(),
                     style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold),
@@ -139,7 +138,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   'Định mức tồn',
                 ),
                 trailing: Text(
-                  '${product['minLimit']} - ${product['maxLimit']}',
+                  '${product.minLimit} - ${product.maxLimit}',
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
@@ -152,7 +151,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   'Ghi chú',
                 ),
                 trailing: Text(
-                  product['notes'],
+                  product.notes,
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
@@ -166,7 +165,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   style: TextStyle(color: Colors.black),
                 ),
                 trailing: Switch(
-                  value: product['isActive'],
+                  value: product.isActive,
                   onChanged: (bool value) {
                     _showConfirmationDialog(value);
                   },
@@ -294,9 +293,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
               onPressed: () {
                 setState(() {
-                  // Cập nhật trạng thái dựa trên lựa chọn của người dùng
-                  isActive = newValue;
-                });
+                    // Cập nhật trạng thái dựa trên lựa chọn của người dùng
+                    this.productService.updateActive(id, !product.isActive);
+                    product.isActive = !product.isActive;
+              });
                 Navigator.of(context).pop(); // Đóng hộp thoại
               },
             ),

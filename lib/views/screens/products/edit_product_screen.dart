@@ -1,23 +1,33 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:sales_management_application/config/constants.dart';
+import 'package:sales_management_application/views/screens/products/product_detail_screen.dart';
 import 'package:sales_management_application/views/widgets/forms/image_input_field.dart';
 import 'package:sales_management_application/views/widgets/forms/number_range_field.dart';
 import 'package:sales_management_application/views/widgets/forms/price_field.dart';
+import '../../../models/Product.dart';
+import '../../../repository/FirebaseService.dart';
 import '../../widgets/forms/custom_form.dart';
 import '../../widgets/forms/custom_form_fields.dart';
 
 class EditProductScreen extends StatefulWidget {
-  const EditProductScreen({super.key});
+  const EditProductScreen({required this.id, required this.product});
+  final Product product;
+  final String id;
 
   @override
-  _EditProductScreenState createState() => _EditProductScreenState();
+  _EditProductScreenState createState() => _EditProductScreenState(id: this.id, product: this.product);
 }
 
 class _EditProductScreenState extends State<EditProductScreen> {
   // Tạo GlobalKey để quản lý trạng thái của Form
   final _formKey = GlobalKey<FormState>();
+  Product product;
+  String id;
+
+  _EditProductScreenState({required this.id, required this.product});
 
   // Các TextEditingController để điều khiển giá trị của các trường nhập
   final Map<String, TextEditingController> controllers = {
@@ -34,20 +44,25 @@ class _EditProductScreenState extends State<EditProductScreen> {
   };
   File? productImage;
 
+  String formatCurrency(num amount) {
+    final formatter = NumberFormat('#,###');
+    return formatter.format(amount);
+  }
+
   @override
   void initState() {
     super.initState();
     // Giả sử các giá trị ban đầu của nhà cung cấp
-    controllers['name']!.text = 'Hàng hóa 1';
-    controllers['barcode']!.text = '123456789';
-    controllers['selling_price']!.text = '200000';
-    controllers['capital_price']!.text = '100000';
-    controllers['unit']!.text = 'Cái';
-    controllers['quantity']!.text = '50';
-    controllers['minLimit']!.text = '20';
-    controllers['maxLimit']!.text = '1000';
-    controllers['description']!.text = 'Hàng real 100%';
-    controllers['notes']!.text = 'Nhập khẩu';
+    controllers['name']!.text = product.name;
+    controllers['barcode']!.text = product.barcode;
+    controllers['selling_price']!.text = formatCurrency(product.sellingPrice);
+    controllers['capital_price']!.text = formatCurrency(product.capitalPrice);
+    controllers['unit']!.text = product.unit!;
+    controllers['quantity']!.text = formatCurrency(product.quantity);
+    controllers['minLimit']!.text = formatCurrency(product.minLimit);
+    controllers['maxLimit']!.text = formatCurrency(product.maxLimit);
+    controllers['description']!.text = product.description.toString();
+    controllers['notes']!.text = product.notes;
     // image nữa
   }
   @override
@@ -57,6 +72,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: const Text('Thêm hàng hóa'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            // context.go('/suppliers');
+            context.pop();
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -119,7 +141,26 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       controller: controllers['notes']!, label: 'Ghi chú'),
                 ],
                 onSubmit: () {
+                  Product updateProduct = this.product;
+                  updateProduct.name = controllers['name']!.text;
+                  updateProduct.barcode = controllers['barcode']!.text;
+                  updateProduct.sellingPrice = num.parse(controllers['selling_price']!.text.replaceAll(',', ''));
+                  updateProduct.capitalPrice = num.parse(controllers['capital_price']!.text.replaceAll(',', ''));
+                  updateProduct.unit = controllers['unit']!.text;
+                  updateProduct.quantity = num.parse(controllers['quantity']!.text.replaceAll(',', ''));
+                  updateProduct.minLimit = num.parse(controllers['minLimit']!.text.replaceAll(',', ''));
+                  updateProduct.maxLimit = num.parse(controllers['maxLimit']!.text.replaceAll(',', ''));
+                  updateProduct.description = controllers['description']!.text;
+                  updateProduct.notes = controllers['notes']!.text;
+                  _updateProductInfo(id, updateProduct);
+                  this.product = updateProduct;
                   _showSuccessDialog(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProductDetailScreen(id: id, product: product),
+                    ),
+                  );
                 },
                 submitBtn: 'Lưu',
               ),
@@ -130,6 +171,11 @@ class _EditProductScreenState extends State<EditProductScreen> {
     );
   }
 
+  void _updateProductInfo(String id, Product product) async {
+    FirebaseService firebaseService = new FirebaseService();
+    firebaseService.updateData('Products',  id, product.toJSON());
+  }
+
   /// hàm hiển thị thông báo sau khi submit và TODO: chuyển về trang products/:id trước đó
   void _showSuccessDialog(BuildContext context) {
     showDialog(
@@ -138,7 +184,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
       builder: (BuildContext context) {
         // Đặt thời gian chuyển hướng sau 2 giây
         Future.delayed(const Duration(seconds: 2), () {
-          context.go('/products');
         });
 
         return const AlertDialog(

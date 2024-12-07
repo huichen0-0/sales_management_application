@@ -40,7 +40,7 @@ class FirebaseService {
     return mapResults;
   }
 
-  Future<void> updateDate(String path, String id, Map<String, dynamic> data) async {
+  Future<void> updateData(String path, String id, Map<String, dynamic> data) async {
     try {
       await _database.child(path).child(id).update(data);
       print('Data updated successfully at $path');

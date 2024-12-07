@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sales_management_application/services/filter/ProductFilter.dart';
 import 'package:sales_management_application/views/screens/home/overview_screen.dart';
 import 'package:sales_management_application/views/screens/home/widgets_screen.dart';
 import 'package:sales_management_application/views/screens/invoices/invoices_screen.dart';
@@ -19,7 +20,7 @@ class _MainScreenState extends State<MainScreen> {
     const OverviewScreen(),
     const InvoiceScreen(),
     const OrderScreen(),
-    ProductScreen(),
+    ProductScreen(ProductFilter()),
     const WidgetScreen(),
   ];
 

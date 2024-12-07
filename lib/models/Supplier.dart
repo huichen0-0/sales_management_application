@@ -12,21 +12,6 @@ class Supplier { // Nhà cung cấp
   String note = "";
   String uid = "";
 
-  // Supplier({required name, required address, required isActive, required phone, required amount, required email, required note, required isDeleted, required uid}) {
-  //   DateTime now = DateTime.now();
-  //   this.id = DateFormat('yyMMddHHmmss').format(now);
-  //   this.amount = 0;
-  //   this.name = " ";
-  //   this.address = " ";
-  //   this.isActive = true;
-  //   this.isDeleted = false;
-  //   this.phone = " ";
-  //   this.email = " ";
-  //   this.note = " ";
-  //   this.uid = " ";
-  // }
-
-
   Supplier({required this.amount, required this.name, required this.address, required this.isActive,
       required this.isDeleted, required this.phone, required this.email, required this.note, required this.uid, required id});
 

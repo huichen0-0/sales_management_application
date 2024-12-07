@@ -25,12 +25,12 @@ class SupplierScreen extends StatefulWidget {
 }
 
 class _SupplierScreenState extends State<SupplierScreen> {
-  SortingController? _sortingController;
+  SortingController _sortingController = SortingController([]);
   String selectedSorting = AppSort.newest; // Giá trị mặc định của sắp xếp
   String selectedDisplay = AppDisplay.totalPurchase; // Giá trị mặc định của tổng mua
   String selectedOption = AppTime.today; //giá trị mặc định của lọc thời gian
   SupplierService supplierService = SupplierService();
-  Map<String, Supplier> suppliers = HashMap();
+  List<Supplier> suppliers = [];
   List<Map<String, dynamic>> items = [];
   SupplierFilter filter = SupplierFilter();
 
@@ -41,18 +41,9 @@ class _SupplierScreenState extends State<SupplierScreen> {
     final formatter = NumberFormat('#,###');
     return formatter.format(amount);
   }
-  //khởi tạo
-  @override
-  void initState() {
-    super.initState();
-    for(Supplier i in suppliers.values) {
-      items.add(i.toJson());
-    }
-    _sortingController = SortingController(items);
-  }
+
   @override
   Widget build(BuildContext context) {
-    final items = _sortingController?.currentData;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -69,6 +60,9 @@ class _SupplierScreenState extends State<SupplierScreen> {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
+              if (items.isEmpty) {
+                items = supplierService.convertToJson(suppliers);
+              }
               _openSearchPage();
             },
           ),
@@ -94,7 +88,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
         ],
       ),
       body:
-        FutureBuilder<Map<String, Supplier>>(
+        FutureBuilder<List<Supplier>>(
           future: supplierService.getSupplierList(filter), // Pass the Future function here
           builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -105,6 +99,10 @@ class _SupplierScreenState extends State<SupplierScreen> {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                 suppliers = snapshot.data!;
+                if (_sortingController.currentData.isNotEmpty) {
+                  suppliers = supplierService.convertToSupplier(
+                      _sortingController.currentData);
+                }
                 return _buildItemList(context, suppliers);
               } else {
                 return _buildEmptyView();
@@ -140,9 +138,10 @@ class _SupplierScreenState extends State<SupplierScreen> {
 
   // Widget hiển thị danh sách nhà cung cấp
   Widget _buildItemList(
-      BuildContext context, Map<String, Supplier> suppliers) {
+      BuildContext context, List<Supplier> suppliers) {
     // Tính tổng mua từ danh sách nhà cung cấp TODO: thực hiện ở tầng logic
-    double totalPurchase = suppliers.values.fold(0, (sum, item) => sum + item.amount);
+    // suppliers.forEach((i) {print(i.toJson());});
+    double totalPurchase = suppliers.fold(0, (sum, item) => sum + item.amount);
     return ListView(
       padding: const EdgeInsets.all(8.0),
       children: [
@@ -199,12 +198,12 @@ class _SupplierScreenState extends State<SupplierScreen> {
         const SizedBox(height: 10),
 
         ///hiển thị danh sách nhà cung cấp
-        for (var entry in suppliers.entries)
-          if (entry.value.isDeleted == false)
+        for (var entry in suppliers)
+          if (entry.isDeleted == false)
             SupplierCard(
-              supplier: entry.value,
+              supplier: entry,
               onTap: (id) {
-                context.push('/suppliers/${entry.key}', extra: [entry.key, entry.value]);
+                context.push('/suppliers/${entry.id}', extra: [entry.id, entry]);
               },
             )
       ],
@@ -221,7 +220,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
           onSelectDisplay: (option) {
             setState(() {
               selectedDisplay = option;
-              _sortingController?.updateSorting(option, 'amount');
+              _sortingController.updateSorting(option, 'amount');
             });
           },
         );
@@ -259,7 +258,9 @@ class _SupplierScreenState extends State<SupplierScreen> {
             setState(() {
               selectedSorting = option;
               //cập nhật ui đã sắp xếp
-              _sortingController?.updateSorting(option, 'amount');
+              items = supplierService.convertToJson(suppliers);
+              _sortingController = SortingController(items);
+              _sortingController.updateSorting(option, 'amount');
             });
           },
         );
@@ -281,7 +282,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
             {'searchKey': 'notes', 'tag': 'Ghi chú', 'hint': 'Tìm theo ghi chú'},
           ],
           searchData: items,
-          dataType: 'suppliers',
+          dataType: 'Suppliers',
           onCancel: () {
             // Hủy tìm kiếm và đóng trang tìm kiếm
             Navigator.pop(context);
