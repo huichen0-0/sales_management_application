@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sales_management_application/controllers/inventory_controller.dart';
-import 'package:sales_management_application/models/inventory_check_receipt.dart';
+import 'package:sales_management_application/kiemkho/controllers/ic_controller.dart';
+import 'package:sales_management_application/kiemkho/models/ic_receipt.dart';
+import 'package:sales_management_application/kiemkho/views/screens/inventory_check/ic_detail_screen.dart';
+import 'package:sales_management_application/kiemkho/views/screens/inventory_check/ic_filter_screen.dart';
+import 'package:sales_management_application/kiemkho/views/screens/inventory_check/ic_home_screen.dart';
+import 'package:sales_management_application/kiemkho/views/screens/inventory_check/ic_update_screen.dart';
 import 'package:sales_management_application/views/screens/authentication/forgot_password_screen.dart';
 import 'package:sales_management_application/views/screens/authentication/login_screen.dart';
 import 'package:sales_management_application/views/screens/authentication/register_screen.dart';
@@ -14,10 +18,6 @@ import 'package:sales_management_application/views/screens/customers/filter_cust
 import 'package:sales_management_application/views/screens/home/main_screen.dart';
 import 'package:sales_management_application/views/screens/home/overview_screen.dart';
 import 'package:sales_management_application/views/screens/home/widgets_screen.dart';
-import 'package:sales_management_application/views/screens/inventory_check/inventory_update_screen.dart';
-import 'package:sales_management_application/views/screens/inventory_check/inventory_filter_screen.dart';
-import 'package:sales_management_application/views/screens/inventory_check/inventory_detail_screen.dart';
-import 'package:sales_management_application/views/screens/inventory_check/inventory_screen.dart';
 import 'package:sales_management_application/views/screens/invoices/invoices_screen.dart';
 import 'package:sales_management_application/views/screens/orders/orders_screen.dart';
 import 'package:sales_management_application/views/screens/products/add_product_screen.dart';
@@ -197,7 +197,7 @@ final _router = GoRouter(
           builder: (context, state) {
             final id = int.parse(state.pathParameters['id']!); // Lấy ID từ URL
             return InventoryDetailScreen(
-              inventoryCheckReceiptId: id,
+              receiptId: id,
             );
           },
           routes: [
@@ -207,10 +207,10 @@ final _router = GoRouter(
                 final id =
                     int.parse(state.pathParameters['id']!); // Lấy ID từ URL
                 final InventoryController controller = InventoryController();
-                final InventoryCheckReceipt? existingNote =
-                    controller.getInventoryCheckReceiptById(id); // Lấy dữ liệu
+                final InventoryCheckReceipt? receipt =
+                    controller.getReceiptById(id); // Lấy dữ liệu
                 return UpdateInventoryScreen(
-                  existingNote: existingNote,
+                  existingReceipt: receipt,
                 );
               },
             ),

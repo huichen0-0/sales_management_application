@@ -7,7 +7,7 @@ class InventoryCheckReceiptDetail {
   // Constructor
   InventoryCheckReceiptDetail({
     required Product product,
-    int matchedQuantity = 0,
+    num matchedQuantity = 0,
   })  : _product = product,
         _matchedQuantity = matchedQuantity;
 
@@ -50,7 +50,6 @@ class InventoryCheckReceiptDetail {
   }
 
   factory InventoryCheckReceiptDetail.fromJSON(Map<String, dynamic> json) {
-    print(json);
     return InventoryCheckReceiptDetail(
       product: Product.fromJSON(
           json['product']), // Chuyển 'product' từ JSON thành đối tượng Product

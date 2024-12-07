@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sales_management_application/views/helper/helper.dart';
 import 'package:sales_management_application/xuathuy/models/ec_receipt.dart';
-import 'package:sales_management_application/xuathuy/views/helper/helper.dart';
 
 class ExportCancellationReceiptCard extends StatelessWidget {
   final ExportCancellationReceipt receipt;

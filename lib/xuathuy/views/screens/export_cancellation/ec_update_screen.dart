@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sales_management_application/views/helper/helper.dart';
 import 'package:sales_management_application/views/widgets/search_bars/search_product.dart';
 import 'package:sales_management_application/xuathuy/controllers/ec_controller.dart';
 import 'package:sales_management_application/xuathuy/models/ec_receipt.dart';
 import 'package:sales_management_application/xuathuy/models/ec_receipt_detail.dart';
-import 'package:sales_management_application/xuathuy/views/helper/helper.dart';
-
 class UpdateExportCancellationScreen extends StatefulWidget {
   final ExportCancellationReceipt?
       existingReceipt; // Tham số cho phiếu xuất hủy hiện có
@@ -67,14 +66,14 @@ class _UpdateExportCancellationScreenState
               : _buildEmptyView(),
         ),
       ),
-      bottomNavigationBar: Padding(
+      bottomNavigationBar: receipt.products.isNotEmpty ? Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ElevatedButton(
               onPressed: () {
-                receipt.status = 0;
+                receipt.status = 1;
                 _controller.updateReceipt(updatedItem: receipt);
                 context.pop(true);
               }, // TODO: xử lý nút
@@ -92,7 +91,7 @@ class _UpdateExportCancellationScreenState
             ),
           ],
         ),
-      ),
+      ) : null,
     );
   }
 
@@ -396,8 +395,9 @@ class _UpdateExportCancellationScreenState
             setState(() {
               detail.cancelledQuantity =
                   num.tryParse(controller.text) ?? 1; // Cập nhật số lượng kiểm
-              _controller.updateDetail(receipt, detail);
               // Cập nhật detail trong receipt
+              _controller.updateDetail(receipt, detail);
+
             });
             Navigator.of(context).pop(); // Đóng dialog
           },
@@ -431,7 +431,7 @@ class _UpdateExportCancellationScreenState
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () {
               setState(() {
-                receipt.products.remove(detail); // Xóa sản phẩm
+                _controller.removeDetail(receipt, detail); // Xóa sản phẩm
               });
               Navigator.of(context).pop(); // Đóng dialog
             },

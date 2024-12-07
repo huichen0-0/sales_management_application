@@ -2,34 +2,33 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sales_management_application/config/constants.dart';
+import 'package:sales_management_application/kiemkho/controllers/ic_controller.dart';
 import 'package:sales_management_application/controllers/sorting_controller.dart';
+import 'package:sales_management_application/kiemkho/models/ic_receipt.dart';
+import 'package:sales_management_application/kiemkho/views/widgets/cards/ic_receipt_card.dart';
 import 'package:sales_management_application/views/helper/helper.dart';
 import 'package:sales_management_application/views/widgets/sheets/sorting_bottom_sheet.dart';
 import 'package:sales_management_application/views/widgets/sheets/time_filter_bottom_sheet.dart';
-import 'package:sales_management_application/xuathuy/controllers/ec_controller.dart';
-import 'package:sales_management_application/xuathuy/models/ec_receipt.dart';
-import 'package:sales_management_application/xuathuy/views/widgets/cards/ec_card.dart';
 
-class ExportCancellationScreen extends StatefulWidget {
-  const ExportCancellationScreen({super.key});
+class InventoryScreen extends StatefulWidget {
+  const InventoryScreen({super.key});
 
   @override
-  _ExportCancellationScreenState createState() =>
-      _ExportCancellationScreenState();
+  _InventoryScreenState createState() => _InventoryScreenState();
 }
 
-class _ExportCancellationScreenState extends State<ExportCancellationScreen> {
+class _InventoryScreenState extends State<InventoryScreen> {
   // Giá trị mặc định của sắp xếp
   String selectedSorting = AppSort.newest;
   //giá trị mặc định của lọc thời gian
   String selectedOption = AppTime.thisMonth;
   //xuất hủy controller
-  final ExportCancellationController _controller =
-      ExportCancellationController();
+  final InventoryController _controller =
+  InventoryController();
   //controller sắp xếp
   SortingController? _sortingController;
-  late Future<List<ExportCancellationReceipt>> _receiptsFuture;
-  List<ExportCancellationReceipt>? _receipts;
+  late Future<List<InventoryCheckReceipt>> _receiptsFuture;
+  List<InventoryCheckReceipt>? _receipts;
 
   @override
   void initState() {
@@ -37,12 +36,14 @@ class _ExportCancellationScreenState extends State<ExportCancellationScreen> {
     _receiptsFuture = _controller.getData();
   }
 
+
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: _buildAppBar(context),
-      body: FutureBuilder<List<ExportCancellationReceipt>>(
+      body:FutureBuilder<List<InventoryCheckReceipt>>(
         future: _receiptsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -64,18 +65,17 @@ class _ExportCancellationScreenState extends State<ExportCancellationScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed:() => context.push('/export_cancellation/add'),
+        onPressed:() => context.push('/inventory/add'),
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add),
       ),
     );
   }
-
-//Widget hiển thị appbar
+  //Widget hiển thị appbar
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.blue,
-      title: const Text('Xuất hủy'),
+      title: const Text('Kiểm kho'),
       actions: [
         IconButton(
           icon: const Icon(Icons.search),
@@ -95,7 +95,7 @@ class _ExportCancellationScreenState extends State<ExportCancellationScreen> {
     );
   }
 
-  // Widget hiển thị khi không có phiếu xuất hủy
+  // Widget hiển thị khi không có phiếu kiểm kho
   Widget _buildEmptyView() {
     return const Center(
       child: Column(
@@ -104,7 +104,7 @@ class _ExportCancellationScreenState extends State<ExportCancellationScreen> {
           Icon(Icons.remove_shopping_cart, size: 100, color: Colors.blue),
           SizedBox(height: 20),
           Text(
-            'Chưa có phiếu xuất hủy',
+            'Chưa có phiếu kiểm kho',
             style: TextStyle(fontSize: 16, color: Colors.grey),
           ),
         ],
@@ -112,48 +112,44 @@ class _ExportCancellationScreenState extends State<ExportCancellationScreen> {
     );
   }
 
-  // Widget hiển thị danh sách phiếu xuất hủyWidget _buildItemList(
+  // Widget hiển thị danh sách phiếu kiểm kho
   Widget _buildItemList(
-      BuildContext context, List<ExportCancellationReceipt> items) {
-    final groupedItems =
-        groupBy(items, (item) => Helper.formatDate(item.createdAt!));
-
+      BuildContext context, List<InventoryCheckReceipt> receipts) {
+    // Nhóm danh sách theo ngày
+    final groupedReceipts =
+    groupBy(receipts, (item) => Helper.formatDate(item.createdAt));
     return ListView(
       padding: const EdgeInsets.all(8.0),
       children: [
         //hiển thị nút lọc thời gian
         _buildTimeFilterRow(context),
         const SizedBox(height: 10),
-
-        /// Hiển thị tổng số phiếu
+        //Hiển thị tổng phiếu
         Text(
-          '${items.length} phiếu xuất hủy',
+          '${receipts.length} phiếu kiểm kho',
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
-
-        /// Hiển thị danh sách phiếu theo nhóm ngày
-        for (var group in groupedItems.entries)
+        //hiển thị danh sách phiếu nhóm theo ngày
+        for (var group in groupedReceipts.entries)
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                group.key,
-                style:
-                    const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              for (var item in group.value)
-                ExportCancellationReceiptCard(
-                  receipt: item,
-                  onTap: (id) => context.push('/export_cancellation/$id'),
+              Text(group.key,
+                  style: const TextStyle(
+                      fontSize: 12, fontWeight: FontWeight.bold)),
+              //hiển thị danh sách phiếu kiểm kho trong ngày
+              for (var receipt in group.value)
+                InventoryCheckReceiptCard(
+                  receipt: receipt,
+                  onTap: (id) {
+                    return context.push('/inventory/$id');
+                  },
                 ),
             ],
           ),
       ],
     );
   }
-
   //Hiển thị nút lọc thời gian
   Row _buildTimeFilterRow(BuildContext context) {
     return Row(
@@ -185,7 +181,6 @@ class _ExportCancellationScreenState extends State<ExportCancellationScreen> {
         return TimeFilterBottomSheet(
           selectedOption: selectedOption,
           onOptionSelected: (option, startDate, [endDate]) {
-            // Xử lý lựa chọn thời gian
             print('Lựa chọn: $option, Bắt đầu: $startDate, Kết thúc: $endDate');
             setState(() {
               selectedOption = option;
@@ -212,7 +207,7 @@ class _ExportCancellationScreenState extends State<ExportCancellationScreen> {
             setState(() {
               selectedSorting = option;
               //cập nhật ui đã sắp xếp
-              _sortingController!.updateSorting(option);
+              _sortingController?.updateSorting(option);
             });
           },
         );

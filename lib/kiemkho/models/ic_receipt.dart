@@ -1,5 +1,5 @@
-import 'package:sales_management_application/models/inventory_check_receipt_detail.dart';
 import 'package:sales_management_application/models/product.dart';
+import 'ic_receipt_detail.dart';
 
 class InventoryCheckReceipt {
   // Đơn kiểm kho
@@ -97,42 +97,6 @@ class InventoryCheckReceipt {
     }
 
     return [totalDeviationDec, totalProductDec, totalQuantityDec];
-  }
-
-  // kiểm tra hàng hóa đã trong phiếu kiểm chưa
-  bool isInInventoryCheckReceipt(Product productToCheck) {
-    return _products.any((item) => item.product.id == productToCheck.id);
-  }
-
-  //lấy phiếu kiểm chi tiết (hàng hóa kiểm) trong phiếu kiểm
-  InventoryCheckReceiptDetail getInventoryCheckReceiptDetailByProduct(
-      Product productToFind) {
-    return _products.firstWhere(
-      (item) => item.product.id == productToFind.id,
-    );
-  }
-
-  void updateInventoryCheckReceiptDetail(InventoryCheckReceiptDetail item) {
-    // Tìm InventoryCheckReceiptDetail theo Product
-    InventoryCheckReceiptDetail inventoryCheckReceiptDetail =
-        getInventoryCheckReceiptDetailByProduct(item.product);
-
-    //cập nhật giá trị
-    inventoryCheckReceiptDetail.matchedQuantity = item.matchedQuantity;
-  }
-
-  // Lấy nhãn trạng thái
-  String getStatusLabel() {
-    switch (_status) {
-      case 2:
-        return 'Đã cân bằng';
-      case 1:
-        return 'Phiếu tạm';
-      case 0:
-        return 'Đã hủy';
-      default:
-        return 'Không xác định';
-    }
   }
 
   // Hàm toJSON
