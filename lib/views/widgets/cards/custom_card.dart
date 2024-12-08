@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sales_management_application/models/Product.dart';
+import 'package:sales_management_application/models/product.dart';
 import 'package:sales_management_application/models/Supplier.dart';
 
 ///widgets hiển thị ở trang chức năng

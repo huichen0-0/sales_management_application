@@ -1,11 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:sales_management_application/models/ProductCategory.dart';
 import 'package:sales_management_application/repository/FirebaseService.dart';
 import 'package:sales_management_application/services/filter/ProductFilter.dart';
 
-import '../models/Product.dart';
-import '../models/Supplier.dart';
-import 'filter/SupplierFilter.dart';
+import '../models/product.dart';
 
 class ProductService {
   FirebaseService firebaseService = new FirebaseService();

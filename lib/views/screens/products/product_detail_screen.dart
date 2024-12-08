@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:sales_management_application/config/constants.dart';
-import 'package:sales_management_application/models/Product.dart';
+import 'package:sales_management_application/models/product.dart';
 import 'package:sales_management_application/services/ProductService.dart';
 
 class ProductDetailScreen extends StatefulWidget {

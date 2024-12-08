@@ -7,7 +7,7 @@ import 'package:sales_management_application/views/screens/products/product_deta
 import 'package:sales_management_application/views/widgets/forms/image_input_field.dart';
 import 'package:sales_management_application/views/widgets/forms/number_range_field.dart';
 import 'package:sales_management_application/views/widgets/forms/price_field.dart';
-import '../../../models/Product.dart';
+import '../../../models/product.dart';
 import '../../../repository/FirebaseService.dart';
 import '../../widgets/forms/custom_form.dart';
 import '../../widgets/forms/custom_form_fields.dart';

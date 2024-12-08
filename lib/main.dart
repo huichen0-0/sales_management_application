@@ -30,7 +30,7 @@ import 'package:sales_management_application/views/screens/suppliers/suppliers_s
 import 'package:sales_management_application/views/screens/terms_and_conditions_screen.dart';
 import 'package:sales_management_application/views/widgets/filter_list.dart';
 
-import 'models/Product.dart';
+import 'models/product.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

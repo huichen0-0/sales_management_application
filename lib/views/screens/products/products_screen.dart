@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:sales_management_application/config/constants.dart';
 import 'package:sales_management_application/controllers/sorting_controller.dart';
-import 'package:sales_management_application/models/Product.dart';
+import 'package:sales_management_application/models/product.dart';
 import 'package:sales_management_application/services/ProductService.dart';
 import 'package:sales_management_application/services/filter/ProductFilter.dart';
 import 'package:sales_management_application/views/widgets/cards/custom_card.dart';
