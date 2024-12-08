@@ -105,7 +105,6 @@ class MyApp extends StatelessWidget {
           path: '/tac',
           builder: (context, state) => const TermsAndConditionsScreen(),
         ),
-
         /// after login ///
         GoRoute(
           path: '/home',
@@ -299,7 +298,6 @@ class MyApp extends StatelessWidget {
             ),
           ],
         ),
-
         /// customer
         GoRoute(
           path: '/customers',

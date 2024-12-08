@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:sales_management_application/controllers/sorting_controller.dart';
+import 'package:sales_management_application/models/FilterCustomer.dart';
 import 'package:sales_management_application/views/widgets/cards/custom_card.dart';
 import 'package:sales_management_application/views/widgets/search_bar.dart';
 import 'package:sales_management_application/views/widgets/sheets/display_bottom_sheet.dart';
 import 'package:sales_management_application/views/widgets/sheets/sorting_bottom_sheet.dart';
 import 'package:sales_management_application/views/widgets/sheets/time_filter_bottom_sheet.dart';
 import 'package:sales_management_application/config/constants.dart';
+import 'package:sales_management_application/controllers/customer_controller.dart';
+import 'package:sales_management_application/models/Customer.dart';
+
 class CustomerScreen extends StatefulWidget {
   const CustomerScreen({super.key});
 
@@ -16,138 +20,103 @@ class CustomerScreen extends StatefulWidget {
 }
 
 class _CustomerScreenState extends State<CustomerScreen> {
+  final CustomerController _customerController = CustomerController();
+  List<Customer> items = [];
+  List<Map<String, dynamic>> itemsToSearch = [];
   SortingController? _sortingController;
+  FilterCustomer _filterCustomer = FilterCustomer(fromDate: null, toDate: null, 
+                                                  fromSellAmount: null, toSellAmount: null, 
+                                                  fromReturnAmount: null, toReturnAmount: null, 
+                                                  isMan: true, isWoman: false, 
+                                                  isActive: true, isInactive: false);
   String selectedSorting = AppSort.newest; // Giá trị mặc định của sắp xếp
   String selectedDisplay = AppDisplay.totalSale; // Giá trị mặc định của tổng mua
   String selectedOption = AppTime.today; //giá trị mặc định của lọc thời gian
-  ///fake dữ liệu
-  final List<Map<String, dynamic>> items = [
-    {
-      'id': 1,
-      'name': 'ABC1',
-      'phone': '0987654321',
-      'sex': 'Nam',
-      'amount': 1000000,
-      'address': '123 Đường ABC, Quận 1, TP.HCM',
-      'email': 'kh@example.com',
-      'notes': 'KH vip',
-      'isActive': true,
-    },
-    {
-      'id': 1,
-      'name': 'ABC11',
-      'phone': '0987654321',
-      'sex': 'Nam',
-      'amount': 1100000,
-      'address': '123 Đường ABC, Quận 1, TP.HCM',
-      'email': 'kh@example.com',
-      'notes': 'KH vip',
-      'isActive': true,
-    },
-    {
-      'id': 1,
-      'name': 'ABC12',
-      'phone': '0987654321',
-      'sex': 'Nam',
-      'amount': 1200000,
-      'address': '123 Đường ABC, Quận 1, TP.HCM',
-      'email': 'kh@example.com',
-      'notes': 'KH vip',
-      'isActive': true,
-    },
-    {
-      'id': 1,
-      'name': 'ABC21',
-      'phone': '0987654321',
-      'sex': 'Nam',
-      'amount': 100000,
-      'address': '123 Đường ABC, Quận 1, TP.HCM',
-      'email': 'kh@example.com',
-      'notes': 'KH vip',
-      'isActive': true,
-    },
-    {
-      'id': 1,
-      'name': 'BC1',
-      'phone': '0987654321',
-      'sex': 'Nam',
-      'amount': 4000000,
-      'address': '123 Đường ABC, Quận 1, TP.HCM',
-      'email': 'kh@example.com',
-      'notes': 'KH vip',
-      'isActive': true,
-    },
-    {
-      'id': 1,
-      'name': 'A1',
-      'phone': '0987654321',
-      'sex': 'Nam',
-      'amount': 10000,
-      'address': '123 Đường ABC, Quận 1, TP.HCM',
-      'email': 'kh@example.com',
-      'notes': 'KH vip',
-      'isActive': true,
-    },
-    {
-      'id': 1,
-      'name': 'C1',
-      'phone': '0987654321',
-      'sex': 'Nam',
-      'amount': 10050,
-      'address': '123 Đường ABC, Quận 1, TP.HCM',
-      'email': 'kh@example.com',
-      'notes': 'KH vip',
-      'isActive': true,
-    },
-    {
-      'id': 1,
-      'name': 'AB4C1',
-      'phone': '0987654321',
-      'sex': 'Nam',
-      'amount': 10023,
-      'address': '123 Đường ABC, Quận 1, TP.HCM',
-      'email': 'kh@example.com',
-      'notes': 'KH vip',
-      'isActive': true,
-    },
-    {
-      'id': 1,
-      'name': 'ABC1',
-      'phone': '0987654321',
-      'sex': 'Nam',
-      'amount': 12000,
-      'address': '123 Đường ABC, Quận 1, TP.HCM',
-      'email': 'kh@example.com',
-      'notes': 'KH vip',
-      'isActive': true,
-    },
-    {
-      'id': 1,
-      'name': 'ABC1',
-      'phone': '0987654321',
-      'sex': 'Nam',
-      'amount': 1000000,
-      'address': '123 Đường ABC, Quận 1, TP.HCM',
-      'email': 'kh@example.com',
-      'notes': 'KH vip',
-      'isActive': true,
-    },
-  ];
+  double totalAmountSell = 0;
+  double totalAmountReturn = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCustomers();
+    _getListCustomersToSearch();
+    _sortingController = SortingController(_customerController.toMap(items));
+  }
+
+  //Hàm lấy thông tin khách hàng
+  Future<void> _fetchCustomers() async {
+    await _customerController.getDataListCustomers();
+      
+    setState(() {
+      items = _customerController.customers;
+      setTotalAmount();
+    });
+  }
+
+  //Hàm lấy danh sách khách hàng dùng cho tìm kiếm
+  Future<void> _getListCustomersToSearch() async {
+    await _customerController.getListCustomerToSearch();
+    setState(() {
+      List<Customer> customerToSearch = _customerController.listCustomersToSearch;
+      itemsToSearch = _customerController.toMap(customerToSearch);
+    });
+  }
+
+  //Hàm lọc danh sách khách hàng
+  Future<void> _filterListCustomers(FilterCustomer filterCustomer) async {
+    await _customerController.filterCustomer(filterCustomer);
+    setState(() {
+      items = _customerController.customers;
+      setTotalAmount();
+    });
+  }
+
+  //Hàm chuyển hướng đến giao diện thêm khách hàng
+  Future<void> goToAddCustomer() async {
+    final check = await context.push<String>('/customers/add');
+    if (check != null) {
+      setState(() {
+        _fetchCustomers();
+        _getListCustomersToSearch();
+      });
+    }
+  }
+
+  //Hàm chuyển hướng đến giao diện thông tin chi tiết khách hàng
+  Future<void> goToDetailCustomer(String id) async {
+    await context.push<String>('/customers/$id');
+    setState(() {
+      _fetchCustomers();
+      _getListCustomersToSearch();
+    });
+  }
+
+  //Hàm chuyển hướng đến giao diện lọc khách hàng
+  Future<void> goToFilterCustomer() async {
+    FilterCustomer? fc =  await context.push<FilterCustomer>('/customers/filter', extra: _filterCustomer);
+    if(fc != null){
+      setState(() {
+        _filterCustomer = fc;
+        _filterListCustomers(fc);
+      });
+    }
+  }
 
   /// Hàm format số tiền
   String formatCurrency(double amount) {
     final formatter = NumberFormat('#,###');
     return formatter.format(amount);
   }
-//khởi tạo
-  @override
-  void initState() {
-    super.initState();
-    _sortingController = SortingController(items);
+
+  void setTotalAmount(){
+    setState(() {
+      totalAmountSell = items.fold(0, (sum, item) => sum + item.amountSell);
+      totalAmountReturn = items.fold(0, (sum, item) => sum + item.amountReturn);
+    });
   }
+
   @override
   Widget build(BuildContext context) {
-    final items = _sortingController?.currentData;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -164,6 +133,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
+              // TODO: Xử lý tìm kiếm (DONE)
               _openSearchPage();
             },
           ),
@@ -172,7 +142,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
           IconButton(
             icon: const Icon(Icons.sort),
             onPressed: () {
-              // TODO: Xử lý sắp xếp
+              // TODO: Xử lý sắp xếp (gần DONE, chờ module khác xong)
               // Mở Bottom Sheet để chọn sắp xếp
               _showSortingOptions(context);
             },
@@ -182,17 +152,17 @@ class _CustomerScreenState extends State<CustomerScreen> {
           IconButton(
             icon: const Icon(Icons.filter_alt_outlined),
             onPressed: () {
-              // TODO: Xử lý lọc
-              context.push('/customers/filter');
+              // TODO: Xử lý lọc (gần DONE, chờ module khác xong)
+              goToFilterCustomer();
             },
           ),
         ],
       ),
       body:
-      items!.isNotEmpty ? _buildItemList(context, items) : _buildEmptyView(),
+      items.isNotEmpty ? _buildItemList(context, items) : _buildEmptyView(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.push('/customers/add');
+          goToAddCustomer();
         },
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add),
@@ -219,9 +189,14 @@ class _CustomerScreenState extends State<CustomerScreen> {
 
   // Widget hiển thị danh sách khách hàng
   Widget _buildItemList(
-      BuildContext context, List<Map<String, dynamic>> items) {
-    // Tính tổng mua từ danh sách khách hàng TODO: thực hiện ở tầng logic
-    double totalPurchase = items.fold(0, (sum, item) => sum + item['amount']);
+      BuildContext context, List<Customer> items) {
+    // Tính tổng tiền từ danh sách khách hàng
+    double totalPurchase = 0; 
+    if(selectedDisplay == AppDisplay.totalSale){
+      totalPurchase = totalAmountSell;
+    } else {
+      totalPurchase = totalAmountReturn;
+    }
     return ListView(
       padding: const EdgeInsets.all(8.0),
       children: [
@@ -243,10 +218,9 @@ class _CustomerScreenState extends State<CustomerScreen> {
               },
             ),
 
-            ///nút lọc hiển thị TODO: cần xử lý áp dụng
+            ///nút lọc hiển thị TODO: cần xử lý áp dụng (DONE)
             TextButton.icon(
               onPressed: () {
-                // Mở Bottom Sheet để chọn Tổng mua
                 _showDisplayOptions(context);
               },
               label: Text(
@@ -260,7 +234,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
               iconAlignment: IconAlignment.end,
             ),
 
-            //tổng tiền theo hiển thị TODO: thay đổi theo tùy chọn
+            //tổng tiền theo hiển thị TODO: thay đổi theo tùy chọn (DONE)
             Text(
               formatCurrency(totalPurchase),
               style: const TextStyle(
@@ -281,7 +255,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
         for (var item in items)
           CustomerCard(
             customer: item,
-            onTap: (id) => context.push('/customers/$id'),
+            onTap: (id) => goToDetailCustomer(id),
+            amount: (selectedDisplay == AppDisplay.totalSale) ? item.amountSell : item.amountReturn,
           ),
       ],
     );
@@ -299,6 +274,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
               selectedDisplay = option;
             });
           },
+          totalAmountSell: formatCurrency(totalAmountSell),
+          totalAmountReturn: formatCurrency(totalAmountReturn),
         );
       },
     );
@@ -323,6 +300,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
 
   /// Hiển thị Bottom Sheet cho tùy chọn sắp xếp
   void _showSortingOptions(BuildContext context) {
+    String amountOption = (selectedDisplay == AppDisplay.totalSale) ? 'amountSell' : 'amountReturn';
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -334,7 +312,16 @@ class _CustomerScreenState extends State<CustomerScreen> {
           onSelectSorting: (option) {
             setState(() {
               selectedSorting = option;
-              _sortingController?.updateSorting(option, 'amount');
+              _sortingController = SortingController(_customerController.toMap(items));
+              if(_sortingController != null){ // Kiểm tra đã khởi tạo _sortingController thành công chưa
+                _sortingController?.updateSorting(option, amountOption); // sortValue là tên cột của giá trị tiền muốn truyền vào
+                items = _customerController.fromMap(_sortingController!.currentData);
+                setTotalAmount();
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Lỗi khi thực hiện sắp xếp, vui lòng thử lại sau!')),
+                );
+              }
             });
           },
         );
@@ -349,12 +336,12 @@ class _CustomerScreenState extends State<CustomerScreen> {
         builder: (context) => SearchBarScreen(
           searchOptions: const [
             {'searchKey': 'name', 'tag': 'Tên', 'hint': 'Tìm theo tên'},
-            {'searchKey': 'phone', 'tag': 'SĐT', 'hint': 'Tìm theo SĐT'},
+            {'searchKey': 'phoneNumber', 'tag': 'SĐT', 'hint': 'Tìm theo SĐT'},
             {'searchKey': 'email', 'tag': 'Email', 'hint': 'Tìm theo email'},
             {'searchKey': 'address', 'tag': 'Địa chỉ', 'hint': 'Tìm theo địa chỉ'},
-            {'searchKey': 'notes', 'tag': 'Ghi chú', 'hint': 'Tìm theo ghi chú'},
+            {'searchKey': 'note', 'tag': 'Ghi chú', 'hint': 'Tìm theo ghi chú'},
           ],
-          searchData: items,
+          searchData: itemsToSearch,
           dataType: 'customers',
           onCancel: () {
             // Hủy tìm kiếm và đóng trang tìm kiếm
@@ -364,5 +351,9 @@ class _CustomerScreenState extends State<CustomerScreen> {
         ),
       ),
     );
+    setState(() {
+      _fetchCustomers();
+      _getListCustomersToSearch();
+    });
   }
 }

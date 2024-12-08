@@ -48,11 +48,15 @@ class DisplaySupplierBottomSheet extends StatelessWidget {
 class DisplayCustomerBottomSheet extends StatelessWidget {
   final String selectedDisplay;
   final Function(String) onSelectDisplay;
+  final String totalAmountSell;
+  final String totalAmountReturn;
 
   const DisplayCustomerBottomSheet(
       {super.key,
         required this.selectedDisplay,
-        required this.onSelectDisplay});
+        required this.onSelectDisplay,
+        required this.totalAmountSell,
+        required this.totalAmountReturn});
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +67,7 @@ class DisplayCustomerBottomSheet extends StatelessWidget {
         children: [
           ListTile(
             title: const Text(AppDisplay.totalSale),
-            trailing: const Text('0'), //TODO: cần lấy giá trị từ db
+            trailing: Text(totalAmountSell), //TODO: cần lấy giá trị từ db (DONE)
             onTap: () {
               onSelectDisplay(AppDisplay.totalSale);
               Navigator.pop(context);
@@ -71,7 +75,7 @@ class DisplayCustomerBottomSheet extends StatelessWidget {
           ),
           ListTile(
             title: const Text(AppDisplay.totalRefund),
-            trailing: const Text('0'), //TODO: cần lấy giá trị từ db
+            trailing: Text(totalAmountReturn), //TODO: cần lấy giá trị từ db (DONE)
             onTap: () {
               onSelectDisplay(AppDisplay.totalRefund);
               Navigator.pop(context);

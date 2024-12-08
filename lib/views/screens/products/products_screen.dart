@@ -178,6 +178,7 @@ class _ProductScreenState extends State<ProductScreen> {
         for (var item in items)
           ProductCard(
             product: item,
+            selectedDisplay: selectedDisplay,
             onTap: (id) {
               context.push('/products/${item.id}', extra: [item.id, item.toJSON()]);
             },

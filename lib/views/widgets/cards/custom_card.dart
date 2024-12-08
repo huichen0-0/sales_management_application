@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sales_management_application/models/product.dart';
 import 'package:sales_management_application/models/Supplier.dart';
+import 'package:sales_management_application/views/helper/helper.dart';
+
+import '../../../models/Customer.dart';
+
 
 ///widgets hiển thị ở trang chức năng
 class WidgetCard extends StatelessWidget {
@@ -118,25 +121,27 @@ class SupplierCard extends StatelessWidget {
 
 ///customers hiển thị ở trang khach hang
 class CustomerCard extends StatelessWidget {
-  final Map<String, dynamic> customer;
+  final Customer customer;
   final Function(String id) onTap;
+  final num amount; // Biến truyền vào giá trị tổng bán hoặc tổng trả phụ thuộc vào tùy chọn
 
-  const CustomerCard({super.key, required this.customer, required this.onTap});
+  const CustomerCard({super.key, required this.customer, required this.onTap, required this.amount});
 
   @override
   Widget build(BuildContext context) {
-    //TODO: cần xử lý lấy giá trị từ db
+    //TODO: cần xử lý lấy giá trị từ db (DONE)
+    bool isActive = customer.isActivated == 1 ? true : false;
     return Card(
       child: ListTile(
         leading: const Icon(Icons.perm_identity),
 
-        /// ncc hoạt đông thì màu xanh, không thì xám
-        iconColor: customer['isActive'] ? Colors.blue : Colors.black54,
-        textColor: customer['isActive'] ? Colors.blue : Colors.black54,
+        /// khách hàng hoạt đông thì màu xanh, không thì xám
+        iconColor: isActive ? Colors.blue : Colors.black54,
+        textColor: isActive ? Colors.blue : Colors.black54,
 
         /// tên
         title: Text(
-          customer['name'],
+          customer.name,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -146,16 +151,16 @@ class CustomerCard extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(customer['phone']),
+            Text(customer.phoneNumber),
           ],
         ),
 
-        /// tổng mua (tạm thời để hiển thị) TODO: cần lấy các giá trị ở tùy chọn hiển thị
+        /// tổng mua (tạm thời để hiển thị) TODO: cần lấy các giá trị ở tùy chọn hiển thị (DONE)
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              customer['amount'].toString(),
+              amount.toString(),
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
               ),
@@ -163,7 +168,7 @@ class CustomerCard extends StatelessWidget {
           ],
         ),
         onTap: () {
-          onTap(customer['id'].toString());
+          onTap(customer.id.toString());
         },
       ),
     );
@@ -175,16 +180,12 @@ class CustomerCard extends StatelessWidget {
 class ProductCard extends StatelessWidget {
   final Product product;
   final Function(String id) onTap;
+  final String selectedDisplay;
 
-  const ProductCard({super.key, required this.product, required this.onTap});
-  /// Hàm format số tiền
-  String formatCurrency(num amount) {
-    final formatter = NumberFormat('#,###');
-    return formatter.format(amount);
-  }
+  const ProductCard({super.key, required this.product, required this.onTap, required this.selectedDisplay});
+
   @override
   Widget build(BuildContext context) {
-    //TODO: cần xử lý lấy giá trị từ db
     return Card(
       child: ListTile(
         leading: const Icon(Icons.image, size: 30,),
@@ -201,7 +202,7 @@ class ProductCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-        formatCurrency(product.sellingPrice),
+        Helper.formatCurrency(selectedDisplay == 'Giá bán' ? product.sellingPrice : product.capitalPrice),
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
@@ -209,7 +210,7 @@ class ProductCard extends StatelessWidget {
             ),
             const SizedBox(height: 5,),
             Text(
-              'Tồn: ${formatCurrency(product.quantity)} ${product.unit}',
+              'Tồn: ${Helper.formatCurrency(product.quantity)} ${product.unit}',
               style: const TextStyle(
                 fontSize: 10,
               ),
