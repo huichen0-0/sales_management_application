@@ -52,7 +52,6 @@ class ProductService {
       return false;
     }
     if (filter.isActive == false && filter.isInactive == true && product.isActive == true) {
-      print("I got here");
       return false;
     }
     if (filter.isActive == false && filter.isInactive == false) {

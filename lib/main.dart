@@ -29,7 +29,19 @@ import 'package:sales_management_application/views/screens/suppliers/supplier_de
 import 'package:sales_management_application/views/screens/suppliers/suppliers_screen.dart';
 import 'package:sales_management_application/views/screens/terms_and_conditions_screen.dart';
 import 'package:sales_management_application/views/widgets/filter_list.dart';
+import 'package:sales_management_application/xuathuy/controllers/ec_controller.dart';
+import 'package:sales_management_application/xuathuy/models/ec_receipt.dart';
+import 'package:sales_management_application/xuathuy/views/screens/export_cancellation/ec_detail_screen.dart';
+import 'package:sales_management_application/xuathuy/views/screens/export_cancellation/ec_filter_screen.dart';
+import 'package:sales_management_application/xuathuy/views/screens/export_cancellation/ec_home_screen.dart';
+import 'package:sales_management_application/xuathuy/views/screens/export_cancellation/ec_update_screen.dart';
 
+import 'kiemkho/controllers/ic_controller.dart';
+import 'kiemkho/models/ic_receipt.dart';
+import 'kiemkho/views/screens/inventory_check/ic_detail_screen.dart';
+import 'kiemkho/views/screens/inventory_check/ic_filter_screen.dart';
+import 'kiemkho/views/screens/inventory_check/ic_home_screen.dart';
+import 'kiemkho/views/screens/inventory_check/ic_update_screen.dart';
 import 'models/product.dart';
 
 Future<void> main() async {
@@ -138,7 +150,7 @@ class MyApp extends StatelessWidget {
               path: ':id',
               builder: (context, state) {
                 List<dynamic> extraList = (state.extra as List);
-                Product product = extraList.elementAt(1);
+                Product product = Product.fromJSON(extraList.elementAt(1));
                 final String key = extraList.elementAt(0);
                 return ProductDetailScreen(id: key, product: product);
               },
@@ -160,7 +172,87 @@ class MyApp extends StatelessWidget {
           path: '/all',
           builder: (context, state) => const WidgetScreen(),
         ),
+        GoRoute(
+          path: '/inventory',
+          builder: (context, state) => const InventoryScreen(),
+          routes: [
+            GoRoute(
+              path: 'filter',
+              builder: (context, state) => const FilterInventoryScreen(),
+            ),
+            GoRoute(
+              path: 'add',
+              builder: (context, state) => const UpdateInventoryScreen(),
+            ),
+            GoRoute(
+              path: ':id',
+              builder: (context, state) {
+                final id = int.parse(state.pathParameters['id']!); // Lấy ID từ URL
+                return InventoryDetailScreen(
+                  receiptId: id,
+                );
+              },
+              routes: [
+                GoRoute(
+                  path: 'edit',
+                  builder: (context, state) {
+                    final id =
+                    int.parse(state.pathParameters['id']!); // Lấy ID từ URL
+                    final InventoryController controller = InventoryController();
+                    final InventoryCheckReceipt? receipt =
+                    controller.getReceiptById(id); // Lấy dữ liệu
+                    return UpdateInventoryScreen(
+                      existingReceipt: receipt,
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
 
+        /// export cancellation
+        GoRoute(
+          path: '/export_cancellation',
+          builder: (context, state) => const ExportCancellationScreen(),
+          routes: [
+            GoRoute(
+              path: 'filter',
+              builder: (context, state) => const FilterExportCancellationScreen(),
+            ),
+            GoRoute(
+              path: 'add',
+              builder: (context, state) => const UpdateExportCancellationScreen(),
+            ),
+            GoRoute(
+              path: ':id',
+              builder: (context, state) {
+                final id = int.parse(state.pathParameters['id']!); // Lấy ID từ URL
+
+                return ExportCancellationDetailScreen(
+                  receiptId: id,
+                );
+              },
+              routes: [
+                GoRoute(
+                  path: 'edit',
+                  builder: (context, state) {
+                    final id =
+                    int.parse(state.pathParameters['id']!); // Lấy ID từ URL
+                    final ExportCancellationController controller =
+                    ExportCancellationController();
+
+                    final ExportCancellationReceipt? existingReceipt =
+                    controller.getReceiptById(id); // Lấy dữ liệu
+                    return UpdateExportCancellationScreen(
+                      existingReceipt: existingReceipt,
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
         /// supplier
         GoRoute(
           path: '/suppliers',
@@ -189,7 +281,7 @@ class MyApp extends StatelessWidget {
               path: ':id',
               builder: (context, state) {
                 List<dynamic> extraList = (state.extra as List);
-                Supplier supplier = extraList.elementAt(1);
+                Supplier supplier = Supplier.fromJson(extraList.elementAt(1));
                 final String key = extraList.elementAt(0);
                 return SupplierDetailScreen(id: key, supplier: supplier);
               },

@@ -179,7 +179,7 @@ class _ProductScreenState extends State<ProductScreen> {
           ProductCard(
             product: item,
             onTap: (id) {
-              context.push('/products/${item.id}', extra: [item.id, item]);
+              context.push('/products/${item.id}', extra: [item.id, item.toJSON()]);
             },
           ),
       ],

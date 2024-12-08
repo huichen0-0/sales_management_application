@@ -144,8 +144,6 @@ class _SearchBarScreenState extends State<SearchBarScreen> {
                   final item = _searchingController.searchResults[index];
                   //lấy id
                   final itemId = item['id'].toString();
-                  //in thử
-                  print(item);
                   //hiên thị ra
                   return ListTile(
                     //nội dung của thuộc tính đang tìm
@@ -155,7 +153,7 @@ class _SearchBarScreenState extends State<SearchBarScreen> {
                     // Xử lý khi chọn kết quả tìm kiếm
                     onTap: () {
                       // đẩy đến trang xem chi tiết
-                      context.push('/${widget.dataType}/$itemId');
+                      context.push('/${widget.dataType}/$itemId', extra: [itemId, item]);
                       print(
                           'Selected: ${item[_searchingController.selectedSearchKey]}');
                     },

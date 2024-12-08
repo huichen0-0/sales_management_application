@@ -29,7 +29,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
   @override
   Widget build(BuildContext context) {
-
+    print('ở đây này');
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(

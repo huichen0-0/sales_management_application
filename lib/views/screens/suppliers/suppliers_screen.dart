@@ -203,7 +203,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
             SupplierCard(
               supplier: entry,
               onTap: (id) {
-                context.push('/suppliers/${entry.id}', extra: [entry.id, entry]);
+                context.push('/suppliers/${entry.id}', extra: [entry.id, entry.toJson()]);
               },
             )
       ],

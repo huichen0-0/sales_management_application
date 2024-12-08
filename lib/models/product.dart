@@ -6,15 +6,17 @@ class Product {
   String? imageUrl=''; // URL hình ảnh sản phẩm
   num capitalPrice=0; // Giá vốn
   num sellingPrice=0; // Giá bán
-  num quantity; // Tồn kho
-  num minLimit; // Tồn ít nhất
-  num maxLimit; // Tồn nhiều nhất
+  num quantity=0; // Tồn kho
+  num minLimit=0; // Tồn ít nhất
+  num maxLimit=0; // Tồn nhiều nhất
   String? unit=''; // Đơn vị
   String? description=''; // Mô tả sản phẩm
-  String notes; // Ghi chú
-  bool isActive; // Trạng thái hoạt động
+  String notes=''; // Ghi chú
+  bool isActive = true; // Trạng thái hoạt động
   DateTime? createdAt; // Ngày tạo sản phẩm
   String? uid='';
+
+  Product.empty();
 
   // Constructor
   Product({
