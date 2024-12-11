@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class FilterExportCancellationScreen extends StatefulWidget {
-  const FilterExportCancellationScreen({super.key});
+class FilterImportScreen extends StatefulWidget {
+  const FilterImportScreen({super.key});
 
   @override
-  State<FilterExportCancellationScreen> createState() => _FilterExportCancellationScreenState();
+  State<FilterImportScreen> createState() => _FilterImportScreenState();
 }
 
-class _FilterExportCancellationScreenState extends State<FilterExportCancellationScreen> {
+class _FilterImportScreenState extends State<FilterImportScreen> {
   bool _isCompleted = true;
   bool _isTemp = true;
   bool _isCancelled = false;
@@ -69,12 +69,12 @@ class _FilterExportCancellationScreenState extends State<FilterExportCancellatio
                   TextButton(
                     onPressed: _resetFilters,
                     child:
-                    const Text('Đặt lại', style: TextStyle(fontSize: 16)),
+                        const Text('Đặt lại', style: TextStyle(fontSize: 16)),
                   ),
                   ElevatedButton(
                     onPressed: _applyFilters,
                     child:
-                    const Text('Áp dụng', style: TextStyle(fontSize: 16)),
+                        const Text('Áp dụng', style: TextStyle(fontSize: 16)),
                   ),
                 ],
               ),
@@ -97,6 +97,12 @@ class _FilterExportCancellationScreenState extends State<FilterExportCancellatio
 
   void _applyFilters() {
     // TODO: áp dụng bộ lọc
-    context.pop();
+    final Map<String, dynamic> filters = {
+      'status' : {
+        0 : _isCancelled,
+        1 : _isTemp,
+        3 : _isCompleted,
+      }};
+    context.pop(filters);
   }
 }

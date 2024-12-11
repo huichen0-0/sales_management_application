@@ -12,18 +12,25 @@ class ExportCancellationController {
   /// DỮ LIỆU ///
   List<ExportCancellationReceipt> data = [
     ExportCancellationReceipt(
-      id: 1,
+      id: '1',
       products: [
         ExportCancellationReceiptDetail(
+          productId: '2',
           product: Product(
-            id: 1,
-            name: 'Giò heo',
+            id: "2",
+            name: 'Giò hổ Châu Phi',
+            barcode: '9890892083',
             unit: 'Kg',
-            capitalPrice: 100000,
-            sellingPrice: 110000,
-            quantity: 10,
-            isActived: true,
+            capitalPrice: 200000,
+            sellingPrice: 500000,
+            quantity: 200,
+            minLimit: 10,
+            maxLimit: 10000,
+            description: 'Mô tả',
+            notes: 'Ghi chú',
+            isActive: true,
             imageUrl: 'image',
+            createdAt: DateTime.now(),
           ),
           cancelledQuantity: 9,
         ),
@@ -32,79 +39,93 @@ class ExportCancellationController {
       createdAt: DateTime.now(),
     ),
     ExportCancellationReceipt(
-      id: 2,
+      id: '2',
       products: [
         ExportCancellationReceiptDetail(
+          productId: '4',
           product: Product(
-            id: 2,
-            name: 'Giò hổ Châu Phi',
+            id: "4",
+            name: 'Giò hổ Châu Phi 4',
+            barcode: '9890892083',
             unit: 'Kg',
             capitalPrice: 200000,
-            sellingPrice: 220000,
-            quantity: 20,
-            isActived: true,
+            sellingPrice: 500000,
+            quantity: 200,
+            minLimit: 10,
+            maxLimit: 10000,
+            description: 'Mô tả',
+            notes: 'Ghi chú',
+            isActive: true,
             imageUrl: 'image',
+            createdAt: DateTime.now(),
           ),
           cancelledQuantity: 2,
         ),
         ExportCancellationReceiptDetail(
           product: Product(
-            id: 3,
-            name: 'Giò gà Ấn Độ',
+            id: "2",
+            name: 'Giò hổ Châu Phi',
+            barcode: '9890892083',
             unit: 'Kg',
-            capitalPrice: 300000,
-            sellingPrice: 330000,
-            quantity: 30,
-            isActived: true,
+            capitalPrice: 200000,
+            sellingPrice: 500000,
+            quantity: 200,
+            minLimit: 10,
+            maxLimit: 10000,
+            description: 'Mô tả',
+            notes: 'Ghi chú',
+            isActive: true,
             imageUrl: 'image',
+            createdAt: DateTime.now(),
           ),
-          cancelledQuantity: 20,
+          cancelledQuantity: 20, productId: '2',
         ),
       ],
       status: 3,
       createdAt: DateTime.now().subtract(const Duration(days: 1)),
     ),
     ExportCancellationReceipt(
-      id: 3,
+      id: '3',
       products: [
         ExportCancellationReceiptDetail(
+          productId: '3',
           product: Product(
-            id: 2,
-            name: 'Giò hổ Châu Phi',
+            id: "3",
+            name: 'Giò hổ Châu Phi 3',
+            barcode: '9890892083',
             unit: 'Kg',
             capitalPrice: 200000,
-            sellingPrice: 220000,
-            quantity: 20,
-            isActived: true,
+            sellingPrice: 500000,
+            quantity: 200,
+            minLimit: 10,
+            maxLimit: 10000,
+            description: 'Mô tả',
+            notes: 'Ghi chú',
+            isActive: true,
             imageUrl: 'image',
+            createdAt: DateTime.now(),
           ),
           cancelledQuantity: 2,
         ),
         ExportCancellationReceiptDetail(
+          productId: '2',
           product: Product(
-            id: 3,
-            name: 'Giò gà Ấn Độ',
+            id: "2",
+            name: 'Giò hổ Châu Phi',
+            barcode: '9890892083',
             unit: 'Kg',
-            capitalPrice: 300000,
-            sellingPrice: 330000,
-            quantity: 30,
-            isActived: true,
+            capitalPrice: 200000,
+            sellingPrice: 500000,
+            quantity: 200,
+            minLimit: 10,
+            maxLimit: 10000,
+            description: 'Mô tả',
+            notes: 'Ghi chú',
+            isActive: true,
             imageUrl: 'image',
+            createdAt: DateTime.now(),
           ),
           cancelledQuantity: 20,
-        ),
-        ExportCancellationReceiptDetail(
-          product: Product(
-            id: 4,
-            name: 'Giò bò Ấn Độ',
-            unit: 'Kg',
-            capitalPrice: 500000,
-            sellingPrice: 600000,
-            quantity: 200,
-            isActived: true,
-            imageUrl: 'image',
-          ),
-          cancelledQuantity: 10,
         ),
       ],
       status: 0,
@@ -125,7 +146,7 @@ class ExportCancellationController {
   }) {
     final index = data.indexWhere((receipt) => receipt.id == updatedItem.id);
     if (index == -1) {
-      updatedItem.id = data.length + 1; // Giả định ID tự tăng
+      updatedItem.id = (data.length + 1).toString(); // Giả định ID tự tăng
       data.add(updatedItem);
     } else {
       data[index] = updatedItem;
@@ -137,28 +158,28 @@ class ExportCancellationController {
   }
 
   // Hàm lấy phiếu theo ID future
-  Future<ExportCancellationReceipt?> getReceiptByIdAsync(int id) async {
+  Future<ExportCancellationReceipt?> getReceiptByIdAsync(String id) async {
     return data.firstWhere(
       (receipt) => receipt.id == id,
-      orElse: () => ExportCancellationReceipt(id: -1),
+      orElse: () => ExportCancellationReceipt.empty(),
     );
   }
   // Hàm lấy phiếu theo ID
-  ExportCancellationReceipt? getReceiptById(int id) {
+  ExportCancellationReceipt? getReceiptById(String id) {
     return data.firstWhere(
       (receipt) => receipt.id == id,
-      orElse: () => ExportCancellationReceipt(id: -1),
+      orElse: () => ExportCancellationReceipt.empty(),
     );
   }
 
   // Hàm xóa phiếu
-  void deleteReceipt(int id) {
+  void deleteReceipt(String id) {
     data.removeWhere((receipt) => receipt.id == id);
   }
 
   // lấy dữ liệu dạng MAP
   List<Map<String, dynamic>> convertToJSON(List<ExportCancellationReceipt>? data) => [
-        for (var receipt in data ?? <ExportCancellationReceipt>[]) receipt.toJSON(),
+        for (var receipt in data ?? <ExportCancellationReceipt>[]) receipt.toJSON1(),
       ];
 
   // chuyển sang danh sách object
@@ -170,18 +191,15 @@ class ExportCancellationController {
 
   /// XỬ LÝ CHI TIẾT PHIẾU ///
   // kiểm tra hàng hóa đã trong phiếu kiểm chưa
-  bool existDetail(ExportCancellationReceipt receipt, int productId) {
-    return receipt.products.any((item) => item.product.id == productId);
+  bool existDetail(ExportCancellationReceipt receipt, String productId) {
+    return receipt.products.any((item) => item.productId == productId);
   }
   /// Hàm lấy chi tiết phiếu trong phiếu hủy xuất
   ExportCancellationReceiptDetail getDetailByProductId(
-      ExportCancellationReceipt receipt, int productId) {
+      ExportCancellationReceipt receipt, String productId) {
     return receipt.products.firstWhere(
-      (detail) => detail.product.id == productId,
-      orElse: () => ExportCancellationReceiptDetail(
-        product: Product(id: -1),
-        cancelledQuantity: 0,
-      ),
+      (detail) => detail.productId == productId,
+      orElse: () => ExportCancellationReceiptDetail.empty(),
     );
   }
 
@@ -189,7 +207,7 @@ class ExportCancellationController {
   /// Hàm cập nhật chi tiết phiếu trong phiếu hủy xuất
   void updateDetail(ExportCancellationReceipt receipt, ExportCancellationReceiptDetail detail) {
     final detailIndex = receipt.products.indexWhere(
-      (item) => item.product.id == detail.product.id,
+      (item) => item.productId == detail.productId,
     );
 
     if (detailIndex != -1) {

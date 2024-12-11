@@ -84,7 +84,7 @@ class WidgetScreen extends StatelessWidget {
                 'icon': Icons.input,
                 'label': 'Nhập hàng',
                 'action': () {
-                  context.go('/home');
+                  context.push('/import');
                 },
               },
               {

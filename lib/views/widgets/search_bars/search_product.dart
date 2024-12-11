@@ -28,7 +28,7 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
 //fake dữ liệu danh sách sản phẩm //sau lấy từ db rồi chuyển sang dạng map
   List<Map<String, dynamic>> products = [
     {
-      'id': 1,
+      'id': "1",
       'name': 'Giò heo',
       'sellingPrice': 2000000,
       'capitalPrice': 1000000,
@@ -39,11 +39,11 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       'barcode': '1314124212',
       'description': '100% thịt heo rừng',
       'notes': 'hàng vip',
-      'isActived': true,
+      'isActive': true,
       'createdAt': DateTime.now().subtract(const Duration(seconds: 5)),
     },
     {
-      'id': 2,
+      'id': '2',
       'name': 'Giò heo X',
       'sellingPrice': 2010000,
       'capitalPrice': 1000000,
@@ -54,7 +54,7 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       'barcode': '1314124212',
       'description': '100% thịt heo rừng',
       'notes': 'hàng vip',
-      'isActived': true,
+      'isActive': true,
       'createdAt': DateTime.now().subtract(const Duration(seconds: 15)),
     },
     {
@@ -69,11 +69,11 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       'barcode': '1314124212',
       'description': '100% thịt heo rừng',
       'notes': 'hàng vip',
-      'isActived': true,
+      'isActive': true,
       'createdAt': DateTime.now().subtract(const Duration(seconds: 25)),
     },
     {
-      'id': 4,
+      'id': '4',
       'name': 'Giò heo Z',
       'sellingPrice': 201000,
       'capitalPrice': 102000,
@@ -84,11 +84,11 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       'barcode': '1314124212',
       'description': '100% thịt heo rừng',
       'notes': 'hàng vip',
-      'isActived': true,
+      'isActive': true,
       'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
     },
     {
-      'id': 5,
+      'id': '5',
       'name': 'Giò hổ',
       'sellingPrice': 201000,
       'capitalPrice': 102000,
@@ -99,11 +99,11 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       'barcode': '1314124212',
       'description': '100% thịt heo rừng',
       'notes': 'hàng vip',
-      'isActived': true,
+      'isActive': true,
       'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
     },
     {
-      'id': 6,
+      'id': '6',
       'name': 'Giò hổ VN',
       'sellingPrice': 201000,
       'capitalPrice': 102000,
@@ -114,11 +114,11 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       'barcode': '1314124212',
       'description': '100% thịt heo rừng',
       'notes': 'hàng vip',
-      'isActived': true,
+      'isActive': true,
       'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
     },
     {
-      'id': 7,
+      'id': '7',
       'name': 'Giò hổ US',
       'sellingPrice': 201000,
       'capitalPrice': 102000,
@@ -129,11 +129,11 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       'barcode': '1314124212',
       'description': '100% thịt heo rừng',
       'notes': 'hàng vip',
-      'isActived': true,
+      'isActive': true,
       'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
     },
     {
-      'id': 8,
+      'id': '8',
       'name': 'Giò bò UK',
       'sellingPrice': 201000,
       'capitalPrice': 102000,
@@ -144,11 +144,11 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       'barcode': '1314124212',
       'description': '100% thịt heo rừng',
       'notes': 'hàng vip',
-      'isActived': true,
+      'isActive': true,
       'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
     },
     {
-      'id': 9,
+      'id': '9',
       'name': 'Giò bò Ấn Độ',
       'sellingPrice': 201000,
       'capitalPrice': 102000,
@@ -159,11 +159,11 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       'barcode': '1314124212',
       'description': '100% thịt heo rừng',
       'notes': 'hàng vip',
-      'isActived': true,
+      'isActive': true,
       'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
     },
     {
-      'id': 10,
+      'id': '10',
       'name': 'Giò gà China',
       'sellingPrice': 201000,
       'capitalPrice': 102000,
@@ -174,11 +174,11 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       'barcode': '1314124212',
       'description': '100% thịt heo rừng',
       'notes': 'hàng vip',
-      'isActived': true,
+      'isActive': true,
       'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
     },
     {
-      'id': 11,
+      'id': '11',
       'name': 'Chả lụa',
       'sellingPrice': 201000,
       'capitalPrice': 102000,
@@ -189,7 +189,7 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       'barcode': '1314124212',
       'description': '100% thịt heo rừng',
       'notes': 'hàng vip',
-      'isActived': true,
+      'isActive': true,
       'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
     },
   ];
@@ -282,36 +282,11 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
                       // Số lượng kết quả tìm kiếm
                       itemCount: _searchingController.searchResults.length,
                       itemBuilder: (context, index) {
-
-                        // Lấy từng đối tượng trong searchResults
-                        int id =
-                            _searchingController.searchResults[index]['id'];
-                        String name =
-                            _searchingController.searchResults[index]['name'];
-                        num quantity = _searchingController.searchResults[index]
-                            ['quantity'];
-                        num sellingPrice = _searchingController
-                            .searchResults[index]['sellingPrice'];
-                        num capitalPrice = _searchingController
-                            .searchResults[index]['capitalPrice'];
-                        String unit =
-                            _searchingController.searchResults[index]['unit'];
-                        num minLimit = _searchingController.searchResults[index]['minLimit'];
-                        num maxLimit = _searchingController.searchResults[index]['maxLimit'];
-                        Product product = Product(
-                            id: id,
-                            quantity: quantity,
-                            name: name,
-                            sellingPrice: sellingPrice,
-                            capitalPrice: capitalPrice,
-                            unit: unit,
-                          minLimit: minLimit,
-                          maxLimit: maxLimit,
-                        );
-
+                        //TODO: đã rút gọn
+                        Product product = Product.fromJSON(_searchingController.searchResults[index]);
                         return ListTile(
                           // Hiển thị tên sản phẩm
-                          title: Text(product.name!),
+                          title: Text(product.name),
                           leading: const Icon(
                             Icons.image,
                             size: 30,

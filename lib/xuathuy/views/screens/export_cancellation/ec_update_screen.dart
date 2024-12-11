@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sales_management_application/views/helper/helper.dart';
-import 'package:sales_management_application/views/widgets/search_bars/search_product.dart';
-import 'package:sales_management_application/xuathuy/controllers/ec_controller.dart';
-import 'package:sales_management_application/xuathuy/models/ec_receipt.dart';
-import 'package:sales_management_application/xuathuy/models/ec_receipt_detail.dart';
+import '/views/helper/helper.dart';
+import '/views/widgets/search_bars/search_product.dart';
+import '/xuathuy/controllers/ec_controller.dart';
+import '/xuathuy/models/ec_receipt.dart';
+import '/xuathuy/models/ec_receipt_detail.dart';
+
 class UpdateExportCancellationScreen extends StatefulWidget {
   final ExportCancellationReceipt?
       existingReceipt; // Tham số cho phiếu xuất hủy hiện có
@@ -20,7 +21,7 @@ class UpdateExportCancellationScreen extends StatefulWidget {
 class _UpdateExportCancellationScreenState
     extends State<UpdateExportCancellationScreen> {
   //phiếu xuất hủy
-  ExportCancellationReceipt receipt = ExportCancellationReceipt();
+  ExportCancellationReceipt receipt = ExportCancellationReceipt.empty();
 
   //xuất hủy controller
   final ExportCancellationController _controller =
@@ -57,7 +58,9 @@ class _UpdateExportCancellationScreenState
             } else {
               //chưa sẽ tạo hàng kiểm mới
               final detail = ExportCancellationReceiptDetail(
-                  product: product, cancelledQuantity: 1);
+                  productId: product.id!,
+                  product: product,
+                  cancelledQuantity: 1);
               _showReceiptDetailDialog(detail, true);
             }
           },
@@ -66,32 +69,37 @@ class _UpdateExportCancellationScreenState
               : _buildEmptyView(),
         ),
       ),
-      bottomNavigationBar: receipt.products.isNotEmpty ? Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                receipt.status = 1;
-                _controller.updateReceipt(updatedItem: receipt);
-                context.pop(true);
-              }, // TODO: xử lý nút
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-              child: const Text('Lưu tạm'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                receipt.status = 3;
-                _controller.updateReceipt(updatedItem: receipt);
-                context.pop(true);
-              }, // TODO: xử lý nút
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-              child: const Text('Hoàn thành'),
-            ),
-          ],
-        ),
-      ) : null,
+      bottomNavigationBar: receipt.products.isNotEmpty
+          ? Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      receipt.status = 1;
+                      _controller.updateReceipt(updatedItem: receipt);
+                      context.pop(true);
+                    }, // TODO: xử lý nút
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                    child: const Text('Lưu tạm'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      receipt.status = 3;
+                      _controller.updateReceipt(updatedItem: receipt);
+                      context.pop(true);
+                    },
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                    child: const Text('Hoàn thành'),
+                  ),
+                ],
+              ),
+            )
+          : null,
     );
   }
 
@@ -180,7 +188,7 @@ class _UpdateExportCancellationScreenState
   DataRow _buildDataRow(ExportCancellationReceiptDetail item) {
     return DataRow(
       cells: [
-        DataCell(Text(item.product.name!)),
+        DataCell(Text(item.product!.name)),
         DataCell(Text(Helper.formatCurrency(item.cancelledQuantity))),
         DataCell(Text(Helper.formatCurrency(item.cancelledValue))),
       ],
@@ -201,42 +209,51 @@ class _UpdateExportCancellationScreenState
       text: detail.cancelledQuantity.toString(),
     );
 
-    // Hàm cập nhật số lượng đã kiểm
-    void updateCancelledQuantity(num newValue) {
-      setState(() {
-        detail.cancelledQuantity = newValue;
-        quantityController.text = newValue.toString();
-      });
-    }
-
     // Hiển thị dialog
     showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.black87,
-        // Nền tối cho dialog
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        contentPadding: const EdgeInsets.all(16),
-        title: _buildDialogTitle(detail, isNew),
-        // Tiêu đề dialog
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Hiển thị thông tin về hàng hóa
-            _buildProductInfoRow('Tồn kho', detail.product.quantity),
-            _buildProductInfoRow('Giá vốn', detail.product.capitalPrice),
-            _buildProductInfoRow('Giá trị hủy', detail.cancelledValue),
-            const SizedBox(height: 20),
-            // Thành phần điều chỉnh số lượng đã kiểm
-            _buildQuantityAdjuster(
-                quantityController, detail, updateCancelledQuantity),
-            const SizedBox(height: 20),
-            // Nút hành động (Thoát, Xong)
-            _buildDialogActions(context, detail, quantityController),
-          ],
-        ),
-      ),
-    );
+        context: context,
+        builder: (context) => StatefulBuilder(
+              builder: (context, setState) {
+                num totalCancelledValue =
+                    detail.cancelledQuantity * detail.product!.capitalPrice;
+                // Hàm cập nhật số lượng đã kiểm
+                void updateCancelledQuantity(num newValue) {
+                  setState(() {
+                    detail.cancelledQuantity = newValue;
+                    quantityController.text = newValue.toString();
+                    totalCancelledValue =
+                        detail.cancelledQuantity * detail.product!.capitalPrice;
+                  });
+                }
+
+                return AlertDialog(
+                  backgroundColor: Colors.black87,
+                  // Nền tối cho dialog
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                  contentPadding: const EdgeInsets.all(16),
+                  title: _buildDialogTitle(detail, isNew),
+                  // Tiêu đề dialog
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Hiển thị thông tin về hàng hóa
+                      _buildProductInfoRow('Tồn kho', detail.product!.quantity),
+                      _buildProductInfoRow(
+                          'Giá vốn', detail.product!.capitalPrice),
+                      _buildProductInfoRow('Giá trị hủy', totalCancelledValue),
+                      const SizedBox(height: 20),
+                      // Thành phần điều chỉnh số lượng đã kiểm
+                      _buildQuantityAdjuster(
+                          quantityController, detail, updateCancelledQuantity),
+                      const SizedBox(height: 20),
+                      // Nút hành động (Thoát, Xong)
+                      _buildDialogActions(context, detail, quantityController),
+                    ],
+                  ),
+                );
+              },
+            ));
   }
 
 // Tiêu đề của dialog, bao gồm tên hàng hóa và nút xóa
@@ -246,7 +263,7 @@ class _UpdateExportCancellationScreenState
         CircleAvatar(
           backgroundColor: Colors.grey,
           child: Text(
-            detail.product.name![0].toUpperCase(),
+            detail.product!.name[0].toUpperCase(),
             // Chữ cái đầu tên sản phẩm
             style: const TextStyle(color: Colors.white),
           ),
@@ -255,7 +272,7 @@ class _UpdateExportCancellationScreenState
         // Tên sản phẩm
         Expanded(
           child: Text(
-            detail.product.name!,
+            detail.product!.name,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -300,7 +317,7 @@ class _UpdateExportCancellationScreenState
       TextEditingController controller,
       ExportCancellationReceiptDetail detail,
       void Function(num) updateCancelledQuantity) {
-    final stockQuantity = detail.product.quantity!;
+    final stockQuantity = detail.product!.quantity;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -349,6 +366,8 @@ class _UpdateExportCancellationScreenState
                           parsedValue.toString(); // Cập nhật lại UI
                     }
                     updateCancelledQuantity(parsedValue);
+                  } else{
+                    updateCancelledQuantity(1); //TODO: min = 1
                   }
                 },
               ),
@@ -369,7 +388,7 @@ class _UpdateExportCancellationScreenState
     );
   }
 
-// Hành động phía dưới dialog (Thoát, Xong)
+  // Hành động phía dưới dialog (Thoát, Xong)
   Widget _buildDialogActions(
     BuildContext context,
     ExportCancellationReceiptDetail detail,
@@ -397,7 +416,6 @@ class _UpdateExportCancellationScreenState
                   num.tryParse(controller.text) ?? 1; // Cập nhật số lượng kiểm
               // Cập nhật detail trong receipt
               _controller.updateDetail(receipt, detail);
-
             });
             Navigator.of(context).pop(); // Đóng dialog
           },

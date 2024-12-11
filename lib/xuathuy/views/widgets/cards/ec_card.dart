@@ -47,7 +47,7 @@ class ExportCancellationReceiptCard extends StatelessWidget {
         ),
         subtitle: Text(
           products
-              .map((item) => '${item.product.name!} x${item.cancelledQuantity}')
+              .map((item) => '${item.product!.name!} x${item.cancelledQuantity}')
               .join(', '),
           style: const TextStyle(
             fontSize: 10,

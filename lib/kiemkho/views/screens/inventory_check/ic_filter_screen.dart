@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sales_management_application/views/widgets/forms/ratio_field.dart';
 
 class FilterInventoryScreen extends StatefulWidget {
   const FilterInventoryScreen({super.key});
@@ -10,33 +9,56 @@ class FilterInventoryScreen extends StatefulWidget {
 }
 
 class _FilterInventoryScreenState extends State<FilterInventoryScreen> {
+  bool _isCompleted = true;
+  bool _isTemp = true;
+  bool _isCancelled = false;
   late String selectedStatus;
-
-  // Sử dụng GlobalKey để tham chiếu đến trạng thái của RatioField
-  final GlobalKey<RatioFieldState> _ratioFieldKey = GlobalKey<RatioFieldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bộ lọc phiếu kiểm kho'),
+        title: const Text('Bộ lọc phiếu nhập hàng'),
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              RatioField(
-                key: _ratioFieldKey, // Gán key cho RatioField
-                title: 'Trạng thái phiếu',
-                options: const [
-                  'Đã cân bằng',
-                  'Phiếu tạm',
-                  'Đã hủy',
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Trạng thái phiếu',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  CheckboxListTile(
+                    title: const Text('Đã cân bằng'),
+                    value: _isCompleted,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _isCompleted = value ?? false;
+                      });
+                    },
+                  ),
+                  CheckboxListTile(
+                    title: const Text('Phiếu tạm'),
+                    value: _isTemp,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _isTemp = value ?? false;
+                      });
+                    },
+                  ),
+                  CheckboxListTile(
+                    title: const Text('Đã hủy'),
+                    value: _isCancelled,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _isCancelled = value ?? false;
+                      });
+                    },
+                  ),
                 ],
-                onChanged: (value) {
-                  selectedStatus = value;
-                },
               ),
               const SizedBox(height: 20),
 
@@ -46,11 +68,13 @@ class _FilterInventoryScreenState extends State<FilterInventoryScreen> {
                 children: [
                   TextButton(
                     onPressed: _resetFilters,
-                    child: const Text('Đặt lại', style: TextStyle(fontSize: 16)),
+                    child:
+                    const Text('Đặt lại', style: TextStyle(fontSize: 16)),
                   ),
                   ElevatedButton(
                     onPressed: _applyFilters,
-                    child: const Text('Áp dụng', style: TextStyle(fontSize: 16)),
+                    child:
+                    const Text('Áp dụng', style: TextStyle(fontSize: 16)),
                   ),
                 ],
               ),
@@ -64,8 +88,10 @@ class _FilterInventoryScreenState extends State<FilterInventoryScreen> {
   // Hàm đặt lại bộ lọc
   void _resetFilters() {
     setState(() {
-      // Gọi hàm reset của RatioField để đặt lại trạng thái
-      _ratioFieldKey.currentState?.reset();
+      //đặt lại trạng thái
+      _isCompleted = true;
+      _isTemp = true;
+      _isCancelled = false;
     });
   }
 

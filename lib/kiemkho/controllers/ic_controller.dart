@@ -14,11 +14,20 @@ class InventoryController {
       products: [
         InventoryCheckReceiptDetail(
           product: Product(
-            id: 1,
-            name: 'Giò heo',
-            capitalPrice: 100000,
-            sellingPrice: 200000,
-            quantity: 100,
+            id: "2",
+            name: 'Giò hổ Châu Phi',
+            barcode: '9890892083',
+            unit: 'Kg',
+            capitalPrice: 200000,
+            sellingPrice: 500000,
+            quantity: 200,
+            minLimit: 10,
+            maxLimit: 10000,
+            description: 'Mô tả',
+            notes: 'Ghi chú',
+            isActive: true,
+            imageUrl: 'image',
+            createdAt: DateTime.now(),
           ),
           matchedQuantity: 99,
         ),
@@ -31,7 +40,7 @@ class InventoryController {
       products: [
         InventoryCheckReceiptDetail(
           product: Product(
-            id: 2,
+            id: "2",
             name: 'Giò hổ Châu Phi',
             barcode: '9890892083',
             unit: 'Kg',
@@ -42,7 +51,7 @@ class InventoryController {
             maxLimit: 10000,
             description: 'Mô tả',
             notes: 'Ghi chú',
-            isActived: true,
+            isActive: true,
             imageUrl: 'image',
             createdAt: DateTime.now(),
           ),
@@ -50,11 +59,20 @@ class InventoryController {
         ),
         InventoryCheckReceiptDetail(
           product: Product(
-            id: 3,
-            name: 'Giò gà Ấn Độ',
+            id: "2",
+            name: 'Giò hổ Châu Phi',
+            barcode: '9890892083',
+            unit: 'Kg',
             capitalPrice: 200000,
             sellingPrice: 500000,
             quantity: 200,
+            minLimit: 10,
+            maxLimit: 10000,
+            description: 'Mô tả',
+            notes: 'Ghi chú',
+            isActive: true,
+            imageUrl: 'image',
+            createdAt: DateTime.now(),
           ),
           matchedQuantity: 200,
         ),
@@ -122,16 +140,16 @@ class InventoryController {
 
   /// XỬ LÝ CHI TIẾT PHIẾU ///
   // kiểm tra hàng hóa đã trong phiếu kiểm chưa
-  bool existDetail(InventoryCheckReceipt receipt, int productId) {
+  bool existDetail(InventoryCheckReceipt receipt, String productId) {
     return receipt.products.any((item) => item.product.id == productId);
   }
   /// Hàm lấy chi tiết phiếu trong phiếu hủy xuất
   InventoryCheckReceiptDetail getDetailByProductId(
-      InventoryCheckReceipt receipt, int productId) {
+      InventoryCheckReceipt receipt, String productId) {
     return receipt.products.firstWhere(
           (detail) => detail.product.id == productId,
       orElse: () => InventoryCheckReceiptDetail(
-        product: Product(id: -1),
+        product: Product.empty(),
         matchedQuantity: 0,
       ),
     );

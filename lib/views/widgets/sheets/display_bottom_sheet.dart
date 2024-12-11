@@ -192,3 +192,56 @@ class SexBottomSheet extends StatelessWidget {
     );
   }
 }
+///bottom sheet của hiển thị khach hang theo ...
+//TODO: mới chỉ hiển thị, chưa áp dụng lên đối tượng
+class DisplayReceiptBottomSheet extends StatelessWidget {
+  final String selectedDisplay;
+  final Function(String) onSelectDisplay;
+
+  const DisplayReceiptBottomSheet(
+      {super.key,
+        required this.selectedDisplay,
+        required this.onSelectDisplay});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            title: const Text(AppDisplay.totalValue),
+            trailing: selectedDisplay == AppDisplay.totalValue
+                ? const Icon(Icons.check, color: Colors.blue)
+                : null,
+            onTap: () {
+              onSelectDisplay(AppDisplay.totalValue);
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: const Text(AppDisplay.totalPaid),
+            trailing: selectedDisplay == AppDisplay.totalPaid
+                ? const Icon(Icons.check, color: Colors.blue)
+                : null,
+            onTap: () {
+              onSelectDisplay(AppDisplay.totalPaid);
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: const Text(AppDisplay.totalDue),
+            trailing: selectedDisplay == AppDisplay.totalDue
+                ? const Icon(Icons.check, color: Colors.blue)
+                : null,
+            onTap: () {
+              onSelectDisplay(AppDisplay.totalDue);
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}

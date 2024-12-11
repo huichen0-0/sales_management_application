@@ -1,43 +1,51 @@
 class Product {
   // Thuộc tính của sản phẩm
-  int? id; // ID sản phẩm
-  String? name; // Tên sản phẩm
-  String? barcode; // Mã vạch
-  String? imageUrl; // URL hình ảnh sản phẩm
-  num? capitalPrice; // Giá vốn
-  num? sellingPrice; // Giá bán
-  num? quantity; // Tồn kho
-  num? minLimit; // Tồn ít nhất
-  num? maxLimit; // Tồn nhiều nhất
-  String? unit; // Đơn vị
-  String? description; // Mô tả sản phẩm
-  String? notes; // Ghi chú
-  bool? isActived; // Trạng thái hoạt động
+  String? id=''; // ID sản phẩm
+  String name=''; // Tên sản phẩm
+  String barcode=''; // Mã vạch
+  String? imageUrl=''; // URL hình ảnh sản phẩm
+  num capitalPrice=0; // Giá vốn
+  num sellingPrice=0; // Giá bán
+  num quantity=0; // Tồn kho
+  num minLimit=0; // Tồn ít nhất
+  num maxLimit=0; // Tồn nhiều nhất
+  String? unit=''; // Đơn vị
+  String? description=''; // Mô tả sản phẩm
+  String notes=''; // Ghi chú
+  bool isActive = true; // Trạng thái hoạt động
   DateTime? createdAt; // Ngày tạo sản phẩm
+  String? uid='';
+
+  Product.empty();
 
   // Constructor
   Product({
     this.id,
-     this.name,
-    this.barcode,
+    required this.name,
+    required this.barcode,
     this.imageUrl,
-    this.capitalPrice,
-     this.sellingPrice,
-     this.quantity,
-    this.minLimit,
-    this.maxLimit,
+    required this.capitalPrice,
+    required this.sellingPrice,
+    required this.quantity,
+    required this.minLimit,
+    required this.maxLimit,
     this.unit,
     this.description,
-    this.notes,
-    this.isActived = true,
+    required this.notes,
+    this.isActive = true,
     this.createdAt,
+    this.uid
   });
 
   // Kiểm tra xem sản phẩm có tồn kho dưới mức tối thiểu không
-  bool isBelowMinLimit() => quantity! < minLimit!;
+  bool isBelowMinLimit() {
+    return quantity < minLimit;
+  }
 
   // Kiểm tra xem sản phẩm có tồn kho vượt mức tối đa không
-  bool isAboveMaxLimit() => quantity! > maxLimit!;
+  bool isAboveMaxLimit() {
+    return quantity > maxLimit;
+  }
   // Hàm toJSON
   Map<String, dynamic> toJSON() {
     return {
@@ -53,26 +61,28 @@ class Product {
       'unit': unit,
       'description': description,
       'notes': notes,
-      'isActived': isActived,
-      'createdAt': createdAt, // Định dạng ngày tháng
+      'isActive': isActive,
+      'created_at': createdAt, // Định dạng ngày tháng
+      'uid': uid
     };
   }
   factory Product.fromJSON(Map<String, dynamic> json) {
     return Product(
-      id: json['id'],
-      name: json['name'],
-      barcode: json['barcode'],
-      imageUrl: json['imageUrl'],
-      capitalPrice: json['capitalPrice'],
-      sellingPrice: json['sellingPrice'],
-      quantity: json['quantity'],
-      minLimit: json['minLimit'],
-      maxLimit: json['maxLimit'],
-      unit: json['unit'],
-      description: json['description'],
-      notes: json['notes'],
-      isActived: json['isActived'],
-      createdAt: json['createdAt'],
+        id: json['id'],
+        name: json['name'],
+        barcode: json['barcode'],
+        imageUrl: json['imageUrl'],
+        capitalPrice: json['capitalPrice'],
+        sellingPrice: json['sellingPrice'],
+        quantity: json['quantity'],
+        minLimit: json['minLimit'],
+        maxLimit: json['maxLimit'],
+        unit: json['unit'],
+        description: json['description'],
+        notes: json['notes'],
+        isActive: json['isActive'],
+        createdAt: json['createdAt'],
+        uid: json['uid']
     );
   }
 }

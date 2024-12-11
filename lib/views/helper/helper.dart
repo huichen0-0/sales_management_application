@@ -28,4 +28,11 @@ class Helper{
     };
     return statusReceipts[status] ?? 'Không xác định';
   }
+
+  static const List<String> paymentMethod = [
+    'Tiền mặt',
+    'Thẻ tín dụng',
+    'Chuyển khoản'
+  ];
+
 }

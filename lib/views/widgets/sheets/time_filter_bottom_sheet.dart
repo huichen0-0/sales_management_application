@@ -49,7 +49,7 @@ class _TimeFilterBottomSheetState extends State<TimeFilterBottomSheet> {
                 : null, // Hiển thị dấu check nếu là mặc định
             onTap: () {
               // trả về null để xác định là lâý tất cả
-              widget.onOptionSelected(AppTime.allTime, null);
+              widget.onOptionSelected(AppTime.allTime, null, null);
               Navigator.pop(context);
             },
           ),
@@ -59,8 +59,12 @@ class _TimeFilterBottomSheetState extends State<TimeFilterBottomSheet> {
                 ? const Icon(Icons.check, color: Colors.blue)
                 : null, // Hiển thị dấu check nếu là mặc định
             onTap: () {
+              // Lấy thời gian hiện tại
               DateTime now = DateTime.now();
-              widget.onOptionSelected(AppTime.today, now);
+              // Tạo đối tượng DateTime cho đầu ngày hôm nay (00:00:00)
+              DateTime today = DateTime(now.year, now.month, now.day);
+
+              widget.onOptionSelected(AppTime.today, today, null);
               Navigator.pop(context);
             },
           ),
@@ -72,7 +76,10 @@ class _TimeFilterBottomSheetState extends State<TimeFilterBottomSheet> {
             onTap: () {
               DateTime yesterday =
                   DateTime.now().subtract(const Duration(days: 1));
-              widget.onOptionSelected(AppTime.yesterday, yesterday);
+              DateTime startDate = DateTime(yesterday.year, yesterday.month, yesterday.day);
+              // Tạo đối tượng DateTime cho cuối ngày hôm nay (23:59:59.999)
+              DateTime endDate = DateTime(yesterday.year, yesterday.month, yesterday.day, 23, 59, 59, 999);
+              widget.onOptionSelected(AppTime.yesterday, startDate, endDate);
               Navigator.pop(context);
             },
           ),
@@ -82,9 +89,9 @@ class _TimeFilterBottomSheetState extends State<TimeFilterBottomSheet> {
                 ? const Icon(Icons.check, color: Colors.blue)
                 : null, // Hiển thị dấu check nếu là mặc định
             onTap: () {
-              DateTime now = DateTime.now();
-              DateTime sevenDaysAgo = now.subtract(const Duration(days: 7));
-              widget.onOptionSelected(AppTime.last7Days, sevenDaysAgo, now);
+              DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
+              DateTime startDate = DateTime(sevenDaysAgo.year, sevenDaysAgo.month, sevenDaysAgo.day);
+              widget.onOptionSelected(AppTime.last7Days, startDate, null);
               Navigator.pop(context);
             },
           ),
@@ -96,7 +103,7 @@ class _TimeFilterBottomSheetState extends State<TimeFilterBottomSheet> {
             onTap: () {
               DateTime now = DateTime.now();
               DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
-              widget.onOptionSelected(AppTime.thisMonth, firstDayOfMonth, now);
+              widget.onOptionSelected(AppTime.thisMonth, firstDayOfMonth, null);
               Navigator.pop(context);
             },
           ),
@@ -187,6 +194,8 @@ class _TimeFilterBottomSheetState extends State<TimeFilterBottomSheet> {
                     child: ElevatedButton(
                       onPressed: () {
                         if (startDate != null && endDate != null) {
+                          DateTime now = DateTime.now();
+                          endDate = DateTime(endDate!.year, endDate!.month, endDate!.day, now.hour, now.minute, now.second);
                           widget.onOptionSelected(
                               '${_formatDate(startDate)} - ${_formatDate(endDate)}',
                               startDate,

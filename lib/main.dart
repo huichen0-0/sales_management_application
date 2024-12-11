@@ -1,42 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sales_management_application/kiemkho/controllers/ic_controller.dart';
-import 'package:sales_management_application/kiemkho/models/ic_receipt.dart';
-import 'package:sales_management_application/kiemkho/views/screens/inventory_check/ic_detail_screen.dart';
-import 'package:sales_management_application/kiemkho/views/screens/inventory_check/ic_filter_screen.dart';
-import 'package:sales_management_application/kiemkho/views/screens/inventory_check/ic_home_screen.dart';
-import 'package:sales_management_application/kiemkho/views/screens/inventory_check/ic_update_screen.dart';
-import 'package:sales_management_application/views/screens/authentication/forgot_password_screen.dart';
-import 'package:sales_management_application/views/screens/authentication/login_screen.dart';
-import 'package:sales_management_application/views/screens/authentication/register_screen.dart';
-import 'package:sales_management_application/views/screens/authentication/reset_password_screen.dart';
-import 'package:sales_management_application/views/screens/customers/add_customer_screen.dart';
-import 'package:sales_management_application/views/screens/customers/customer_detail_screen.dart';
-import 'package:sales_management_application/views/screens/customers/customers_screen.dart';
-import 'package:sales_management_application/views/screens/customers/edit_customer_screen.dart';
-import 'package:sales_management_application/views/screens/customers/filter_customer_screen.dart';
-import 'package:sales_management_application/views/screens/home/main_screen.dart';
-import 'package:sales_management_application/views/screens/home/overview_screen.dart';
-import 'package:sales_management_application/views/screens/home/widgets_screen.dart';
-import 'package:sales_management_application/views/screens/invoices/invoices_screen.dart';
-import 'package:sales_management_application/views/screens/orders/orders_screen.dart';
-import 'package:sales_management_application/views/screens/products/add_product_screen.dart';
-import 'package:sales_management_application/views/screens/products/edit_product_screen.dart';
-import 'package:sales_management_application/views/screens/products/filter_product_screen.dart';
-import 'package:sales_management_application/views/screens/products/product_detail_screen.dart';
-import 'package:sales_management_application/views/screens/products/products_screen.dart';
-import 'package:sales_management_application/views/screens/suppliers/add_supplier_screen.dart';
-import 'package:sales_management_application/views/screens/suppliers/edit_supplier_screen.dart';
-import 'package:sales_management_application/views/screens/suppliers/filter_supplier_screen.dart';
-import 'package:sales_management_application/views/screens/suppliers/supplier_detail_screen.dart';
-import 'package:sales_management_application/views/screens/suppliers/suppliers_screen.dart';
-import 'package:sales_management_application/views/screens/terms_and_conditions_screen.dart';
-import 'package:sales_management_application/xuathuy/controllers/ec_controller.dart';
-import 'package:sales_management_application/xuathuy/models/ec_receipt.dart';
-import 'package:sales_management_application/xuathuy/views/screens/export_cancellation/ec_detail_screen.dart';
-import 'package:sales_management_application/xuathuy/views/screens/export_cancellation/ec_filter_screen.dart';
-import 'package:sales_management_application/xuathuy/views/screens/export_cancellation/ec_home_screen.dart';
-import 'package:sales_management_application/xuathuy/views/screens/export_cancellation/ec_update_screen.dart';
+import 'package:sales_management_application/models/receipt.dart';
+import 'import/controllers/import_controller.dart';
+import 'import/models/import_receipt.dart';
+import 'import/views/screens/import_detail_screen.dart';
+import 'import/views/screens/import_filter_screen.dart';
+import 'import/views/screens/import_home_screen.dart';
+import 'import/views/screens/import_update_screen.dart';
+import 'kiemkho/controllers/ic_controller.dart';
+import 'kiemkho/models/ic_receipt.dart';
+import 'kiemkho/views/screens/inventory_check/ic_detail_screen.dart';
+import 'kiemkho/views/screens/inventory_check/ic_filter_screen.dart';
+import 'kiemkho/views/screens/inventory_check/ic_home_screen.dart';
+import 'kiemkho/views/screens/inventory_check/ic_update_screen.dart';
+import 'payment/views/payment_screen.dart';
+import 'views/screens/authentication/forgot_password_screen.dart';
+import 'views/screens/authentication/login_screen.dart';
+import 'views/screens/authentication/register_screen.dart';
+import 'views/screens/authentication/reset_password_screen.dart';
+import 'views/screens/customers/add_customer_screen.dart';
+import 'views/screens/customers/customer_detail_screen.dart';
+import 'views/screens/customers/customers_screen.dart';
+import 'views/screens/customers/edit_customer_screen.dart';
+import 'views/screens/customers/filter_customer_screen.dart';
+import 'views/screens/home/main_screen.dart';
+import 'views/screens/home/overview_screen.dart';
+import 'views/screens/home/widgets_screen.dart';
+import 'views/screens/invoices/invoices_screen.dart';
+import 'views/screens/orders/orders_screen.dart';
+import 'views/screens/products/add_product_screen.dart';
+import 'views/screens/products/edit_product_screen.dart';
+import 'views/screens/products/filter_product_screen.dart';
+import 'views/screens/products/product_detail_screen.dart';
+import 'views/screens/products/products_screen.dart';
+import 'views/screens/suppliers/add_supplier_screen.dart';
+import 'views/screens/suppliers/edit_supplier_screen.dart';
+import 'views/screens/suppliers/filter_supplier_screen.dart';
+import 'views/screens/suppliers/supplier_detail_screen.dart';
+import 'views/screens/suppliers/suppliers_screen.dart';
+import 'views/screens/terms_and_conditions_screen.dart';
+import 'views/widgets/search_bars/search_supplier.dart';
+import 'xuathuy/controllers/ec_controller.dart';
+import 'xuathuy/models/ec_receipt.dart';
+import 'xuathuy/views/screens/export_cancellation/ec_detail_screen.dart';
+import 'xuathuy/views/screens/export_cancellation/ec_filter_screen.dart';
+import 'xuathuy/views/screens/export_cancellation/ec_home_screen.dart';
+import 'xuathuy/views/screens/export_cancellation/ec_update_screen.dart';
 
 final _router = GoRouter(
   initialLocation: '/',
@@ -235,7 +244,7 @@ final _router = GoRouter(
         GoRoute(
           path: ':id',
           builder: (context, state) {
-            final id = int.parse(state.pathParameters['id']!); // Lấy ID từ URL
+            final id = state.pathParameters['id']!; // Lấy ID từ URL
 
             return ExportCancellationDetailScreen(
               receiptId: id,
@@ -245,8 +254,7 @@ final _router = GoRouter(
             GoRoute(
               path: 'edit',
               builder: (context, state) {
-                final id =
-                    int.parse(state.pathParameters['id']!); // Lấy ID từ URL
+                final id = state.pathParameters['id']!; // Lấy ID từ URL
                 final ExportCancellationController controller =
                     ExportCancellationController();
 
@@ -260,6 +268,67 @@ final _router = GoRouter(
           ],
         ),
       ],
+    ),
+
+    ///import
+    GoRoute(
+      path: '/import',
+      builder: (context, state) => const ImportScreen(),
+      routes: [
+        GoRoute(
+          path: 'filter',
+          builder: (context, state) => const FilterImportScreen(),
+        ),
+        GoRoute(
+          path: 'add',
+          builder: (context, state) => const UpdateImportScreen(),
+        ),
+        GoRoute(
+          path: ':id',
+          builder: (context, state) {
+            final id = state.pathParameters['id']!; // Lấy ID từ URL
+
+            return ImportDetailScreen(
+              receiptId: id,
+            );
+          },
+          routes: [
+            GoRoute(
+              path: 'edit',
+              builder: (context, state) {
+                final id = state.pathParameters['id']!; // Lấy ID từ URL
+                final ImportController controller = ImportController();
+
+                final ImportReceipt? existingReceipt =
+                    controller.getReceiptById(id); // Lấy dữ liệu
+                return UpdateImportScreen(
+                  existingReceipt: existingReceipt,
+                );
+              },
+            ),
+          ],
+        ),
+      ],
+    ),
+    GoRoute(
+      path: '/supplier-selection',
+      builder: (context, state) => SupplierSelectionSceen(
+        onSupplierTap: (supplier) {
+          context.pop(supplier); // Pop and return the selected supplier
+        },
+      ),
+    ),
+    GoRoute(
+      path: '/payment',
+      builder: (context, state) {
+        final receipt = state.extra as Receipt;
+        return PaymentScreen(
+          receipt: receipt,
+          onSubmit: (receipt) {
+            context.pop(receipt);
+          },
+        );
+      },
     ),
   ],
 );

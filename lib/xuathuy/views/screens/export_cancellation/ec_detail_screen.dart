@@ -6,7 +6,7 @@ import 'package:sales_management_application/xuathuy/models/ec_receipt.dart';
 import 'package:sales_management_application/xuathuy/models/ec_receipt_detail.dart';
 
 class ExportCancellationDetailScreen extends StatefulWidget {
-  final int receiptId;
+  final String receiptId;
 
   const ExportCancellationDetailScreen({super.key, required this.receiptId});
 
@@ -42,8 +42,8 @@ class _ExportCancellationDetailScreenState
 
         final receipt = snapshot.data!;
         final createdAt =
-            Helper.formatDateTime(receipt.createdAt ?? DateTime.now());
-        final status = Helper.getStatusReceipt(receipt.status!);
+            Helper.formatDateTime(receipt.createdAt);
+        final status = Helper.getStatusReceipt(receipt.status);
         final totalValue = Helper.formatCurrency(receipt.totalCancelledValue);
 
         return Scaffold(
@@ -133,9 +133,9 @@ class _ExportCancellationDetailScreenState
   DataRow _buildDataRow(ExportCancellationReceiptDetail detail) {
     return DataRow(
       cells: [
-        DataCell(Text(detail.product.name!)),
+        DataCell(Text(detail.product!.name)),
         DataCell(Text('${detail.cancelledQuantity}')),
-        DataCell(Text(Helper.formatCurrency(detail.product.capitalPrice!))),
+        DataCell(Text(Helper.formatCurrency(detail.product!.capitalPrice))),
         DataCell(Text(Helper.formatCurrency(detail.cancelledValue))),
       ],
     );
