@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sales_management_application/controllers/searching_controller.dart';
+import 'package:sales_management_application/search/searching_controller.dart';
 
 class SearchBarScreen extends StatefulWidget {
   final List<Map<String, String>>

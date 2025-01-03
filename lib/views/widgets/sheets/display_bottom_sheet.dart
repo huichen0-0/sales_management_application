@@ -21,18 +21,18 @@ class DisplaySupplierBottomSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
-            title: const Text(AppDisplay.totalPurchase),
+            title: const Text(AppString.totalPurchase),
             trailing: const Text('0'), //TODO: cần lấy giá trị từ db
             onTap: () {
-              onSelectDisplay(AppDisplay.totalPurchase);
+              onSelectDisplay(AppString.totalPurchase);
               Navigator.pop(context);
             },
           ),
           ListTile(
-            title: const Text(AppDisplay.totalRefund),
+            title: const Text(AppString.totalRefund),
             trailing: const Text('0'), //TODO: cần lấy giá trị từ db
             onTap: () {
-              onSelectDisplay(AppDisplay.totalRefund);
+              onSelectDisplay(AppString.totalRefund);
               Navigator.pop(context);
             },
           ),
@@ -48,15 +48,11 @@ class DisplaySupplierBottomSheet extends StatelessWidget {
 class DisplayCustomerBottomSheet extends StatelessWidget {
   final String selectedDisplay;
   final Function(String) onSelectDisplay;
-  final String totalAmountSell;
-  final String totalAmountReturn;
 
   const DisplayCustomerBottomSheet(
       {super.key,
         required this.selectedDisplay,
-        required this.onSelectDisplay,
-        required this.totalAmountSell,
-        required this.totalAmountReturn});
+        required this.onSelectDisplay});
 
   @override
   Widget build(BuildContext context) {
@@ -66,18 +62,18 @@ class DisplayCustomerBottomSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
-            title: const Text(AppDisplay.totalSale),
-            trailing: Text(totalAmountSell), //TODO: cần lấy giá trị từ db (DONE)
+            title: const Text(AppString.totalSale),
+            trailing: const Text('0'), //TODO: cần lấy giá trị từ db
             onTap: () {
-              onSelectDisplay(AppDisplay.totalSale);
+              onSelectDisplay(AppString.totalSale);
               Navigator.pop(context);
             },
           ),
           ListTile(
-            title: const Text(AppDisplay.totalRefund),
-            trailing: Text(totalAmountReturn), //TODO: cần lấy giá trị từ db (DONE)
+            title: const Text(AppString.totalRefund),
+            trailing: const Text('0'), //TODO: cần lấy giá trị từ db
             onTap: () {
-              onSelectDisplay(AppDisplay.totalRefund);
+              onSelectDisplay(AppString.totalRefund);
               Navigator.pop(context);
             },
           ),
@@ -112,22 +108,22 @@ class DisplayProductBottomSheet extends StatelessWidget {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           ListTile(
-            title: const Text(AppDisplay.sellingPrice),
-            trailing: selectedDisplay == AppDisplay.sellingPrice
+            title: const Text(AppString.sellingPrice),
+            trailing: selectedDisplay == AppString.sellingPrice
                 ? const Icon(Icons.check, color: Colors.blue)
                 : null,
             onTap: () {
-              onSelectDisplay(AppDisplay.sellingPrice);
+              onSelectDisplay(AppString.sellingPrice);
               Navigator.pop(context);
             },
           ),
           ListTile(
-            title: const Text(AppDisplay.capitalPrice),
-            trailing: selectedDisplay == AppDisplay.capitalPrice
+            title: const Text(AppString.capitalPrice),
+            trailing: selectedDisplay == AppString.capitalPrice
                 ? const Icon(Icons.check, color: Colors.blue)
                 : null,
             onTap: () {
-              onSelectDisplay(AppDisplay.capitalPrice);
+              onSelectDisplay(AppString.capitalPrice);
               Navigator.pop(context);
             },
           ),
@@ -181,13 +177,77 @@ class SexBottomSheet extends StatelessWidget {
               Navigator.pop(context);
             },
           ),
-          ListTile(
-            title: const Text('Khác'),
-            trailing: selectedSex == 'Khác'
+        ],
+      ),
+    );
+  }
+}
+///bottom sheet của hiển thị khach hang theo ...
+//TODO: mới chỉ hiển thị, chưa áp dụng lên đối tượng
+class DisplayReceiptBottomSheet extends StatelessWidget {
+  final String selectedDisplay;
+  final Function(String) onSelectDisplay;
+  final bool sale;
+
+  const DisplayReceiptBottomSheet(
+      {super.key,
+        required this.selectedDisplay,
+        required this.onSelectDisplay, required this.sale});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if(!sale) ListTile(
+            title: const Text(AppString.totalImportValue),
+            trailing: selectedDisplay == AppString.totalImportValue
                 ? const Icon(Icons.check, color: Colors.blue)
                 : null,
             onTap: () {
-              onSelectSex('Khác');
+              onSelectDisplay(AppString.totalImportValue);
+              Navigator.pop(context);
+            },
+          ),
+          if(sale) ListTile(
+            title: const Text(AppString.totalSaleValue),
+            trailing: selectedDisplay == AppString.totalSaleValue
+                ? const Icon(Icons.check, color: Colors.blue)
+                : null,
+            onTap: () {
+              onSelectDisplay(AppString.totalSaleValue);
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: const Text(AppString.totalPaid),
+            trailing: selectedDisplay == AppString.totalPaid
+                ? const Icon(Icons.check, color: Colors.blue)
+                : null,
+            onTap: () {
+              onSelectDisplay(AppString.totalPaid);
+              Navigator.pop(context);
+            },
+          ),
+          if(!sale) ListTile(
+            title: const Text(AppString.totalImportDue),
+            trailing: selectedDisplay == AppString.totalImportDue
+                ? const Icon(Icons.check, color: Colors.blue)
+                : null,
+            onTap: () {
+              onSelectDisplay(AppString.totalImportDue);
+              Navigator.pop(context);
+            },
+          ),
+          if(sale) ListTile(
+            title: const Text(AppString.totalSaleDue),
+            trailing: selectedDisplay == AppString.totalSaleDue
+                ? const Icon(Icons.check, color: Colors.blue)
+                : null,
+            onTap: () {
+              onSelectDisplay(AppString.totalSaleDue);
               Navigator.pop(context);
             },
           ),

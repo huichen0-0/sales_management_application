@@ -14,7 +14,7 @@ class RatioField extends StatefulWidget {
   });
 
   @override
-  RatioFieldState createState() => RatioFieldState(this.initialValue);
+  RatioFieldState createState() => RatioFieldState(initialValue);
 }
 
 class RatioFieldState extends State<RatioField> {

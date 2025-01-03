@@ -2,53 +2,94 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:sales_management_application/controllers/auth_controller.dart';
-import 'package:sales_management_application/models/Supplier.dart';
-import 'package:sales_management_application/services/filter/ProductFilter.dart';
-import 'package:sales_management_application/services/filter/SupplierFilter.dart';
-import 'package:sales_management_application/views/screens/authentication/forgot_password_screen.dart';
-import 'package:sales_management_application/views/screens/authentication/login_screen.dart';
-import 'package:sales_management_application/views/screens/authentication/register_screen.dart';
-import 'package:sales_management_application/views/screens/authentication/reset_password_screen.dart';
-import 'package:sales_management_application/views/screens/customers/add_customer_screen.dart';
-import 'package:sales_management_application/views/screens/customers/customer_detail_screen.dart';
-import 'package:sales_management_application/views/screens/customers/customers_screen.dart';
-import 'package:sales_management_application/views/screens/customers/edit_customer_screen.dart';
-import 'package:sales_management_application/views/screens/home/main_screen.dart';
-import 'package:sales_management_application/views/screens/home/overview_screen.dart';
-import 'package:sales_management_application/views/screens/home/widgets_screen.dart';
-import 'package:sales_management_application/views/screens/invoices/invoices_screen.dart';
-import 'package:sales_management_application/views/screens/orders/orders_screen.dart';
-import 'package:sales_management_application/views/screens/products/add_product_screen.dart';
-import 'package:sales_management_application/views/screens/products/edit_product_screen.dart';
-import 'package:sales_management_application/views/screens/products/product_detail_screen.dart';
-import 'package:sales_management_application/views/screens/products/products_screen.dart';
-import 'package:sales_management_application/views/screens/suppliers/add_supplier_screen.dart';
-import 'package:sales_management_application/views/screens/suppliers/edit_supplier_screen.dart';
-import 'package:sales_management_application/views/screens/suppliers/supplier_detail_screen.dart';
-import 'package:sales_management_application/views/screens/suppliers/suppliers_screen.dart';
-import 'package:sales_management_application/views/screens/terms_and_conditions_screen.dart';
-import 'package:sales_management_application/views/widgets/filter_list.dart';
-import 'package:sales_management_application/xuathuy/controllers/ec_controller.dart';
-import 'package:sales_management_application/xuathuy/models/ec_receipt.dart';
-import 'package:sales_management_application/xuathuy/views/screens/export_cancellation/ec_detail_screen.dart';
-import 'package:sales_management_application/xuathuy/views/screens/export_cancellation/ec_filter_screen.dart';
-import 'package:sales_management_application/xuathuy/views/screens/export_cancellation/ec_home_screen.dart';
-import 'package:sales_management_application/xuathuy/views/screens/export_cancellation/ec_update_screen.dart';
-
-import 'kiemkho/controllers/ic_controller.dart';
-import 'kiemkho/models/ic_receipt.dart';
-import 'kiemkho/views/screens/inventory_check/ic_detail_screen.dart';
-import 'kiemkho/views/screens/inventory_check/ic_filter_screen.dart';
-import 'kiemkho/views/screens/inventory_check/ic_home_screen.dart';
-import 'kiemkho/views/screens/inventory_check/ic_update_screen.dart';
-import 'models/product.dart';
+import 'package:sales_management_application/authentication/auth_controller.dart';
+import 'package:sales_management_application/customers/customer.dart';
+import 'package:sales_management_application/customers/customer_filter.dart';
+import 'package:sales_management_application/ec/ec_filter.dart';
+import 'package:sales_management_application/import/import_filter.dart';
+import 'package:sales_management_application/order/order_filter.dart';
+import 'package:sales_management_application/payment/import_payment_screen.dart';
+import 'package:sales_management_application/payment/payment_history_screen.dart';
+import 'package:sales_management_application/payment/sale_payment_screen.dart';
+import 'package:sales_management_application/products/add_product_screen.dart';
+import 'package:sales_management_application/products/edit_product_screen.dart';
+import 'package:sales_management_application/products/product_detail_screen.dart';
+import 'package:sales_management_application/products/product_filter.dart';
+import 'package:sales_management_application/products/products_screen.dart';
+import 'package:sales_management_application/receipt/receipt_detail.dart';
+import 'package:sales_management_application/return_import/model/return_import_receipt.dart';
+import 'package:sales_management_application/return_import/return_import_filter.dart';
+import 'package:sales_management_application/return_import/views/screens/return_import_detail_screen.dart';
+import 'package:sales_management_application/return_import/views/screens/return_import_filter_screen.dart';
+import 'package:sales_management_application/return_import/views/screens/return_import_home_screen.dart';
+import 'package:sales_management_application/return_import/views/screens/return_import_update_screen.dart';
+import 'package:sales_management_application/return_sale/return_sale_detail_screen.dart';
+import 'package:sales_management_application/return_sale/return_sale_filter.dart';
+import 'package:sales_management_application/return_sale/return_sale_filter_screen.dart';
+import 'package:sales_management_application/return_sale/return_sale_home_screen.dart';
+import 'package:sales_management_application/return_sale/return_sale_receipt.dart';
+import 'package:sales_management_application/return_sale/return_sale_update_screen.dart';
+import 'package:sales_management_application/suppliers/add_supplier_screen.dart';
+import 'package:sales_management_application/suppliers/edit_supplier_screen.dart';
+import 'package:sales_management_application/suppliers/supplier.dart';
+import 'package:sales_management_application/suppliers/supplier_detail_screen.dart';
+import 'package:sales_management_application/suppliers/suppliers_screen.dart';
+import 'package:sales_management_application/term_condition/terms_and_conditions_screen.dart';
+import 'package:sales_management_application/views/widgets/search_bars/search_customer_screen.dart';
+import 'package:sales_management_application/views/widgets/search_bars/search_supplier.dart';
+import 'authentication/forgot_password_screen.dart';
+import 'authentication/login_screen.dart';
+import 'authentication/register_screen.dart';
+import 'authentication/reset_password_screen.dart';
+import 'config/constants.dart';
+import 'customers/add_customer_screen.dart';
+import 'customers/customer_detail_screen.dart';
+import 'customers/customers_screen.dart';
+import 'customers/edit_customer_screen.dart';
+import 'ec/ec_detail_screen.dart';
+import 'ec/ec_filter_screen.dart';
+import 'ec/ec_home_screen.dart';
+import 'ec/ec_update_screen.dart';
+import 'filter/customer_filter_screen.dart';
+import 'filter/product_filter_screen.dart';
+import 'filter/supplier_filter_screen.dart';
+import 'home/main_screen.dart';
+import 'home/widgets_screen.dart';
+import 'import/import_detail_screen.dart';
+import 'import/import_filter_screen.dart';
+import 'import/import_home_screen.dart';
+import 'import/import_receipt.dart';
+import 'ec/export_receipt.dart';
+import 'import/import_update_screen.dart';
+import 'inventory_check/ic_detail_screen.dart';
+import 'inventory_check/ic_filter_screen.dart';
+import 'inventory_check/ic_home_screen.dart';
+import 'inventory_check/ic_update_screen.dart';
+import 'inventory_check/inventory_check_receipt.dart';
+import 'invoice/invoice_controller.dart';
+import 'invoice/invoice_detail_screen.dart';
+import 'invoice/invoice_filter.dart';
+import 'invoice/invoice_filter_screen.dart';
+import 'invoice/invoice_home_screen.dart';
+import 'invoice/invoice_receipt.dart';
+import 'invoice/invoice_update_screen.dart';
+import 'order/order.dart';
+import 'order/order_controller.dart';
+import 'order/order_detail_screen.dart';
+import 'order/order_filter_screen.dart';
+import 'order/order_home_screen.dart';
+import 'order/order_update_screen.dart';
+import 'products/product.dart';
+import 'receipt/receipt.dart';
+import 'inventory_check/inventory_filter.dart';
+import 'suppliers/supplier_filter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
+    // name: 'default',
     // Cấu hình kết nối firebase
-    options: FirebaseOptions(
+    options: const FirebaseOptions(
         apiKey: "AIzaSyCI8HdmbzR6Z22Sqws3ZfjOlp0MPHZWFnQ",
         appId: "1:580063029367:android:230872dc2993339fb8fe72",
         messagingSenderId: "580063029367",
@@ -61,7 +102,7 @@ Future<void> main() async {
     ChangeNotifierProvider( //Kiểm tra trạng thái đăng nhập và thực hiện chuyển hướng cho tất cả giao diện
       // create: (context) => AuthController(),
       create: (context) => AuthController()..checkLogin(), //Chạy checkLogin() trước khi khởi tạo ứng dụng và sau khi khởi tạo AuthController
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
@@ -75,7 +116,7 @@ class MyApp extends StatelessWidget {
     //Tạo một thể hiện của AuthController
     final authController = Provider.of<AuthController>(context);
 
-    final _router = GoRouter(
+    final router = GoRouter(
       initialLocation: '/',
       routes: [
         ///authentication
@@ -110,17 +151,126 @@ class MyApp extends StatelessWidget {
           path: '/home',
           builder: (context, state) => const MainScreen(),
         ),
+        ///invoice
         GoRoute(
-          path: '/overview',
-          builder: (context, state) => const OverviewScreen(),
+          path: AppPath.invoice,
+          builder: (context, state) {
+            Object? extraObject = state.extra;
+            if (extraObject == null) {
+              return InvoiceScreen(filter: InvoiceFilter());
+            } else {
+              InvoiceFilter filter = extraObject as InvoiceFilter;
+              return InvoiceScreen(filter: filter);
+            }
+          },
+          routes: [
+            GoRoute(
+              path: 'filter',
+              builder: (context, state) {
+                InvoiceFilter filter = state.extra as InvoiceFilter;
+                return FilterInvoiceScreen(filter: filter);
+              },
+            ),
+            GoRoute(
+              path: 'add',
+              builder: (context, state) => UpdateInvoiceScreen(),
+            ),
+            GoRoute(
+              path: ':id',
+              builder: (context, state) {
+                final id = state.pathParameters['id']!; // Lấy ID từ URL
+                InvoiceReceipt receipt = state.extra as InvoiceReceipt;
+                return InvoiceDetailScreen(
+                  receiptId: id, receipt: receipt,
+                );
+              },
+              routes: [
+                GoRoute(
+                  path: 'edit',
+                  builder: (context, state) {
+                    final id = state.pathParameters['id']!; // Lấy ID từ URL
+                    final InvoiceController controller = InvoiceController();
+                    // Lấy dữ liệu
+                    final InvoiceReceipt? existingInvoice =
+                    controller.getReceiptById(id);
+                    return UpdateInvoiceScreen(
+                      existingInvoice: existingInvoice,
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
         ),
+        ///return invoice
         GoRoute(
-          path: '/invoices',
-          builder: (context, state) => const InvoiceScreen(),
+          path: AppPath.returnInvoice,
+          builder: (context, state) {
+            Object? extraObject = state.extra;
+            if (extraObject == null) {
+              return ReturnInvoiceScreen(filter: ReturnInvoiceFilter());
+            } else {
+              ReturnInvoiceFilter filter = extraObject as ReturnInvoiceFilter;
+              return ReturnInvoiceScreen(filter: filter);
+            }
+          },
+          routes: [
+            GoRoute(
+              path: 'filter',
+              builder: (context, state) {
+                ReturnInvoiceFilter filter = state.extra as ReturnInvoiceFilter;
+                return FilterReturnInvoiceScreen(filter: filter);
+              },
+            ),
+            GoRoute(
+                path: 'add',
+                builder: (context, state) {
+                  final invoiceReceipt = state.extra as InvoiceReceipt;
+                  final receipt = ReturnInvoiceReceipt(
+                      id: '',
+                      invoiceReceiptId: invoiceReceipt.id,
+                      partnerId: invoiceReceipt.partnerId,
+                      customer: invoiceReceipt.customer,
+                      payments: [],
+                      status: 1,
+                      createdAt: DateTime.now(),
+                      details: [], uid: '');
+                  for (var detail in invoiceReceipt.details) {
+                    receipt.details.add(ReceiptDetail(
+                        productId: detail.productId,
+                        quantity: 0,
+                        maxQuantity: detail.quantity,
+                        product: detail.product));
+                  }
+                  return UpdateReturnInvoiceScreen(
+                    receipt: receipt,
+                  );
+                }),
+            GoRoute(
+              path: ':id',
+              builder: (context, state) {
+                final id = state.pathParameters['id']!; // Lấy ID từ URL
+
+                return ReturnInvoiceDetailScreen(
+                  receiptId: id,
+                );
+              },
+              routes: [
+                GoRoute(
+                  path: 'edit',
+                  builder: (context, state) {
+                    final id = state.pathParameters['id']!; // Lấy ID từ URL
+                    ReturnInvoiceReceipt receipt = state.extra as ReturnInvoiceReceipt;
+                    return UpdateReturnInvoiceScreen(receipt: receipt,);
+                  },
+                ),
+              ],
+            ),
+          ],
         ),
         GoRoute(
           path: '/orders',
-          builder: (context, state) => const OrderScreen(),
+          builder: (context, state) => OrderScreen(filter: OrderFilter()),
         ),
         GoRoute(
           path: '/products',
@@ -173,36 +323,87 @@ class MyApp extends StatelessWidget {
         ),
         GoRoute(
           path: '/inventory',
-          builder: (context, state) => const InventoryScreen(),
+          builder: (context, state) {
+            Object? extraObject = state.extra;
+            if (extraObject == null) {
+              return InventoryScreen(InventoryFilter());
+            } else {
+              InventoryFilter filter = extraObject as InventoryFilter;
+              return InventoryScreen(filter);
+            }
+          } ,
           routes: [
             GoRoute(
               path: 'filter',
-              builder: (context, state) => const FilterInventoryScreen(),
+              builder: (context, state) {
+                InventoryFilter filter = state.extra as InventoryFilter;
+                return  FilterInventoryScreen(filter);
+              },
             ),
             GoRoute(
               path: 'add',
-              builder: (context, state) => const UpdateInventoryScreen(),
+              builder: (context, state) => UpdateInventoryScreen(id: '', receipt: InventoryCheckReceipt.empty()),
             ),
             GoRoute(
               path: ':id',
               builder: (context, state) {
-                final id = int.parse(state.pathParameters['id']!); // Lấy ID từ URL
-                return InventoryDetailScreen(
-                  receiptId: id,
-                );
+                List<dynamic> extraList = (state.extra as List);
+                InventoryCheckReceipt inventoryCheck = InventoryCheckReceipt.fromJSON(extraList.elementAt(1));
+                final String key = extraList.elementAt(0);
+                return InventoryDetailScreen(id: key, receipt: inventoryCheck);
               },
               routes: [
                 GoRoute(
                   path: 'edit',
                   builder: (context, state) {
-                    final id =
-                    int.parse(state.pathParameters['id']!); // Lấy ID từ URL
-                    final InventoryController controller = InventoryController();
-                    final InventoryCheckReceipt? receipt =
-                    controller.getReceiptById(id); // Lấy dữ liệu
-                    return UpdateInventoryScreen(
-                      existingReceipt: receipt,
-                    );
+                    List<dynamic> extraList = (state.extra as List);
+                    InventoryCheckReceipt inventoryCheck = extraList.elementAt(1);
+                    final String key = extraList.elementAt(0);
+                    return UpdateInventoryScreen(id: key, receipt: inventoryCheck);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+        ///invoice
+        GoRoute(
+          path: AppPath.invoice,
+          builder: (context, state) {
+            Object? extraObject = state.extra;
+            if (extraObject == null) {
+            return InvoiceScreen(filter: InvoiceFilter());
+            } else {
+            InvoiceFilter filter = extraObject as InvoiceFilter;
+            return InvoiceScreen(filter: filter);
+            }
+          },
+          routes: [
+            GoRoute(
+              path: 'filter',
+              builder: (context, state) {
+                InvoiceFilter filter = state.extra as InvoiceFilter;
+                return FilterInvoiceScreen(filter: filter);
+              },
+            ),
+            GoRoute(
+              path: 'add',
+              builder: (context, state) => const UpdateInvoiceScreen(),
+            ),
+            GoRoute(
+              path: ':id',
+              builder: (context, state) {
+                List<dynamic> extraList = (state.extra as List);
+                InvoiceReceipt receipt = InvoiceReceipt.fromJson(extraList.elementAt(1));
+                final String key = extraList.elementAt(0);
+                return InvoiceDetailScreen(receiptId: key, receipt: receipt);
+              },
+              routes: [
+                GoRoute(
+                  path: 'edit',
+                  builder: (context, state) {
+                    InvoiceReceipt receipt = state.extra as InvoiceReceipt;
+                    return UpdateInvoiceScreen(existingInvoice: receipt);
                   },
                 ),
               ],
@@ -212,40 +413,44 @@ class MyApp extends StatelessWidget {
 
         /// export cancellation
         GoRoute(
-          path: '/export_cancellation',
-          builder: (context, state) => const ExportCancellationScreen(),
+          path: '/ec',
+          builder: (context, state) {
+              Object? extraObject = state.extra;
+              if (extraObject == null) {
+                return ExportCancellationScreen(EcFilter());
+              } else {
+              EcFilter filter = extraObject as EcFilter;
+              return ExportCancellationScreen(filter);
+              }
+          },
           routes: [
             GoRoute(
               path: 'filter',
-              builder: (context, state) => const FilterExportCancellationScreen(),
+              builder: (context, state) {
+                EcFilter filter = state.extra as EcFilter;
+                return  FilterExportCancellationScreen(filter);
+              }
             ),
             GoRoute(
               path: 'add',
-              builder: (context, state) => const UpdateExportCancellationScreen(),
+              builder: (context, state) => UpdateExportCancellationScreen(id: '', receipt: ExportCancellationReceipt.empty()),
             ),
             GoRoute(
               path: ':id',
               builder: (context, state) {
-                final id = int.parse(state.pathParameters['id']!); // Lấy ID từ URL
-
-                return ExportCancellationDetailScreen(
-                  receiptId: id,
-                );
+                List<dynamic> extraList = (state.extra as List);
+                ExportCancellationReceipt ec = ExportCancellationReceipt.fromJSON(extraList.elementAt(1));
+                final String key = extraList.elementAt(0);
+                return ExportCancellationDetailScreen(id: key, ec: ec);
               },
               routes: [
                 GoRoute(
                   path: 'edit',
                   builder: (context, state) {
-                    final id =
-                    int.parse(state.pathParameters['id']!); // Lấy ID từ URL
-                    final ExportCancellationController controller =
-                    ExportCancellationController();
-
-                    final ExportCancellationReceipt? existingReceipt =
-                    controller.getReceiptById(id); // Lấy dữ liệu
-                    return UpdateExportCancellationScreen(
-                      existingReceipt: existingReceipt,
-                    );
+                    List<dynamic> extraList = (state.extra as List);
+                    ExportCancellationReceipt ec = extraList.elementAt(1);
+                    final String key = extraList.elementAt(0);
+                    return UpdateExportCancellationScreen(id: key, receipt: ec);
                   },
                 ),
               ],
@@ -279,10 +484,8 @@ class MyApp extends StatelessWidget {
             GoRoute(
               path: ':id',
               builder: (context, state) {
-                List<dynamic> extraList = (state.extra as List);
-                Supplier supplier = Supplier.fromJson(extraList.elementAt(1));
-                final String key = extraList.elementAt(0);
-                return SupplierDetailScreen(id: key, supplier: supplier);
+                final id = state.pathParameters['id']!;
+                return SupplierDetailScreen(id: id);
               },
               routes: [
                 GoRoute(
@@ -301,11 +504,22 @@ class MyApp extends StatelessWidget {
         /// customer
         GoRoute(
           path: '/customers',
-          builder: (context, state) => const CustomerScreen(),
+          builder: (context, state) {
+            Object? extraObject = state.extra;
+            if (extraObject == null) {
+              return CustomerScreen(filter: CustomerFilter.empty());
+            } else {
+              CustomerFilter filter = extraObject as CustomerFilter;
+              return CustomerScreen(filter: filter);
+            }
+          },
           routes: [
             GoRoute(
               path: 'filter',
-              builder: (context, state) => const FilterCustomerScreen(),
+              builder: (context, state) {
+                CustomerFilter filter = state.extra as CustomerFilter;
+                return  FilterCustomerScreen(filter: filter,);
+              },
             ),
             GoRoute(
               path: 'add',
@@ -314,7 +528,8 @@ class MyApp extends StatelessWidget {
             GoRoute(
               path: ':id',
               builder: (context, state) {
-                return const CustomerDetailScreen();
+                Customer customer = state.extra as Customer;
+                return CustomerDetailScreen(customer: customer);
               },
               routes: [
                 GoRoute(
@@ -326,6 +541,212 @@ class MyApp extends StatelessWidget {
               ],
             ),
           ],
+        ),
+        ///import
+        GoRoute(
+          path: AppPath.import,
+          builder: (context, state) {
+              Object? extraObject = state.extra;
+              if (extraObject == null) {
+              return ImportScreen(filter: ImportFilter());
+              } else {
+              ImportFilter filter = extraObject as ImportFilter;
+              return ImportScreen(filter: filter);
+              }
+          },
+          routes: [
+            GoRoute(
+              path: 'filter',
+              builder: (context, state) {
+                ImportFilter filter = state.extra as ImportFilter;
+                  return  FilterImportScreen(filter: filter);
+              }
+            ),
+            GoRoute(
+              path: 'add',
+              builder: (context, state) => UpdateImportScreen(),
+            ),
+            GoRoute(
+              path: ':id',
+              builder: (context, state) {
+                final id = state.pathParameters['id']!; // Lấy ID từ URL
+                ImportReceipt receipt = state.extra as ImportReceipt;
+                return ImportDetailScreen(receipt: receipt, id: id);
+              },
+              routes: [
+                GoRoute(
+                  path: 'edit',
+                  builder: (context, state) {
+                    List<dynamic> extraList = (state.extra as List);
+                    ImportReceipt ir = extraList.elementAt(1);
+                    final String key = extraList.elementAt(0);
+                    return UpdateImportScreen(existingReceipt: ir);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+        ///order
+        GoRoute(
+          path: AppPath.order,
+          builder: (context, state) {
+            Object? extraObject = state.extra;
+            if (extraObject == null) {
+              return OrderScreen(filter: OrderFilter());
+            } else {
+              OrderFilter filter = extraObject as OrderFilter;
+              return OrderScreen(filter: filter);
+            }
+          },
+          routes: [
+            GoRoute(
+              path: 'filter',
+              builder: (context, state) {
+                OrderFilter filter = state.extra as OrderFilter;
+                return FilterOrderScreen(filter: filter,);
+              },
+            ),
+            GoRoute(
+              path: 'add',
+              builder: (context, state) => const UpdateOrderScreen(),
+            ),
+            GoRoute(
+              path: ':id',
+              builder: (context, state) {
+                // final id = state.pathParameters['id']!; // Lấy ID từ URL
+                Order order = state.extra as Order;
+                return OrderDetailScreen(order: order,);
+              },
+              routes: [
+                GoRoute(
+                  path: 'edit',
+                  builder: (context, state) {
+                    final id = state.pathParameters['id']!; // Lấy ID từ URL
+                    final OrderController controller = OrderController();
+                    // Lấy dữ liệu
+                    final Order? existingOrder = controller.getOrderById(id);
+                    return UpdateOrderScreen(
+                      existingOrder: existingOrder,
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+        ///return import
+        GoRoute(
+          path: AppPath.returnImport,
+          builder: (context, state) {
+            Object? extraObject = state.extra;
+            if (extraObject == null) {
+              return ReturnImportScreen(filter: ReturnImportFilter());
+            } else {
+              ReturnImportFilter filter = extraObject as ReturnImportFilter;
+              return ReturnImportScreen(filter: filter);
+            }
+          },
+          routes: [
+            GoRoute(
+              path: 'filter',
+              builder: (context, state) {
+                ReturnImportFilter filter = state.extra as ReturnImportFilter;
+                return  FilterReturnImportScreen(filter: filter);
+              },
+            ),
+            GoRoute(path: 'add', builder: (context, state) {
+              ImportReceipt importReceipt = state.extra as ImportReceipt;
+              final receipt = ReturnImportReceipt(
+                  id: '',
+                  importReceiptId: importReceipt.id,
+                  partnerId: importReceipt.partnerId,
+                  supplier: importReceipt.supplier,
+                  payments: [],
+                  status: 1,
+                  createdAt: DateTime.now(),
+                  details: [], uid: '');
+              for (var detail in importReceipt.details) {
+                receipt.details.add(ReceiptDetail(
+                    productId: detail.productId,
+                    quantity: 0,
+                    maxQuantity: detail.quantity,
+                    product: detail.product));
+              }
+              return UpdateReturnImportScreen(existingReceipt: receipt,);
+            },
+            ),
+            GoRoute(
+              path: ':id',
+              builder: (context, state) {
+                // final id = state.pathParameters['id']!; // Lấy ID từ URL
+                ReturnImportReceipt receipt = state.extra as ReturnImportReceipt;
+                return ReturnImportDetailScreen(receipt: receipt);
+              },
+              routes: [
+                GoRoute(
+                  path: 'edit',
+                  builder: (context, state) {
+                    List<dynamic> extraList = (state.extra as List);
+                    ReturnImportReceipt receipt = extraList.elementAt(1);
+                    final String key = extraList.elementAt(0);
+                    return UpdateReturnImportScreen(existingReceipt: receipt);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+        GoRoute(
+          path: AppPath.supplierSelection,
+          builder: (context, state) =>
+              SupplierSelectionSceen(
+                onSupplierTap: (supplier) {
+                  context.pop(supplier); // Pop and return the selected supplier
+                },
+              ),
+        ),
+        GoRoute(
+          path: AppPath.customerSelection,
+          builder: (context, state) => CustomerSelectionSceen(
+            onCustomerTap: (customer) {
+              context.pop(customer); // Pop and return the selected supplier
+            },
+          ),
+        ),
+        ///payment
+        GoRoute(
+          path: AppPath.payment,
+          builder: (context, state) {
+            final receipt = state.extra as Receipt;
+            return ImportPaymentScreen(
+              receipt: receipt,
+              onSubmit: (receipt) {
+                context.pop(receipt);
+              },
+            );
+          },
+        ),
+        ///sale payment
+        GoRoute(
+          path: AppPath.salePayment,
+          builder: (context, state) {
+            final receipt = state.extra as Receipt;
+            return SalePaymentScreen(
+              receipt: receipt,
+              onSubmit: (receipt) {
+                context.pop(receipt);
+              },
+            );
+          },
+        ),
+        ///paymentHistory
+        GoRoute(
+          path: '/paymentHistory',
+          builder: (context, state) {
+            final id = state.extra.toString();
+            return PaymentHistory(partnerId: id);
+          },
         ),
       ],
       redirect: (context, state) {
@@ -353,7 +774,7 @@ class MyApp extends StatelessWidget {
     );
     return SafeArea(
       child: MaterialApp.router(
-        routerConfig: _router,
+        routerConfig: router,
         debugShowCheckedModeBanner: false,
       ),
     );

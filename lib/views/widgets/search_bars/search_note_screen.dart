@@ -2,18 +2,15 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:sales_management_application/controllers/searching_controller.dart';
+import 'package:sales_management_application/search/searching_controller.dart';
 
 class SearchNoteScreen extends StatefulWidget {
-  final List<Map<String, String>>
-      searchOptions; // Danh sách chứa searchKey, tag và hint
-  final List<Map<String, dynamic>>
-      searchData; // Dữ liệu tìm kiếm tùy chỉnh cho từng trang
+  final List<Map<String, String>> searchOptions; // Danh sách chứa searchKey, tag và hint
+  final List<Map<String, dynamic>> searchData; // Dữ liệu tìm kiếm tùy chỉnh cho từng trang
   final VoidCallback onCancel; //hủy
   final String title; //tiêu đề
   final String dataType; //kiểu đối tượng vd: products, customers...
-  final Widget Function(Map<String, dynamic> item)
-      itemBuilder; // Widget tùy chỉnh
+  final Widget Function(Map<String, dynamic> item) itemBuilder; // Widget tùy chỉnh
 
   const SearchNoteScreen({
     super.key,
@@ -70,9 +67,8 @@ class _SearchNoteScreenState extends State<SearchNoteScreen> {
     // Nhóm danh sách kết quả theo ngày
     final groupedItems = groupBy(_searchingController.searchResults, (item) {
       // Chuyển `DateTime` thành chuỗi định dạng ngày
-      return DateFormat('yyyy/MM/dd').format(item['createdAt']);
+      return DateFormat('yyyy/MM/dd').format(DateTime.parse(item['createdAt']));
     });
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -135,16 +131,14 @@ class _SearchNoteScreenState extends State<SearchNoteScreen> {
               runSpacing: 8.0,
               children: widget.searchOptions.map((item) {
                 // Biến kiểm tra tag được chọn (key)
-                final bool isSelected =
-                    _searchingController.selectedSearchKey == item['searchKey'];
+                final bool isSelected =  _searchingController.selectedSearchKey == item['searchKey'];
                 return GestureDetector(
                   onTap: () {
                     setState(() {
                       if (!isSelected) {
                         // Nếu chọn tag khác, cập nhật tag đã chọn và kết quả
                         _searchingController.updateTag(item);
-                        _searchingController
-                            .updateSearchResults(_textController.text);
+                        _searchingController.updateSearchResults(_textController.text);
                       }
                     });
                   },

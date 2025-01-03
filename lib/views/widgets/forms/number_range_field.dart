@@ -57,7 +57,7 @@ class NumberRangeField extends StatelessWidget {
                   value = '999999999'; // để trống mặc định giá trị là 999999999
               }
 
-              final num? toValue = num.tryParse(value);
+              final num? toValue = num.tryParse(value.replaceAll(',', ''));
 
               // Kiểm tra xem giá trị của "Từ" có tồn tại không và có hợp lệ không
               final num? fromValue = num.tryParse(fromController.text);

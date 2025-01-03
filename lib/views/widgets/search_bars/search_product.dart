@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sales_management_application/controllers/searching_controller.dart';
-import 'package:sales_management_application/models/product.dart';
+import 'package:sales_management_application/search/searching_controller.dart';
+
+import '../../../products/product.dart';
 
 class ProductSearchBar extends StatefulWidget {
   final Widget backgroundWidget; // Widget nền (có thể tùy chỉnh)
-  final void Function(Product product)
-      onProductTap; // Hàm xử lý khi chọn sản phẩm
-
-  const ProductSearchBar({
+  final void Function(Product product) onProductTap; // Hàm xử lý khi chọn sản phẩm
+  List<Product> products = [];
+  ProductSearchBar({
     super.key,
     required this.onProductTap,
     required this.backgroundWidget,
+    required this.products
   });
 
   @override
-  State<ProductSearchBar> createState() => _ProductSearchBarState();
+  State<ProductSearchBar> createState() => _ProductSearchBarState(products);
 }
 
 class _ProductSearchBarState extends State<ProductSearchBar> {
@@ -26,173 +27,13 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
   late SearchingController _searchingController;
 
 //fake dữ liệu danh sách sản phẩm //sau lấy từ db rồi chuyển sang dạng map
-  List<Map<String, dynamic>> products = [
-    {
-      'id': 1,
-      'name': 'Giò heo',
-      'sellingPrice': 2000000,
-      'capitalPrice': 1000000,
-      'quantity': 400,
-      'unit': 'Kg',
-      'minLimit': 10,
-      'maxLimit': 1000,
-      'barcode': '1314124212',
-      'description': '100% thịt heo rừng',
-      'notes': 'hàng vip',
-      'isActived': true,
-      'createdAt': DateTime.now().subtract(const Duration(seconds: 5)),
-    },
-    {
-      'id': 2,
-      'name': 'Giò heo X',
-      'sellingPrice': 2010000,
-      'capitalPrice': 1000000,
-      'quantity': 100,
-      'unit': 'Kg',
-      'minLimit': 10,
-      'maxLimit': 1000,
-      'barcode': '1314124212',
-      'description': '100% thịt heo rừng',
-      'notes': 'hàng vip',
-      'isActived': true,
-      'createdAt': DateTime.now().subtract(const Duration(seconds: 15)),
-    },
-    {
-      'id': 3,
-      'name': 'Giò heo Y',
-      'sellingPrice': 2110000,
-      'capitalPrice': 1000000,
-      'quantity': 200,
-      'unit': 'Kg',
-      'minLimit': 10,
-      'maxLimit': 1000,
-      'barcode': '1314124212',
-      'description': '100% thịt heo rừng',
-      'notes': 'hàng vip',
-      'isActived': true,
-      'createdAt': DateTime.now().subtract(const Duration(seconds: 25)),
-    },
-    {
-      'id': 4,
-      'name': 'Giò heo Z',
-      'sellingPrice': 201000,
-      'capitalPrice': 102000,
-      'quantity': 800,
-      'unit': 'Kg',
-      'minLimit': 10,
-      'maxLimit': 1000,
-      'barcode': '1314124212',
-      'description': '100% thịt heo rừng',
-      'notes': 'hàng vip',
-      'isActived': true,
-      'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
-    },
-    {
-      'id': 5,
-      'name': 'Giò hổ',
-      'sellingPrice': 201000,
-      'capitalPrice': 102000,
-      'quantity': 800,
-      'unit': 'Kg',
-      'minLimit': 10,
-      'maxLimit': 1000,
-      'barcode': '1314124212',
-      'description': '100% thịt heo rừng',
-      'notes': 'hàng vip',
-      'isActived': true,
-      'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
-    },
-    {
-      'id': 6,
-      'name': 'Giò hổ VN',
-      'sellingPrice': 201000,
-      'capitalPrice': 102000,
-      'quantity': 800,
-      'unit': 'Kg',
-      'minLimit': 10,
-      'maxLimit': 1000,
-      'barcode': '1314124212',
-      'description': '100% thịt heo rừng',
-      'notes': 'hàng vip',
-      'isActived': true,
-      'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
-    },
-    {
-      'id': 7,
-      'name': 'Giò hổ US',
-      'sellingPrice': 201000,
-      'capitalPrice': 102000,
-      'quantity': 800,
-      'unit': 'Kg',
-      'minLimit': 10,
-      'maxLimit': 1000,
-      'barcode': '1314124212',
-      'description': '100% thịt heo rừng',
-      'notes': 'hàng vip',
-      'isActived': true,
-      'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
-    },
-    {
-      'id': 8,
-      'name': 'Giò bò UK',
-      'sellingPrice': 201000,
-      'capitalPrice': 102000,
-      'quantity': 800,
-      'unit': 'Kg',
-      'minLimit': 10,
-      'maxLimit': 1000,
-      'barcode': '1314124212',
-      'description': '100% thịt heo rừng',
-      'notes': 'hàng vip',
-      'isActived': true,
-      'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
-    },
-    {
-      'id': 9,
-      'name': 'Giò bò Ấn Độ',
-      'sellingPrice': 201000,
-      'capitalPrice': 102000,
-      'quantity': 800,
-      'unit': 'Kg',
-      'minLimit': 10,
-      'maxLimit': 1000,
-      'barcode': '1314124212',
-      'description': '100% thịt heo rừng',
-      'notes': 'hàng vip',
-      'isActived': true,
-      'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
-    },
-    {
-      'id': 10,
-      'name': 'Giò gà China',
-      'sellingPrice': 201000,
-      'capitalPrice': 102000,
-      'quantity': 800,
-      'unit': 'Kg',
-      'minLimit': 10,
-      'maxLimit': 1000,
-      'barcode': '1314124212',
-      'description': '100% thịt heo rừng',
-      'notes': 'hàng vip',
-      'isActived': true,
-      'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
-    },
-    {
-      'id': 11,
-      'name': 'Chả lụa',
-      'sellingPrice': 201000,
-      'capitalPrice': 102000,
-      'quantity': 800,
-      'unit': 'Kg',
-      'minLimit': 10,
-      'maxLimit': 1000,
-      'barcode': '1314124212',
-      'description': '100% thịt heo rừng',
-      'notes': 'hàng vip',
-      'isActived': true,
-      'createdAt': DateTime.now().subtract(const Duration(seconds: 55)),
-    },
-  ];
+  List<Map<String, dynamic>> products = [];
+
+  _ProductSearchBarState(List<Product> productsList) {
+    for (var i in productsList) {
+      products.add(i.toJSON());
+    }
+  }
 
   @override
   void initState() {
@@ -285,10 +126,10 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
 
                         // Lấy từng đối tượng trong searchResults
                         String id =
-                            _searchingController.searchResults[index]['id'];
+                            _searchingController.searchResults[index]['id'].toString();
                         String name =
                             _searchingController.searchResults[index]['name'];
-                        num quantity = _searchingController.searchResults[index]
+                        int quantity = _searchingController.searchResults[index]
                             ['quantity'];
                         num sellingPrice = _searchingController
                             .searchResults[index]['sellingPrice'];
@@ -311,7 +152,7 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
 
                         return ListTile(
                           // Hiển thị tên sản phẩm
-                          title: Text(product.name!),
+                          title: Text(product.name),
                           leading: const Icon(
                             Icons.image,
                             size: 30,

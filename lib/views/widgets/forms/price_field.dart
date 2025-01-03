@@ -21,7 +21,6 @@ class PriceField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),
-        suffixText: '₫ ',
       ),
       // Sử dụng inputFormatters chỉ cho nhâp số và format hiển thị
       inputFormatters: [

@@ -15,7 +15,7 @@ class TimeFilterBottomSheet extends StatefulWidget {
   const TimeFilterBottomSheet({
     super.key,
     required this.onOptionSelected,
-    this.selectedOption = AppTime.today, // Giá trị mặc định
+    this.selectedOption, // Giá trị mặc định
   });
 
   @override
@@ -43,60 +43,67 @@ class _TimeFilterBottomSheetState extends State<TimeFilterBottomSheet> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           ListTile(
-            title: const Text(AppTime.allTime),
-            trailing: widget.selectedOption == AppTime.allTime
+            title: const Text(AppString.allTime),
+            trailing: widget.selectedOption == AppString.allTime
                 ? const Icon(Icons.check, color: Colors.blue)
                 : null, // Hiển thị dấu check nếu là mặc định
             onTap: () {
               // trả về null để xác định là lâý tất cả
-              widget.onOptionSelected(AppTime.allTime, null);
+              widget.onOptionSelected(AppString.allTime, null, DateTime.now());
               Navigator.pop(context);
             },
           ),
           ListTile(
-            title: const Text(AppTime.today),
-            trailing: widget.selectedOption == AppTime.today
+            title: const Text(AppString.today),
+            trailing: widget.selectedOption == AppString.today
                 ? const Icon(Icons.check, color: Colors.blue)
                 : null, // Hiển thị dấu check nếu là mặc định
             onTap: () {
+              // Lấy thời gian hiện tại
               DateTime now = DateTime.now();
-              widget.onOptionSelected(AppTime.today, now);
+              // Tạo đối tượng DateTime cho đầu ngày hôm nay (00:00:00)
+              DateTime today = DateTime(now.year, now.month, now.day);
+
+              widget.onOptionSelected(AppString.today, today, null);
               Navigator.pop(context);
             },
           ),
           ListTile(
-            title: const Text(AppTime.yesterday),
-            trailing: widget.selectedOption == AppTime.yesterday
+            title: const Text(AppString.yesterday),
+            trailing: widget.selectedOption == AppString.yesterday
                 ? const Icon(Icons.check, color: Colors.blue)
                 : null, // Hiển thị dấu check nếu là mặc định
             onTap: () {
               DateTime yesterday =
                   DateTime.now().subtract(const Duration(days: 1));
-              widget.onOptionSelected(AppTime.yesterday, yesterday);
+              DateTime startDate = DateTime(yesterday.year, yesterday.month, yesterday.day);
+              // Tạo đối tượng DateTime cho cuối ngày hôm nay (23:59:59.999)
+              DateTime endDate = DateTime(yesterday.year, yesterday.month, yesterday.day, 23, 59, 59, 999);
+              widget.onOptionSelected(AppString.yesterday, startDate, endDate);
               Navigator.pop(context);
             },
           ),
           ListTile(
-            title: const Text(AppTime.last7Days),
-            trailing: widget.selectedOption == AppTime.last7Days
+            title: const Text(AppString.last7Days),
+            trailing: widget.selectedOption == AppString.last7Days
                 ? const Icon(Icons.check, color: Colors.blue)
                 : null, // Hiển thị dấu check nếu là mặc định
             onTap: () {
-              DateTime now = DateTime.now();
-              DateTime sevenDaysAgo = now.subtract(const Duration(days: 7));
-              widget.onOptionSelected(AppTime.last7Days, sevenDaysAgo, now);
+              DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
+              DateTime startDate = DateTime(sevenDaysAgo.year, sevenDaysAgo.month, sevenDaysAgo.day);
+              widget.onOptionSelected(AppString.last7Days, startDate, null);
               Navigator.pop(context);
             },
           ),
           ListTile(
-            title: const Text(AppTime.thisMonth),
-            trailing: widget.selectedOption == AppTime.thisMonth
+            title: const Text(AppString.thisMonth),
+            trailing: widget.selectedOption == AppString.thisMonth
                 ? const Icon(Icons.check, color: Colors.blue)
                 : null, // Hiển thị dấu check nếu là mặc định
             onTap: () {
               DateTime now = DateTime.now();
               DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
-              widget.onOptionSelected(AppTime.thisMonth, firstDayOfMonth, now);
+              widget.onOptionSelected(AppString.thisMonth, firstDayOfMonth, null);
               Navigator.pop(context);
             },
           ),
@@ -187,6 +194,7 @@ class _TimeFilterBottomSheetState extends State<TimeFilterBottomSheet> {
                     child: ElevatedButton(
                       onPressed: () {
                         if (startDate != null && endDate != null) {
+                          endDate = DateTime(endDate!.year, endDate!.month, endDate!.day, 23, 59, 59, 999);
                           widget.onOptionSelected(
                               '${_formatDate(startDate)} - ${_formatDate(endDate)}',
                               startDate,

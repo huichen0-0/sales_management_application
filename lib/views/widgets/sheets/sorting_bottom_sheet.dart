@@ -43,67 +43,67 @@ class SortingBottomSheet extends StatelessWidget {
           // Hiển thị từng tùy chọn dựa trên giá trị boolean
           if (showNewest!)
             ListTile(
-              title: const Text(AppSort.newest),
-              trailing: selectedSorting == AppSort.newest
+              title: const Text(AppString.newest),
+              trailing: selectedSorting == AppString.newest
                   ? const Icon(Icons.check, color: Colors.blue)
                   : null,
               onTap: () {
-                onSelectSorting(AppSort.newest);
+                onSelectSorting(AppString.newest);
                 Navigator.pop(context);
               },
             ),
           if (showOldest!)
             ListTile(
-              title: const Text(AppSort.oldest),
-              trailing: selectedSorting == AppSort.oldest
+              title: const Text(AppString.oldest),
+              trailing: selectedSorting == AppString.oldest
                   ? const Icon(Icons.check, color: Colors.blue)
                   : null,
               onTap: () {
-                onSelectSorting(AppSort.oldest);
+                onSelectSorting(AppString.oldest);
                 Navigator.pop(context);
               },
             ),
           if (showAscendingValue!)
             ListTile(
-              title: const Text(AppSort.ascValue),
-              trailing: selectedSorting == AppSort.ascValue
+              title: const Text(AppString.ascValue),
+              trailing: selectedSorting == AppString.ascValue
                   ? const Icon(Icons.check, color: Colors.blue)
                   : null,
               onTap: () {
-                onSelectSorting(AppSort.ascValue);
+                onSelectSorting(AppString.ascValue);
                 Navigator.pop(context);
               },
             ),
           if (showDescendingValue!)
             ListTile(
-              title: const Text(AppSort.descValue),
-              trailing: selectedSorting == AppSort.descValue
+              title: const Text(AppString.descValue),
+              trailing: selectedSorting == AppString.descValue
                   ? const Icon(Icons.check, color: Colors.blue)
                   : null,
               onTap: () {
-                onSelectSorting(AppSort.descValue);
+                onSelectSorting(AppString.descValue);
                 Navigator.pop(context);
               },
             ),
           if (showAZ!)
             ListTile(
-              title: const Text(AppSort.aZ),
-              trailing: selectedSorting == AppSort.aZ
+              title: const Text(AppString.aZ),
+              trailing: selectedSorting == AppString.aZ
                   ? const Icon(Icons.check, color: Colors.blue)
                   : null,
               onTap: () {
-                onSelectSorting(AppSort.aZ);
+                onSelectSorting(AppString.aZ);
                 Navigator.pop(context);
               },
             ),
           if (showZA!)
             ListTile(
-              title: const Text(AppSort.zA),
-              trailing: selectedSorting == AppSort.zA
+              title: const Text(AppString.zA),
+              trailing: selectedSorting == AppString.zA
                   ? const Icon(Icons.check, color: Colors.blue)
                   : null,
               onTap: () {
-                onSelectSorting(AppSort.zA);
+                onSelectSorting(AppString.zA);
                 Navigator.pop(context);
               },
             ),
