@@ -35,7 +35,7 @@ class ImportReceipt extends Receipt {
   //tổng so luong nhập
 
   factory ImportReceipt.fromJson(Map<dynamic, dynamic> json) => ImportReceipt(
-    id: json['id'],
+    id: json['id'] ?? '',
     partnerId: json['partnerId'],
     supplier: json['supplier'] != null
         ? Supplier.fromJson(json['supplier'])

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sales_management_application/config/constants.dart';
 import 'package:sales_management_application/suppliers/supplier-controller.dart';
-import '../../../customers/customer.dart';
+import '../../../customers/model/customer.dart';
 import '../../../helper/helper.dart';
 import '../../../products/product.dart';
 import '../../../suppliers/supplier.dart';
@@ -11,18 +11,26 @@ import '../../../suppliers/supplier.dart';
 class WidgetCard extends StatelessWidget {
   final String title;
   final List<Map<String, dynamic>> items;
+  final Color? color;
+  final EdgeInsetsGeometry? margin;
+  final EdgeInsetsGeometry? padding;
+  final BoxDecoration? decoration;
 
   WidgetCard({
     super.key,
     required this.items,
     required this.title,
+    this.color,
+    this.margin,
+    this.decoration,
+    this.padding
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.white,
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      color: color ?? Theme.of(context).cardColor,
+      margin: margin ?? EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

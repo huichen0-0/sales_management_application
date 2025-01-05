@@ -28,11 +28,16 @@ class _InventoryScreenState extends State<InventoryScreen> {
   final InventoryController _controller = InventoryController();
   TimeFilterController timeFilterController = TimeFilterController();
   InventoryFilter filter = InventoryFilter();
-  SortingController? _sortingController;
+  SortingController _sortingController = SortingController([]);
   List<InventoryCheckReceipt>? _receipts = [];
   DateTime? fromDate;
   DateTime? toDate;
   _InventoryScreenState(this.filter);
+
+  @override @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +56,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             _receipts = snapshot.data!;
-            if (_sortingController == null) {
-              _sortingController = SortingController(_controller.convertToJSON(_receipts));
-              _sortingController!.updateSorting(selectedSorting);
-            }
+            _sortingController?.currentData = _controller.convertToJSON(_receipts);
+            _sortingController!.updateSorting(selectedSorting);
             final sortedMap = _sortingController!.currentData;
             _receipts = _controller.convertFromJSON(sortedMap);
             return _buildItemList(context, _receipts!);
@@ -65,12 +68,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed:() =>
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => UpdateInventoryScreen(id: '', receipt: InventoryCheckReceipt.empty()),
-              ),
-            ),
+            context.push('/inventory/add'),
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add),
       ),
@@ -100,7 +98,14 @@ class _InventoryScreenState extends State<InventoryScreen> {
         ),
         IconButton(
           icon: const Icon(Icons.filter_alt_outlined),
-          onPressed: () => context.push('/inventory/filter', extra: filter),
+          onPressed: () => context.push('/inventory/filter', extra: filter)
+          .then((result) {
+            if (result != null && result is InventoryFilter) {
+              setState(() {
+                filter = result;
+              });
+            }
+          }),
         ),
       ],
     );

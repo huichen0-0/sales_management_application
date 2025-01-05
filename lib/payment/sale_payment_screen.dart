@@ -116,32 +116,11 @@ class SalePaymentScreenState extends State<SalePaymentScreen> {
     );
   }
 
-  // Widget _buildSeeDetailsButton() {
-  //   return InkWell(
-  //     onTap: () {
-  //       //TODO: navigate to order detail
-  //       print('view order details');
-  //     },
-  //     child: Container(
-  //       padding: const EdgeInsets.all(10),
-  //       decoration: BoxDecoration(
-  //         color: Colors.grey[200],
-  //         borderRadius: BorderRadius.circular(10),
-  //       ),
-  //       child: const Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //         children: [
-  //           Text('Xem hàng trong đơn'),
-  //           Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _buildPaymentInfo() {
     //tính tiền thừa
-    _excessAmount = _controller.amountPaid - _receipt.saleDue;
+    if(_controller.amountPaid > _receipt.saleDue) {
+      _excessAmount = _controller.amountPaid - _receipt.saleDue;
+    }
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -352,7 +331,7 @@ class SalePaymentScreenState extends State<SalePaymentScreen> {
       content: AppString.confirmCompleteContent,
       onConfirm: () {
         _controller.updateAmountPaid(_amountController.text);
-        final success = _controller.completePayment();
+        final success = _controller.completePayment(_excessAmount);
         if (success) {
           widget.onSubmit(_controller.receipt);
           _showSnackBar(AppString.successComplete, Colors.green);

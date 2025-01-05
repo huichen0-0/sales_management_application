@@ -7,6 +7,7 @@ import 'package:sales_management_application/views/widgets/forms/image_input_fie
 import 'package:sales_management_application/views/widgets/forms/number_range_field.dart';
 import 'package:sales_management_application/views/widgets/forms/price_field.dart';
 
+import '../views/widgets/dialogs/confirmation_dialog.dart';
 import '../views/widgets/forms/custom_form.dart';
 import '../views/widgets/forms/custom_form_fields.dart';
 
@@ -106,9 +107,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       controller: controllers['notes']!, label: 'Ghi chú'),
                 ],
                 onSubmit: () {
-                  productController.addProduct(controllers);
-                  _showSuccessDialog(context);
-                  context.go('/products');
+                  _addProduct();
                 },
                 submitBtn: 'Lưu',
               ),
@@ -119,44 +118,26 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
-  /// hàm hiển thị thông báo sau khi submit và TODO: chuyển về trang products/:id trước đó
-  void _showSuccessDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        // Đặt thời gian chuyển hướng sau 2 giây
-        Future.delayed(const Duration(seconds: 2), () {
-        });
-
-        return const AlertDialog(
-          backgroundColor: Colors.white,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.check_circle,
-                color: Colors.green,
-                size: 60,
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Thành công',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Thêm hàng hóa thành công!',
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        );
-      },
+  void _showSnackBar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        duration: const Duration(seconds: 1),
+      ),
     );
   }
 
+  void _addProduct() {
+    ConfirmationDialog.show(
+      context: context,
+      title: 'Thêm hàng hóa',
+      content: 'Bạn có chắc muốn thêm hàng hóa này không?',
+      onConfirm: () {
+        productController.addProduct(controllers);
+        context.pop();
+        _showSnackBar('Thêm hàng hóa thành công!', Colors.green);
+      },
+    );
+  }
 }

@@ -1,95 +1,59 @@
-import 'package:sales_management_application/customers/customer_service.dart';
+import 'package:sales_management_application/customers/service/customer_service.dart';
 import 'package:sales_management_application/invoice/invoice_filter.dart';
 import 'package:sales_management_application/invoice/invoice_service.dart';
 import 'package:sales_management_application/products/product_service.dart';
-import 'package:sales_management_application/receipt/receipt.dart';
+import 'package:sales_management_application/time_filter/time_filter_service.dart';
 
-import '../customers/customer.dart';
+import '../customers/model/customer.dart';
 import '../products/product.dart';
 import '../receipt/receipt_detail.dart';
 import '/config/constants.dart';
 import '../sort/sorting_controller.dart';
-import '../payment/payment.dart';
 import 'invoice_receipt.dart';
 
 class InvoiceController {
   //lấy dữ liệu từ db, key gán vào id
-  List<InvoiceReceipt> data = [
-    // InvoiceReceipt(
-    //   id: 'id-phieu-1',
-    //   partnerId: 'id-kh-1',
-    //   customer: Customer(
-    //     id: 'id-kh-1',
-    //     name: 'Anh A',
-    //     address: '',
-    //     isActive: 1,
-    //     status: 1,
-    //     email: '',
-    //     note: '',
-    //     phoneNumber: '099847282',
-    //   ),
-    //   details: [
-    //     ReceiptDetail(
-    //       productId: "25",
-    //       product: Product(
-    //         id: "25",
-    //         name: 'Giò hổ Châu Phi',
-    //         barcode: '9890892083',
-    //         unit: 'Kg',
-    //         capitalPrice: 200000,
-    //         sellingPrice: 500000,
-    //         quantity: 200,
-    //         minLimit: 10,
-    //         maxLimit: 10000,
-    //         description: 'Mô tả',
-    //         notes: 'Ghi chú',
-    //         isActive: true,
-    //         imageUrl: 'image',
-    //         createdAt: DateTime.now(),
-    //       ),
-    //       quantity: 10,
-    //     ),
-    //   ],
-    //   payments: [
-    //     Payment(amount: 100000, method: 'Tiền mặt', createdAt: DateTime.now()),
-    //   ],
-    //   createdAt: DateTime.now(),
-    //   status: 2,
-    //   //đã hoàn thành
-    //   returned: false,
-    // ),
-  ];
+  List<InvoiceReceipt> data = [ ];
   InvoiceService invoiceService = InvoiceService();
   ProductService productService = ProductService();
   CustomerService customerService = CustomerService();
+  TimeFilterService timeFilterService = TimeFilterService();
 
   // Hàm lấy dữ liệu
-  Future<List<InvoiceReceipt>> getData(InvoiceFilter filter) async {
+  Future<List<InvoiceReceipt>> getData(InvoiceFilter filter, DateTime? fromDate, DateTime? toDate, String? partnerId) async {
     List<InvoiceReceipt> results = [];
     List<InvoiceReceipt> invoices = await invoiceService.getData(filter);
     for(InvoiceReceipt receipt in invoices) {
-      List<ReceiptDetail> detailResult = [];
-      for(ReceiptDetail detail in receipt.details) {
-        Product product = await productService.getProduct(detail.productId);
-        detail.product = product;
-        detailResult.add(detail);
+      if (((partnerId != null && partnerId == receipt.partnerId) || partnerId == null) && timeFilterService.isTimeFilterd(receipt.createdAt, fromDate, toDate)) {
+        List<ReceiptDetail> detailResult = [];
+        for (ReceiptDetail detail in receipt.details) {
+          Product product = await productService.getProduct(detail.productId);
+          detail.product = product;
+          detailResult.add(detail);
+        }
+        receipt.details = detailResult;
+        Customer customer = await customerService.getCustomerByKey(
+            receipt.partnerId);
+        receipt.customer = customer;
+        results.add(receipt);
       }
-      receipt.details = detailResult;
-      Customer customer = await customerService.getCustomerByKey(receipt.partnerId);
-      receipt.customer = customer;
-      results.add(receipt);
     }
     return results;
   }
 
   void saveReceipt(InvoiceReceipt receipt) {
-    this.invoiceService.saveReceipt(receipt);
+    receipt.createdAt = DateTime.now();
+    if (receipt.id == '') {
+      this.invoiceService.saveReceipt(receipt);
+    } else {
+      invoiceService.updateReceipt(receipt);
+    }
   }
 
   /// XỬ LÝ PHIẾU ///
   //tổng giá trị hiên thị, đã hoàn thành mới cộng
-  num getTotalDisplayValue(String attribute) {
-    return data.fold(
+  num getTotalDisplayValue(String attribute, List<InvoiceReceipt> receipts) {
+    return receipts.fold(
       AppNum.zero,
       (sum, receipt) {
         var value = receipt.getAttributeValue(attribute);
@@ -99,8 +63,13 @@ class InvoiceController {
   }
 
   //Hủy phiếu
-  bool cancelReceipt() {
-    return true;
+  bool cancelReceipt(InvoiceReceipt _receipt) {
+    try {
+      invoiceService.removeReceipt(_receipt);
+      return true;
+    } catch(e) {
+      return false;
+    }
   }
 
   // Hàm thêm mới/cập nhật phiếu
@@ -124,11 +93,8 @@ class InvoiceController {
   }
 
   // Hàm lấy phiếu theo ID
-  InvoiceReceipt? getReceiptById(String id) {
-    return data.firstWhere(
-      (receipt) => receipt.id == id,
-      orElse: () => InvoiceReceipt.empty(),
-    );
+  Future<InvoiceReceipt?> getReceiptById(String id) async {
+    return await invoiceService.getReceiptById(id);
   }
 
   // lấy dữ liệu dạng MAP

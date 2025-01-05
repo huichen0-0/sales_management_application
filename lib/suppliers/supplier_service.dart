@@ -30,7 +30,7 @@ class SupplierService {
   }
 
   void deleteSupplier(String id) {
-    firebaseService.updateData('Suppliers', id, {'isDeleted': false});
+    firebaseService.updateData('Suppliers', id, {'isDeleted': true});
   }
 
   Future<Supplier> getSupplierByKey(String id) async {

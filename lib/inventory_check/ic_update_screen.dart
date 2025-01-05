@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sales_management_application/authentication/forgot_password_screen.dart';
 import 'package:sales_management_application/inventory_check/inventory_controller.dart';
 import 'package:sales_management_application/products/product_controller.dart';
 import 'package:sales_management_application/views/widgets/search_bars/search_product.dart';
 import '../helper/helper.dart';
-import 'ic_home_screen.dart';
+import '../views/widgets/dialogs/confirmation_dialog.dart';
 import 'inventory_check_detail.dart';
 import '../products/product.dart';
 import 'inventory_check_receipt.dart';
@@ -101,26 +103,14 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
               onPressed: () async {
                 receipt.status = 1;
                 _controller.save(receipt);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => InventoryScreen(InventoryFilter()),
-                  ),
-                );
+                context.pop();
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
               child: const Text('Lưu tạm'),
             ),
             ElevatedButton(
               onPressed: () async {
-                receipt.status = 2;
-                _controller.save(receipt);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => InventoryScreen(InventoryFilter()),
-                  ),
-                );
+                _addIc(receipt);
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
               child: const Text('Hoàn thành'),
@@ -128,6 +118,31 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
           ],
         ),
       ) : null,
+    );
+  }
+
+  void _showSnackBar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        duration: const Duration(seconds: 1),
+      ),
+    );
+  }
+
+  void _addIc(InventoryCheckReceipt receipt) {
+    ConfirmationDialog.show(
+      context: context,
+      title: 'Thêm đơn kiểm kho',
+      content: 'Bạn có chắc muốn thêm đơn này không?',
+      onConfirm: () {
+        receipt.status = 2;
+        _controller.save(receipt);
+        productController.updateAmount(receipt);
+        context.pop();
+        _showSnackBar('Thêm đơn kiểm kho thành công!', Colors.green);
+      },
     );
   }
 

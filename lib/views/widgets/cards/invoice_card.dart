@@ -10,16 +10,12 @@ class InvoiceReceiptCard extends StatelessWidget {
   final String displayValue;
   final Function(String id) onTap;
   TimeFilterService timeFilterService = TimeFilterService();
-  DateTime? fromDate;
-  DateTime? toDate;
 
   InvoiceReceiptCard(
       {super.key,
       required this.receipt,
       required this.onTap,
-      required this.displayValue,
-      required this.fromDate,
-      required this.toDate,}
+      required this.displayValue}
   );
 
   @override
@@ -28,7 +24,7 @@ class InvoiceReceiptCard extends StatelessWidget {
     final totalQuantity = receipt.totalQuantity;
     final createdAt = Helper.formatTime(receipt.createdAt);
     final status = Helper.getStatusReceipt(receipt.status);
-    final totalDisplayValue = Helper.formatCurrency(getTotalValue());
+    final totalDisplayValue = Helper.formatCurrency(receipt.getAttributeValue(displayValue));
 
     // Lấy chi tiết sản phẩm đầu tiên và số lượng sản phẩm còn lại
     final firstDetail = details.isNotEmpty ? details.first : null;
@@ -93,24 +89,5 @@ class InvoiceReceiptCard extends StatelessWidget {
         },
       ),
     );
-  }
-
-  num getTotalValue() {
-    if (displayValue == AppString.totalAmount) {
-      return receipt.totalImportValue;
-    }
-    num totalPaid = 0;
-    if (receipt.payments.isNotEmpty) {
-      totalPaid += receipt.payments.fold(0, (sum, payment) =>
-      timeFilterService.isTimeFilterd(payment.createdAt, fromDate, toDate) ? sum + payment.amount : sum + 0);
-    }
-    if (displayValue == AppString.totalPaid) {
-      return totalPaid;
-    }
-    if (displayValue == AppString.totalImportDue) {
-      num totalDue = receipt.totalImportValue - totalPaid;
-      return totalDue;
-    }
-    return 0;
   }
 }

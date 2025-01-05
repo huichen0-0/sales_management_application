@@ -14,7 +14,8 @@ import 'order_controller.dart';
 
 class OrderScreen extends StatefulWidget {
   OrderFilter filter = OrderFilter();
-  OrderScreen({super.key, required this.filter});
+  String? partnerId;
+  OrderScreen({super.key, required this.filter, this.partnerId});
 
   @override
   OrderScreenState createState() => OrderScreenState(this.filter);
@@ -58,7 +59,7 @@ class OrderScreenState extends State<OrderScreen> {
       backgroundColor: Colors.grey[100],
       appBar: _buildAppBar(context),
       body: FutureBuilder<List<Order>>(
-        future: _controller.getData(filter, fromDate, toDate),
+        future: _controller.getData(filter, fromDate, toDate, widget.partnerId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -88,12 +89,6 @@ class OrderScreenState extends State<OrderScreen> {
       backgroundColor: Colors.blue,
       title:
           const Text(AppString.order, style: TextStyle(color: Colors.white)),
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: () {
-          context.go('/home');
-        },
-      ),
       actions: [
         IconButton(
           icon: const Icon(Icons.search, color: Colors.white),

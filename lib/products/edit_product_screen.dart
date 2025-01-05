@@ -7,6 +7,7 @@ import 'package:sales_management_application/products/product_detail_screen.dart
 import 'package:sales_management_application/views/widgets/forms/image_input_field.dart';
 import 'package:sales_management_application/views/widgets/forms/number_range_field.dart';
 import 'package:sales_management_application/views/widgets/forms/price_field.dart';
+import '../views/widgets/dialogs/confirmation_dialog.dart';
 import '../views/widgets/forms/custom_form.dart';
 import '../views/widgets/forms/custom_form_fields.dart';
 import 'product.dart';
@@ -152,15 +153,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   updateProduct.maxLimit = num.parse(controllers['maxLimit']!.text.replaceAll(',', ''));
                   updateProduct.description = controllers['description']!.text;
                   updateProduct.notes = controllers['notes']!.text;
-                  _updateProductInfo(id, updateProduct);
-                  product = updateProduct;
-                  _showSuccessDialog(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProductDetailScreen(id: id, product: product),
-                    ),
-                  );
+                  _editProduct(updateProduct);
+                  // product = updateProduct;
+                  // context.pop(product);
                 },
                 submitBtn: 'Lưu',
               ),
@@ -176,42 +171,26 @@ class _EditProductScreenState extends State<EditProductScreen> {
     firebaseService.updateData('Products',  id, product.toJSON());
   }
 
-  /// hàm hiển thị thông báo sau khi submit và TODO: chuyển về trang products/:id trước đó
-  void _showSuccessDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        // Đặt thời gian chuyển hướng sau 2 giây
-        Future.delayed(const Duration(seconds: 2), () {
-        });
 
-        return const AlertDialog(
-          backgroundColor: Colors.white,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.check_circle,
-                color: Colors.green,
-                size: 60,
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Thành công',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Sửa hàng hóa thành công!',
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        );
+  void _showSnackBar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        duration: const Duration(seconds: 1),
+      ),
+    );
+  }
+
+  void _editProduct(Product updateProduct) {
+    ConfirmationDialog.show(
+      context: context,
+      title: 'Sửa hàng hóa',
+      content: 'Bạn có chắc muốn lưu lại thông tin không?',
+      onConfirm: () {
+        _updateProductInfo(id, updateProduct);
+        context.pop(updateProduct);
+        _showSnackBar('Sửa hàng hóa thành công!', Colors.green);
       },
     );
   }

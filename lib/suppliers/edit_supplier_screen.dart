@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sales_management_application/repository/firebase_repository.dart';
 import 'package:sales_management_application/suppliers/supplier.dart';
 import 'package:sales_management_application/suppliers/supplier_detail_screen.dart';
-
+import '../views/widgets/dialogs/confirmation_dialog.dart';
 import '../views/widgets/forms/custom_form.dart';
 import '../views/widgets/forms/custom_form_fields.dart';
 
@@ -41,6 +41,7 @@ class _EditSupplierScreenState extends State<EditSupplierScreen> {
     supplierCodeController.text = supplier.id.toString(); // Mã nhà cung cấp
     addressController.text = supplier.address; // Địa chỉ
     emailController.text = supplier.email; // Email
+    notesController.text = supplier.note;
   }
 
   @override
@@ -50,13 +51,6 @@ class _EditSupplierScreenState extends State<EditSupplierScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: const Text('Chỉnh sửa thông tin nhà cung cấp'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            // context.go('/suppliers');
-            context.pop();
-          },
-        ),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -85,15 +79,8 @@ class _EditSupplierScreenState extends State<EditSupplierScreen> {
                   updateSupplier.address = addressController.text;
                   updateSupplier.email = emailController.text;
                   updateSupplier.note = notesController.text;
-                  _updateSupplierInfo(id, updateSupplier);
-                  supplier = updateSupplier;
-                  _showSuccessDialog(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SupplierDetailScreen(id: id),
-                    ),
-                  );
+                  _editSupplier(updateSupplier);
+                  // context.go('/suppliers/${updateSupplier.id}');
                 },
                 submitBtn: 'Lưu',
               ),
@@ -109,42 +96,25 @@ class _EditSupplierScreenState extends State<EditSupplierScreen> {
     firebaseService.updateData('Suppliers',  id, supplier.toJson());
   }
 
-  /// hàm hiển thị thông báo sau khi submit và TODO: chuyển về trang suppliers/:id trước đó
-  void _showSuccessDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        // Đặt thời gian chuyển hướng sau 2 giây
-        Future.delayed(const Duration(seconds: 2), () {
-        });
+  void _showSnackBar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        duration: const Duration(seconds: 1),
+      ),
+    );
+  }
 
-        return const AlertDialog(
-          backgroundColor: Colors.white,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.check_circle,
-                color: Colors.green,
-                size: 60,
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Thành công',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Sửa thông tin thành công!',
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        );
+  void _editSupplier(Supplier updateSupplier) {
+    ConfirmationDialog.show(
+      context: context,
+      title: 'Sửa hàng hóa',
+      content: 'Bạn có chắc muốn lưu lại thông tin không?',
+      onConfirm: () {
+        _updateSupplierInfo(id, updateSupplier);
+        context.pop(updateSupplier);
+        _showSnackBar('Sửa hàng hóa thành công!', Colors.green);
       },
     );
   }

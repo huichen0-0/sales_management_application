@@ -194,13 +194,12 @@ class _UpdateReturnImportScreenState extends State<UpdateReturnImportScreen> {
                     context.push(AppPath.payment, extra: _receipt).then((result) {
                       //thanh toan xong
                       if (result != null && result is Receipt) {
-                        print('Accepted');
                         _controller.saveReceipt(_receipt);
+                        productController.subAmount(_receipt);
                         context.pop();
                       }
                     });
                   } else {
-                    print('Rejected');
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: const Text(AppString.errorNoProduct),

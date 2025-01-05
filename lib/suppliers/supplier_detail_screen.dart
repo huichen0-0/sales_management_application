@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sales_management_application/suppliers/supplier-controller.dart';
 import 'package:sales_management_application/suppliers/supplier.dart';
 import 'package:sales_management_application/suppliers/supplier_service.dart';
 
@@ -14,7 +15,7 @@ class SupplierDetailScreen extends StatefulWidget {
 class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
   Supplier supplier = Supplier.empty();
   String id;
-  SupplierService supplierService = SupplierService();
+  SupplierController supplierController = SupplierController();
 
   _SupplierDetailScreenState(this.id);
 
@@ -26,12 +27,6 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
         appBar: AppBar(
           backgroundColor: Colors.blue,
           title: const Text('Chi tiết nhà cung cấp'),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              context.pop();
-            },
-          ),
           actions: [
 
             ///nút sửa
@@ -52,7 +47,7 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
           ],
         ),
         body: FutureBuilder<Supplier>(
-          future: supplierService.getSupplierByKey(widget.id),
+          future: supplierController.getSupplierByKey(widget.id),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -266,8 +261,7 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
                 size: 35,
               ),
               onPressed: () {
-                //TODO: thực hiện thao tác xóa
-                _deleteSupplier();
+                supplierController.deleteSupplier(supplier);
                 context.go('/suppliers', extra: null);
               },
             ),
@@ -333,7 +327,7 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
               onPressed: () {
                 setState(() {
                   // Cập nhật trạng thái dựa trên lựa chọn của người dùng
-                  supplierService.updateActive(id, !supplier.isActive);
+                  supplierController.updateActive(supplier, !supplier.isActive);
                   supplier.isActive = !supplier.isActive;
                 });
                 Navigator.of(context).pop(); // Đóng hộp thoại
@@ -344,9 +338,5 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
         );
       },
     );
-  }
-
-  void _deleteSupplier() {
-    supplierService.deleteSupplier(id);
   }
 }

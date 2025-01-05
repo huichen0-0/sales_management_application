@@ -37,7 +37,7 @@ class InventoryService {
   }
 
   bool isFilterd(InventoryCheckReceipt mapValue, InventoryFilter filter) {
-    if (filter.isTemp == true && filter.isBalanced == false && mapValue.status == 3) {
+    if (filter.isTemp == true && filter.isBalanced == false && mapValue.status == 2) {
       return false;
     }
     if (filter.isTemp == false && filter.isBalanced == true && mapValue.status == 1) {

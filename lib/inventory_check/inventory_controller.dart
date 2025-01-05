@@ -36,7 +36,7 @@ class InventoryController {
       InventoryCheckReceiptDetail t = InventoryCheckReceiptDetail.empty();
       Product product = await productService.getProduct(i.productId);
       t.product = product;
-      t.productId = product.id;
+      t.productId = i.productId;
       t.matchedQuantity = i.matchedQuantity;
       details.add(t);
     }
@@ -44,14 +44,14 @@ class InventoryController {
     return receipt;
   }
 
-  Future<void> save(InventoryCheckReceipt receipt) async {
+  void save(InventoryCheckReceipt receipt) {
     inventoryService.save(receipt, 'InventoryCheck');
-    if (receipt.status == 2) {
-      for(InventoryCheckReceiptDetail i in receipt.details) {
-        Product product = await productService.getProduct(i.productId);
-        inventoryService.updateInventory(product, i.matchedQuantity);
-      }
-    }
+    // if (receipt.status == 2) {
+    //   for(InventoryCheckReceiptDetail i in receipt.details) {
+    //     Product product = await productService.getProduct(i.productId);
+    //     inventoryService.updateInventory(product, i.matchedQuantity);
+    //   }
+    // }
   }
 
   void delete(InventoryCheckReceipt receipt) {
@@ -154,9 +154,8 @@ class InventoryController {
           title: 'Tìm kiếm phiếu kiểm kho',
           itemBuilder: (item) {
             return InventoryCheckReceiptCard(
-              receipt:
-                  InventoryCheckReceipt.fromJSON(item), //chuyển về object
-              onTap: (id) => context.push('/inventory/$id'),
+              receipt: InventoryCheckReceipt.fromJSON(item), //chuyển về object
+              onTap: (id) => context.push('/inventory/$id', extra: [id, InventoryCheckReceipt.fromJSON(item)]),
             );
           },
         ),

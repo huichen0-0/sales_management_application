@@ -54,4 +54,12 @@ class InvoiceService {
   Future<InvoiceReceipt> getReceiptById(String id) async {
     return InvoiceReceipt.fromJson(await firebaseService.getDataByKey('Invoice', id));
   }
+
+  void updateReceipt(InvoiceReceipt receipt) {
+    firebaseService.updateData('Invoice', receipt.id, receipt.toJson2());
+  }
+
+  void removeReceipt(InvoiceReceipt receipt) {
+    firebaseService.delete('Invoice', receipt.id);
+  }
 }

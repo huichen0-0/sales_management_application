@@ -71,11 +71,11 @@ class _UpdateImportScreenState extends State<UpdateImportScreen> {
                   //nhập hàng tra hàng hóa đã trong phiếu nhập hàng chưa
                   if (_controller.existDetail(receipt, product.id)) {
                     // rồi sẽ lấy ra tiếp tục nhập hàng
-                    final detail =
-                        _controller.getDetailByProductId(receipt, product.id);
+                    final detail = _controller.getDetailByProductId(receipt, product.id);
                     _showReceiptDetailDialog(detail, false);
                   } else {
-                    //chưa sẽ tạo hàng nhập hàng mới
+                    //chưa sẽ tạo hàng nhập
+                    // àng mới
                     final detail = ReceiptDetail(
                         product: product,
                         quantity: 1,
@@ -149,9 +149,8 @@ class _UpdateImportScreenState extends State<UpdateImportScreen> {
           if (receipt.partnerId != '') {
             context.push(AppPath.payment, extra: receipt).then((result) {
               if (result != null && result is Receipt) {
-                //TODO: insert hóa đơn nhập vào db
-                // _controller.updateReceipt(updatedItem: receipt);
                 _controller.saveReceipt(receipt);
+                productController.addAmount(receipt);
                 context.pop();
               }
             });

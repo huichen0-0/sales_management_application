@@ -21,7 +21,7 @@ class CustomForm extends StatelessWidget {
       child: Column(
         children: [
           ...fields,
-          const SizedBox(height: 16),
+          const SizedBox(height: 16,),
           Padding(
             padding: const EdgeInsets.symmetric(
                 horizontal: 8.0, vertical: 16.0),
@@ -34,11 +34,22 @@ class CustomForm extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: const BorderRadius.all(Radius.circular(4.0)),
                 ),
               ),
-              child: Text(submitBtn,
-                  style: const TextStyle(color: Colors.white)
+              child: Container(
+                height: 50,
+                width: double.infinity,  // Set the width of the container
+                alignment: Alignment.center,  // Center the child widget inside the container
+                child: Text(
+                  submitBtn,  // Your text content
+                  style: TextStyle(
+                    color: Colors.white,  // Set text color
+                    fontFamily: 'YourFontFamily',  // Set custom font family
+                    fontSize: 18.0,  // Set font size
+                    fontWeight: FontWeight.bold,  // Set font weight (optional)
+                  ),
+                ),
               ),
             ),
           ),

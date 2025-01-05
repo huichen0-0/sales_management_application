@@ -1,4 +1,4 @@
-import '../customers/customer.dart';
+import '../customers/model/customer.dart';
 import '../receipt/receipt.dart';
 import '../receipt/receipt_detail.dart';
 import '../payment/payment.dart';
@@ -39,7 +39,7 @@ class InvoiceReceipt extends Receipt {
     partnerId: json['partnerId'],
     customer: json['customer'] != null
         ? Customer.fromJson(json['customer'])
-        : null,
+        : Customer.empty(),
     details: (json['details'] as List<dynamic>)
         .map((detail) => ReceiptDetail.fromJson(detail))
         .toList(),
@@ -63,9 +63,9 @@ class InvoiceReceipt extends Receipt {
     'status': status,
     'returned': returned,
     ///(dùng cho sắp xếp)
-    'totalValue': totalSaleValue, //tổng tiền
+    'totalSaleValue': totalSaleValue, //tổng tiền
     'totalPaid': amountPaid, //đã trả
-    'totalDue': saleDue, //còn nợ
+    'saleDue': saleDue, //còn nợ
     'uid': uid
   };
 

@@ -1,10 +1,10 @@
-import 'package:sales_management_application/customers/customer.dart';
+import 'package:sales_management_application/customers/model/customer.dart';
 import 'package:sales_management_application/invoice/invoice_receipt.dart';
 import 'package:sales_management_application/products/product_service.dart';
 import 'package:sales_management_application/suppliers/supplier.dart';
 import 'package:sales_management_application/suppliers/supplier_service.dart';
 import 'package:sales_management_application/time_filter/time_filter_service.dart';
-import '../customers/customer_service.dart';
+import '../customers/service/customer_service.dart';
 import '../import/import_filter.dart';
 import '../products/product.dart';
 import '../receipt/receipt_detail.dart';
@@ -26,12 +26,12 @@ class OrderController {
    TimeFilterService timeFilterService = TimeFilterService();
 
   // Hàm lấy dữ liệu
-  Future<List<Order>> getData(OrderFilter filter, DateTime? fromDate, DateTime? toDate) async {
+  Future<List<Order>> getData(OrderFilter filter, DateTime? fromDate, DateTime? toDate, String? partnerId) async {
 
     List<Order> results = [];
     List<Order> orders = await orderService.getData(filter);
     for(Order i in orders) {
-      if (timeFilterService.isTimeFilterd(i.createdAt, fromDate, toDate)) {
+      if (((partnerId != null && partnerId == i.customerId) || partnerId == null) && timeFilterService.isTimeFilterd(i.createdAt, fromDate, toDate)) {
         List<OrderDetail> detailResult = [];
         for (OrderDetail detail in i.details) {
           Product product = await productService.getProduct(detail.productId);

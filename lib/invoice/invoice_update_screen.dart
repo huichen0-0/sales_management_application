@@ -5,7 +5,7 @@ import 'package:sales_management_application/invoice/invoice_controller.dart';
 import 'package:sales_management_application/invoice/invoice_receipt.dart';
 import 'package:sales_management_application/products/product_controller.dart';
 import '../config/constants.dart';
-import '../customers/customer.dart';
+import '../customers/model/customer.dart';
 import '../helper/helper.dart';
 import '../order/overlay.dart';
 import '../products/product.dart';
@@ -412,7 +412,7 @@ class UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
     );
   }
 
-  /// xây dựng nút "+"
+  ///
   Widget _buildFloatingActionButtons() {
     return FloatingActionButton(
       onPressed: () {
@@ -430,34 +430,4 @@ class UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
     );
   }
 
-/// xử lý khi nhấn lưu tạm
-// void _handleSaveTemporary() {
-//   ConfirmationDialog.show(
-//     context: context,
-//     title: AppString.confirmTemporaryTitle,
-//     content: AppString.confirmTemporaryContent,
-//     onConfirm: () {
-//       final success = _invoiceController.saveTemporary(_invoice);
-//       if (success) {
-//         context.pop();
-//         _showSnackBar(AppString.successTemporary, Colors.green);
-//       } else {
-//         _showSnackBar(AppString.error, Colors.red);
-//       }
-//     },
-//   );
-// }
-
-// /// xử lý khi nhấn thanh toán
-// void _handlePayment() {
-//   var newInvoice = _invoiceController.createInvoiceBasedOnReceipt(_invoice);
-//   context.push(AppPath.salePayment, extra: newInvoice).then(
-//         (result) {
-//       if (result != null && result is InvoiceReceipt) {
-//         //TODO: insert hóa đơn vào db, dùng invoice controller?
-//         context.pop();
-//       }
-//     },
-//   );
-// }
 }

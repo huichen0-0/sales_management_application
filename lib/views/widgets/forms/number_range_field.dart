@@ -34,6 +34,7 @@ class NumberRangeField extends StatelessWidget {
               // Nếu không nhập giá trị, mặc định "Từ" là 0
               if (value == null || value.isEmpty) {
                 value = '0';
+                fromController.text = value;
               }
               return null;
             },
@@ -54,7 +55,8 @@ class NumberRangeField extends StatelessWidget {
             // Validator kiểm tra giá trị
             validator: (value) {
               if (value == null || value.isEmpty) {
-                  value = '999999999'; // để trống mặc định giá trị là 999999999
+                  value = '999999999';
+                  toController.text = value;// để trống mặc định giá trị là 999999999
               }
 
               final num? toValue = num.tryParse(value.replaceAll(',', ''));

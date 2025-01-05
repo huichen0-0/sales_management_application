@@ -15,6 +15,7 @@ class WidgetScreen extends StatelessWidget {
     final authController = Provider.of<AuthController>(context);
 
     return Scaffold(
+      backgroundColor: Colors.white54,
       body: FutureBuilder<Users?>( //Đưa vào builder để lấy thông tin người dùng từ BE
           future: authController.getUserInfo(), // Gọi phương thức lấy thông tin người dùng
           builder: (context, snapshot) {
@@ -57,31 +58,24 @@ class WidgetScreen extends StatelessWidget {
                   title: 'Giao dịch',
                   items: [
                     {
-                      'icon': Icons.shopping_bag,
-                      'label': 'Bán hàng',
-                      'action': () {
-                        context.go('/sell');
-                      },
-                    },
-                    {
                       'icon': Icons.receipt,
                       'label': 'Hóa đơn',
                       'action': () {
-                        context.go('/invoice');
+                        context.push('/invoice');
                       },
                     },
                     {
                       'icon': Icons.add_shopping_cart,
                       'label': 'Đặt hàng',
                       'action': () {
-                        context.go('/orders');
+                        context.push('/orders');
                       },
                     },
                     {
                       'icon': Icons.assignment_return,
                       'label': 'Trả hàng',
                       'action': () {
-                        context.go('/returnInvoice');
+                        context.push('/returnInvoice');
                       },
                     },
                   ],
@@ -133,40 +127,41 @@ class WidgetScreen extends StatelessWidget {
                       'icon': Icons.person,
                       'label': 'Khách hàng',
                       'action': () {
-                        context.go('/customers');
+                        context.push('/customers');
                       },
                     },
                     {
                       'icon': Icons.group,
                       'label': 'Nhà cung cấp',
                       'action': () {
-                        context.go('/suppliers');
+                        context.push('/suppliers');
                       },
                     },
                   ],
                 ),
                 WidgetCard(
                   title: 'Báo cáo',
+                  color: Colors.white,
                   items: [
                     {
                       'icon': Icons.insert_chart_outlined,
                       'label': 'Cuối ngày',
                       'action': () {
-                        context.go('/home');
+                        context.push('/home');
                       },
                     },
                     {
                       'icon': Icons.inventory_outlined,
                       'label': 'Hàng hóa',
                       'action': () {
-                        context.go('/home');
+                        context.push('/home');
                       },
                     },
                     {
                       'icon': Icons.area_chart,
                       'label': 'Bán hàng',
                       'action': () {
-                        context.go('/home');
+                        context.push('/home');
                       },
                     },
                   ],

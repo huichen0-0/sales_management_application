@@ -1,4 +1,4 @@
-import '../customers/customer.dart';
+import '../customers/model/customer.dart';
 import 'order_detail.dart';
 
 class Order {

@@ -54,12 +54,6 @@ class _SupplierScreenState extends State<SupplierScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: const Text("Nhà cung cấp"),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            context.go('/home');
-          },
-        ),
         actions: [
           /// tìm kiếm
           IconButton(
@@ -76,7 +70,6 @@ class _SupplierScreenState extends State<SupplierScreen> {
           IconButton(
             icon: const Icon(Icons.sort),
             onPressed: () {
-              // TODO: Xử lý sắp xếp
               // Mở Bottom Sheet để chọn sắp xếp
               _showSortingOptions(context);
             },
@@ -86,8 +79,15 @@ class _SupplierScreenState extends State<SupplierScreen> {
           IconButton(
             icon: const Icon(Icons.filter_alt_outlined),
             onPressed: () {
-              // TODO: Xử lý lọc
-              context.push('/suppliers/filter', extra: filter);
+              context.push('/suppliers/filter', extra: filter)
+              .then((result) {
+                if (result != null && result is SupplierFilter) {
+                  setState(() {
+                    filter = result;
+                    //gán filter
+                  });
+                }
+              });;
             },
           ),
         ],
@@ -117,7 +117,14 @@ class _SupplierScreenState extends State<SupplierScreen> {
         ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.go('/suppliers/add');
+          context.push('/suppliers/add')
+          .then((result) {
+            if (result != null && result is Supplier) {
+              setState(() {
+                //gán filter
+              });
+            }
+          });
         },
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add),
@@ -218,12 +225,10 @@ class _SupplierScreenState extends State<SupplierScreen> {
 
         ///hiển thị danh sách nhà cung cấp
         for (var entry in suppliers)
-          if (entry.isDeleted == false)
             SupplierCard(
                 supplier: entry,
                 onTap: (id) {
-                  context.push('/suppliers/${entry.id}',
-                      extra: [entry.id, entry.toJson()]);
+                  context.push('/suppliers/${entry.id}');
                 },
                 fromDate: fromDate,
                 toDate: toDate,
@@ -323,7 +328,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
             {'searchKey': 'notes', 'tag': 'Ghi chú', 'hint': 'Tìm theo ghi chú'},
           ],
           searchData: items,
-          dataType: 'Suppliers',
+          dataType: 'suppliers',
           onCancel: () {
             // Hủy tìm kiếm và đóng trang tìm kiếm
             Navigator.pop(context);

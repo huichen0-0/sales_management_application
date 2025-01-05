@@ -1,6 +1,6 @@
 // import 'package:flutter/material.dart';
 // import 'package:sales_management_application/config/constants.dart';
-// import 'package:sales_management_application/views/widgets/forms/number_range_field.dart';
+// import 'package:sales_management_application/view/widgets/forms/number_range_field.dart';
 //
 // /// hiển thị tùy chọn lọc cho trang /suppliers
 // /// TODO: cần xử lý áp dung

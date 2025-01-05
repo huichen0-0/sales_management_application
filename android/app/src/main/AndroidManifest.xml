@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="sales_management_application"
+        android:label="Quản lý bán hàng"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

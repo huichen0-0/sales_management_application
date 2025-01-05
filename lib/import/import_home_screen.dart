@@ -316,7 +316,8 @@ class _ImportScreenState extends State<ImportScreen> {
             return ImportReceiptCard(
               displayValue: _displayAttribute,
               receipt: ImportReceipt.fromJson(item), //chuyển về object
-              onTap: (id) {context.push('${AppPath.import}/id');}, fromDate: fromDate, toDate: toDate,
+              onTap: (id) {context.push('${AppPath.import}/id', extra: ImportReceipt.fromJson(item));},
+              fromDate: fromDate, toDate: toDate,
             );
           },
         ),
@@ -326,12 +327,13 @@ class _ImportScreenState extends State<ImportScreen> {
 
   // Hàm này được gọi khi bạn trở lại từ trang lọc và nhận được kết quả
   Future<void> _openFilterScreen() async {
-    final result = await context.push(AppPath.importFilter, extra: filter);
-    // Đường dẫn đến trang lọc
-    if (result != null && result is Map<String, dynamic>) {
-      setState(() {
-        // _filters = result;
-      });
-    }
+    await context.push(AppPath.importFilter, extra: filter)
+    .then((result) {
+      if (result != null && result is ImportFilter) {
+        setState(() {
+          filter = result;
+        });
+      }
+    });
   }
 }

@@ -45,9 +45,6 @@ class ReturnImportScreenState extends State<ReturnImportScreen> {
 
   //lưu dữ liệu ban đầu
   List<ReturnImportReceipt>? _receipts;
-
-  //bộ lọc
-  Map<String, dynamic> _filters = {};
   ReturnImportFilter filter = ReturnImportFilter();
   ReturnImportController controller= ReturnImportController();
   ReturnImportScreenState(this.filter);
@@ -162,19 +159,10 @@ class ReturnImportScreenState extends State<ReturnImportScreen> {
             ///nút lọc hiển thị TODO: cần xử lý áp dụng
             TextButton.icon(
               onPressed: null,
-              //     () {
-              //   // Mở Bottom Sheet để chọn Tổng mua
-              //   // _showDisplayOptions(context);
-              // },
               label: Text(
                 _selectedDisplay,
                 style: const TextStyle(color: Colors.black),
               ),
-              // icon: const Icon(
-              //   Icons.keyboard_arrow_down,
-              //   color: Colors.black,
-              // ),
-              // iconAlignment: IconAlignment.end,
             ),
 
             //tổng tiền theo hiển thị TODO: thay đổi theo tùy chọn
@@ -302,7 +290,7 @@ class ReturnImportScreenState extends State<ReturnImportScreen> {
               displayValue: _displayAttribute,
               receipt: ReturnImportReceipt.fromJson(item),
               //chuyển về object
-              onTap: (id) => context.push('/returnImport/$id'),
+              onTap: (id) => context.push('/returnImport/$id', extra: ReturnImportReceipt.fromJson(item)),
             );
           },
         ),
@@ -314,9 +302,9 @@ class ReturnImportScreenState extends State<ReturnImportScreen> {
   Future<void> _openFilterScreen() async {
     final result = await context.push(AppPath.returnImportFilter, extra: filter);
     // Đường dẫn đến trang lọc
-    if (result != null && result is Map<String, dynamic>) {
+    if (result != null && result is ReturnImportFilter) {
       setState(() {
-        _filters = result;
+        filter = result;
       });
     }
   }

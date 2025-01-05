@@ -46,7 +46,14 @@ class _ReturnImportDetailScreenState extends State<ReturnImportDetailScreen> {
                     ///nút sửa
                     IconButton(
                       onPressed: () {
-                        context.push('${AppPath.returnImport}/${receipt.id}/edit', extra: [receipt.partnerId, receipt]);
+                        context.push('${AppPath.returnImport}/${receipt.id}/edit', extra: [receipt.partnerId, receipt])
+                        .then((result) {
+                          if (result != null && result is ReturnImportReceipt) {
+                            setState(() {
+                              receipt = result;
+                            });
+                          }
+                        });;
                       },
                       icon: const Icon(Icons.edit),
                     ),

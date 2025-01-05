@@ -55,7 +55,7 @@ class ExportCancellationReceiptCard extends StatelessWidget {
           maxLines: 1,
         ),
         onTap: () {
-          onTap(receipt.id.toString());
+          onTap(receipt.id);
         },
       ),
     );

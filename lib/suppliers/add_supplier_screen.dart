@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:sales_management_application/suppliers/supplier.dart';
 import 'package:sales_management_application/suppliers/supplier_service.dart';
 
+import '../views/widgets/dialogs/confirmation_dialog.dart';
 import '../views/widgets/forms/custom_form.dart';
 import '../views/widgets/forms/custom_form_fields.dart';
 
@@ -34,12 +35,6 @@ class _AddSupplierScreenState extends State<AddSupplierScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: const Text('Thêm nhà cung cấp'),
-        // leading: IconButton(
-        //   icon: const Icon(Icons.arrow_back),
-        //   onPressed: () {
-        //     Navigator.pop(context); // Quay lại trang trước đó
-        //   },
-        // ),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -62,17 +57,13 @@ class _AddSupplierScreenState extends State<AddSupplierScreen> {
                   InputField(controller: notesController, label: 'Ghi chú'),
                 ],
                 onSubmit: (){
-                  Supplier supplier = Supplier(amount: 0, name: 'name', address: 'address', isActive: true, isDeleted: false, phone: 'phone', email: 'email', note: 'note', uid: 'uid', id: "");
-                  DateTime now = DateTime.now();
-                  supplier.id = DateFormat('yyMMddHHmmss').format(now);
+                  Supplier supplier = Supplier.empty();
                   supplier.name = nameController.text;
                   supplier.phone = phoneController.text.toString();
                   supplier.address = addressController.text;
                   supplier.email = emailController.text;
                   supplier.note = notesController.text;
-                  supplierService.insertSupplier(supplier);
-                  _showSuccessDialog(context);
-                  context.go('/suppliers');
+                  _addSupplier(supplier);
                 },
                 submitBtn: 'Lưu',
               ),
@@ -83,43 +74,25 @@ class _AddSupplierScreenState extends State<AddSupplierScreen> {
     );
   }
 
-  /// hàm hiển thị thông báo sau khi submit và TODO: chuyển về trang suppliers/:id trước đó
-  void _showSuccessDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        // Đặt thời gian chuyển hướng sau 2 giây
-        Future.delayed(const Duration(seconds: 2), () {
-        //     context.go('/suppliers');
-        });
+  void _showSnackBar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        duration: const Duration(seconds: 1),
+      ),
+    );
+  }
 
-        return const AlertDialog(
-          backgroundColor: Colors.white,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.check_circle,
-                color: Colors.green,
-                size: 60,
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Thành công',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Thêm nhà cung cấp thành công!',
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        );
+  void _addSupplier(Supplier supplier) {
+    ConfirmationDialog.show(
+      context: context,
+      title: 'Thêm nhà cung cấp',
+      content: 'Bạn có chắc muốn thêm nhà cung cấp này không?',
+      onConfirm: () {
+        supplierService.insertSupplier(supplier);
+        context.pop();
+        _showSnackBar('Thêm nhà cung cấp thành công!', Colors.green);
       },
     );
   }

@@ -1,8 +1,10 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:sales_management_application/customers/customer.dart';
+import 'package:sales_management_application/customers/model/customer.dart';
+import 'package:sales_management_application/repository/firebase_repository.dart';
 
 class CustomerRepository {
   final DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
+  FirebaseService firebaseService = FirebaseService();
 
   //Thêm khách hàng
   Future<bool> addCustomer(Customer customer) async {
@@ -50,15 +52,11 @@ class CustomerRepository {
   }
 
   //Cập nhật thông tin khách hàng
-  Future<bool> updateCustomer (String cusId, Customer updatedCustomer) async {
+  void updateCustomer (String cusId, Customer updatedCustomer) {
     try{
-      Map<String, dynamic> customerData = updatedCustomer.toJson();
-      await _databaseReference.child('Customer').child(cusId).update(customerData);
-      return true;
-
+      firebaseService.updateData('Customer', cusId, updatedCustomer.toJson());
     } catch (e) {
       print ('Lỗi khi cập nhật thông tin khách hàng: $e');
-      return false;
     }
   }
 }

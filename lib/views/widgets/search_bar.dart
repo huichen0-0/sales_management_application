@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sales_management_application/products/product.dart';
 import 'package:sales_management_application/search/searching_controller.dart';
+
+import '../../customers/model/customer.dart';
 
 class SearchBarScreen extends StatefulWidget {
   final List<Map<String, String>>
@@ -152,8 +155,11 @@ class _SearchBarScreenState extends State<SearchBarScreen> {
                             ''),
                     // Xử lý khi chọn kết quả tìm kiếm
                     onTap: () {
-                      // đẩy đến trang xem chi tiết
-                      context.push('/${widget.dataType}/$itemId', extra: [itemId, item]);
+                      if (widget.dataType == 'customers') {
+                        context.push('/${widget.dataType}/$itemId', extra:  Customer.fromJson(item));
+                      } else if (widget.dataType == 'products') {
+                        context.push('/${widget.dataType}/$itemId', extra:  [item['id'], item]);
+                      }
                       print(
                           'Selected: ${item[_searchingController.selectedSearchKey]}');
                     },

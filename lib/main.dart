@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sales_management_application/authentication/auth_controller.dart';
-import 'package:sales_management_application/customers/customer.dart';
-import 'package:sales_management_application/customers/customer_filter.dart';
+import 'package:sales_management_application/customers/model/customer.dart';
+import 'package:sales_management_application/customers/filter/customer_filter.dart';
 import 'package:sales_management_application/ec/ec_filter.dart';
 import 'package:sales_management_application/import/import_filter.dart';
 import 'package:sales_management_application/order/order_filter.dart';
+import 'package:sales_management_application/payment/customer_payment_history_screen.dart';
 import 'package:sales_management_application/payment/import_payment_screen.dart';
-import 'package:sales_management_application/payment/payment_history_screen.dart';
+import 'package:sales_management_application/payment/supplier_payment_history_screen.dart';
 import 'package:sales_management_application/payment/sale_payment_screen.dart';
 import 'package:sales_management_application/products/add_product_screen.dart';
 import 'package:sales_management_application/products/edit_product_screen.dart';
@@ -42,15 +43,15 @@ import 'authentication/login_screen.dart';
 import 'authentication/register_screen.dart';
 import 'authentication/reset_password_screen.dart';
 import 'config/constants.dart';
-import 'customers/add_customer_screen.dart';
-import 'customers/customer_detail_screen.dart';
-import 'customers/customers_screen.dart';
-import 'customers/edit_customer_screen.dart';
-import 'ec/ec_detail_screen.dart';
+import 'customers/view/add_customer_screen.dart';
+import 'customers/view/customer_detail_screen.dart';
+import 'customers/view/customers_screen.dart';
+import 'customers/view/edit_customer_screen.dart';
+import 'ec/view/ec_detail_screen.dart';
 import 'ec/ec_filter_screen.dart';
-import 'ec/ec_home_screen.dart';
-import 'ec/ec_update_screen.dart';
-import 'filter/customer_filter_screen.dart';
+import 'ec/view/ec_home_screen.dart';
+import 'ec/view/ec_update_screen.dart';
+import 'customers/filter/customer_filter_screen.dart';
 import 'filter/product_filter_screen.dart';
 import 'filter/supplier_filter_screen.dart';
 import 'home/main_screen.dart';
@@ -128,12 +129,6 @@ class MyApp extends StatelessWidget {
           path: '/forgot_password',
           builder: (context, state) => ForgotPasswordScreen(),
         ),
-        // GoRoute(
-        //   path: '/otp',
-        //   builder: (context, state) => VerificationCodeScreen(
-        //     previousPage: state.extra as String?,
-        //   ),
-        // ),
         GoRoute(
           path: '/reset_password',
           builder: (context, state) => ResetPasswordScreen(),
@@ -191,11 +186,8 @@ class MyApp extends StatelessWidget {
                     final id = state.pathParameters['id']!; // Lấy ID từ URL
                     final InvoiceController controller = InvoiceController();
                     // Lấy dữ liệu
-                    final InvoiceReceipt? existingInvoice =
-                    controller.getReceiptById(id);
-                    return UpdateInvoiceScreen(
-                      existingInvoice: existingInvoice,
-                    );
+                    final InvoiceReceipt? existingInvoice = state.extra as InvoiceReceipt;
+                    return UpdateInvoiceScreen(existingInvoice: existingInvoice,);
                   },
                 ),
               ],
@@ -348,7 +340,7 @@ class MyApp extends StatelessWidget {
               path: ':id',
               builder: (context, state) {
                 List<dynamic> extraList = (state.extra as List);
-                InventoryCheckReceipt inventoryCheck = InventoryCheckReceipt.fromJSON(extraList.elementAt(1));
+                InventoryCheckReceipt inventoryCheck = extraList.elementAt(1) as InventoryCheckReceipt;
                 final String key = extraList.elementAt(0);
                 return InventoryDetailScreen(id: key, receipt: inventoryCheck);
               },
@@ -418,10 +410,10 @@ class MyApp extends StatelessWidget {
               Object? extraObject = state.extra;
               if (extraObject == null) {
                 return ExportCancellationScreen(EcFilter());
-              } else {
-              EcFilter filter = extraObject as EcFilter;
-              return ExportCancellationScreen(filter);
-              }
+    } else {
+    EcFilter filter = extraObject as EcFilter;
+    return ExportCancellationScreen(filter);
+    };
           },
           routes: [
             GoRoute(
@@ -439,7 +431,7 @@ class MyApp extends StatelessWidget {
               path: ':id',
               builder: (context, state) {
                 List<dynamic> extraList = (state.extra as List);
-                ExportCancellationReceipt ec = ExportCancellationReceipt.fromJSON(extraList.elementAt(1));
+                ExportCancellationReceipt ec = extraList.elementAt(1) as ExportCancellationReceipt;
                 final String key = extraList.elementAt(0);
                 return ExportCancellationDetailScreen(id: key, ec: ec);
               },
@@ -535,7 +527,8 @@ class MyApp extends StatelessWidget {
                 GoRoute(
                   path: 'edit',
                   builder: (context, state) {
-                    return const EditCustomerScreen();
+                    Customer customer = state.extra as Customer;
+                    return EditCustomerScreen(customer: customer,);
                   },
                 ),
               ],
@@ -746,6 +739,14 @@ class MyApp extends StatelessWidget {
           builder: (context, state) {
             final id = state.extra.toString();
             return PaymentHistory(partnerId: id);
+          },
+        ),
+        ///customerHistory
+        GoRoute(
+          path: '/customerPaymentHistory',
+          builder: (context, state) {
+            final id = state.extra.toString();
+            return CustomerPaymentHistoryScreen(partnerId: id);
           },
         ),
       ],

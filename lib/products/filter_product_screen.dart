@@ -1,5 +1,5 @@
 // import 'package:flutter/material.dart';
-// import 'package:sales_management_application/views/widgets/forms/ratio_field.dart';
+// import 'package:sales_management_application/view/widgets/forms/ratio_field.dart';
 //
 // /// hiển thị tùy chọn lọc cho trang /products
 // /// TODO: cần xử lý áp dung

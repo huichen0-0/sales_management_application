@@ -7,7 +7,7 @@ import 'package:sales_management_application/order/order_controller.dart';
 import 'package:sales_management_application/products/product_controller.dart';
 import 'package:sales_management_application/products/product_filter.dart';
 import '../config/constants.dart';
-import '../customers/customer.dart';
+import '../customers/model/customer.dart';
 import '../helper/helper.dart';
 import '../order/order_detail.dart';
 import '../order/overlay.dart';

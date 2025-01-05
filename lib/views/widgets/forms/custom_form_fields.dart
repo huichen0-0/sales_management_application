@@ -96,7 +96,16 @@ class _PasswordFieldState extends State<PasswordField> {
       obscureText: _obscureText, // Ẩn/hiện mật khẩu
       decoration: InputDecoration(
         labelText: widget.label,
-        border: const OutlineInputBorder(),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0), // Optional: Rounded corners
+          borderSide: const BorderSide(color: Colors.grey), // Default border color
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue, width: 2.0), // Focused border color
+        ),
+        enabledBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey, width: 1.0), // Border color when enabled
+        ),
         suffixIcon: IconButton(
           icon: Icon(
             _obscureText ? Icons.visibility_off : Icons.visibility,
@@ -189,9 +198,18 @@ class EmailField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      decoration: const InputDecoration(
-        labelText: 'Email',
-        border: OutlineInputBorder(),
+      decoration: InputDecoration(
+        labelText: ' Email',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0), // Optional: Rounded corners
+          borderSide: const BorderSide(color: Colors.grey), // Default border color
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue, width: 2.0), // Focused border color
+        ),
+        enabledBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey, width: 1.0), // Border color when enabled
+        ),
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {

@@ -107,7 +107,7 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
               ),
               onTap: () {
                 //đi tới trang xem KH chi tiết
-                context.push('${AppPath.customer}/${_receipt.partnerId}');
+                context.push('${AppPath.customer}/${_receipt.partnerId}', extra: _receipt.customer);
               },
             ),
             ListView.builder(
@@ -175,7 +175,7 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
         ///nút sửa
         IconButton(
           onPressed: () {
-            context.push('${AppPath.invoice}/${widget.receiptId}/edit');
+            context.push('${AppPath.invoice}/${widget.receiptId}/edit', extra: _receipt);
           },
           icon: const Icon(Icons.edit),
         ),
@@ -281,7 +281,7 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
       title: AppString.confirmCancelTitle,
       content: AppString.confirmCancelContent,
       onConfirm: () {
-        final success = _controller.cancelReceipt();
+        final success = _controller.cancelReceipt(_receipt);
         if (success) {
           Navigator.of(context).pop();
           _showSnackBar(AppString.successCancel, Colors.green);

@@ -94,15 +94,9 @@ class _FilterImportScreenState extends State<FilterImportScreen> {
   }
 
   void _applyFilters() {
-    // TODO: áp dụng bộ lọc
     ImportFilter filter = ImportFilter();
     filter.isFinished = _isCompleted;
     filter.isTemp = _isTemp;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ImportScreen(filter: filter,),
-      ),
-    );
+    context.pop(filter);
   }
 }

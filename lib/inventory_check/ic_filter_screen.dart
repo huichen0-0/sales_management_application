@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sales_management_application/authentication/forgot_password_screen.dart';
 import 'package:sales_management_application/inventory_check/inventory_filter.dart';
 
 import 'ic_home_screen.dart';
@@ -91,11 +93,6 @@ class _FilterInventoryScreenState extends State<FilterInventoryScreen> {
     InventoryFilter filter = InventoryFilter();
     filter.isBalanced = _isCompleted;
     filter.isTemp = _isTemp;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => InventoryScreen(filter),
-      ),
-    );
+    context.pop(filter);
   }
 }

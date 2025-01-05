@@ -108,31 +108,11 @@ class ImportPaymentScreenState extends State<ImportPaymentScreen> {
     );
   }
 
-  // Widget _buildSeeDetailsButton() {
-  //   return InkWell(
-  //     onTap: () {
-  //       //TODO: navigate to order detail
-  //       print('view order details');
-  //     },
-  //     child: Container(
-  //       padding: const EdgeInsets.all(10),
-  //       decoration: BoxDecoration(
-  //         color: Colors.grey[200],
-  //         borderRadius: BorderRadius.circular(10),
-  //       ),
-  //       child: const Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //         children: [
-  //           Text('Xem hàng trong đơn'),
-  //           Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _buildPaymentInfo() {
-    _excessAmount = _controller.amountPaid - _receipt.importDue;
+    //tính tiền thừa
+    if(_controller.amountPaid > _receipt.importDue) {
+      _excessAmount = _controller.amountPaid - _receipt.importDue;
+    }
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -198,47 +178,6 @@ class ImportPaymentScreenState extends State<ImportPaymentScreen> {
       ),
     );
   }
-
-  // Widget _buildDiscountRow() {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(vertical: 6),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //       children: [
-  //         const Text("Giảm giá (%)",
-  //             style: TextStyle(
-  //               fontSize: 16,
-  //             )),
-  //         SizedBox(
-  //           width: 60,
-  //           child: TextField(
-  //             controller: _discountController,
-  //             textAlign: TextAlign.end,
-  //             decoration: const InputDecoration(
-  //               border: UnderlineInputBorder(),
-  //               focusedBorder: UnderlineInputBorder(
-  //                 borderSide:
-  //                 BorderSide(color: Colors.blue), // Thay đổi màu khi focus
-  //               ),
-  //               suffix: Text("%"),
-  //             ),
-  //             keyboardType: TextInputType.number,
-  //             inputFormatters: [
-  //               FilteringTextInputFormatter.digitsOnly,
-  //             ],
-  //             onChanged: (value) {
-  //               setState(() {
-  //                 value.isEmpty
-  //                     ? _discountController.text = '0'
-  //                     : _discount = num.parse(value);
-  //               });
-  //             },
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   Widget _buildRowInfo(String label, String value, {Color? color}) {
     return Padding(
@@ -340,7 +279,7 @@ class ImportPaymentScreenState extends State<ImportPaymentScreen> {
       content: AppString.confirmCompleteContent,
       onConfirm: () {
         _controller.updateAmountPaid(_amountController.text);
-        final success = _controller.completePayment();
+        final success = _controller.completePayment(_excessAmount);
         if (success) {
           widget.onSubmit(_controller.receipt);
           _showSnackBar(AppString.successComplete, Colors.green);

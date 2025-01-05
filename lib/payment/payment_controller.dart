@@ -36,8 +36,9 @@ class PaymentController {
   }
 
   /// Xử lý logic Hoàn thành
-  bool completePayment() {
+  bool completePayment(num excessAmount) {
     if (amountPaid <= 0) return false;
+    amountPaid = amountPaid - excessAmount;
     payment = _createPayment();
     receipt.status = AppNum.two;  // trạng thái Hoàn thành
     receipt.payments.add(payment);

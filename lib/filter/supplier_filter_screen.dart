@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sales_management_application/authentication/forgot_password_screen.dart';
 
 import '../suppliers/supplier_filter.dart';
 import '../suppliers/suppliers_screen.dart';
@@ -166,11 +168,6 @@ class _FilterSupplierScreenState extends State<FilterSupplierScreen> {
     } else {
       filter.purchaseUpperBound = int.parse(upperbound.text);
     }
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SupplierScreen(filter),
-      ),
-    );
+    context.pop(filter);
   }
 }

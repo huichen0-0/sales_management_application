@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sales_management_application/authentication/forgot_password_screen.dart';
 import 'package:sales_management_application/ec/ec_filter.dart';
 
-import 'ec_home_screen.dart';
+import 'view/ec_home_screen.dart';
 
 class FilterExportCancellationScreen extends StatefulWidget {
   EcFilter filter = EcFilter();
@@ -96,11 +98,6 @@ class _FilterExportCancellationScreenState extends State<FilterExportCancellatio
     EcFilter filter = EcFilter();
     filter.isFinished = _isCompleted;
     filter.isTemp = _isTemp;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ExportCancellationScreen(filter),
-      ),
-    );
+    context.pop(filter);
   }
 }

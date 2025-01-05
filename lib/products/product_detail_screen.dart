@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:sales_management_application/config/constants.dart';
+import 'package:sales_management_application/products/product_controller.dart';
 import 'package:sales_management_application/products/product_service.dart';
 
 import 'product.dart';
@@ -16,9 +17,9 @@ class ProductDetailScreen extends StatefulWidget {
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
-  final Product product;
+  Product product;
   final String id;
-  ProductService productService = ProductService();
+  ProductController productController = ProductController();
   bool isActive = true; // biến check trạng thái hoạt động TODO: lấy từ thuộc tính của ncc
 
   _ProductDetailScreenState(this.id, this.product);
@@ -35,17 +36,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: const Text('Chi tiết hàng hóa'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            context.go('/products', extra: null);
-          },
-        ),
         actions: [
           ///nút sửa
           IconButton(
             onPressed: () {
-              context.push('/products/$id/edit', extra: [id, product]);
+              context.push('/products/$id/edit', extra: [id, product])
+              .then((result) {
+                if (result != null && result is Product) {
+                  setState(() {
+                    product = result;
+                    //gán filter
+                  });
+                }
+              });;
             },
             icon: const Icon(Icons.edit),
           ),
@@ -227,7 +230,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 size: 35,
               ),
               onPressed: () {
-                //TODO: thực hiện thao tác xóa
+                productController.deleteProduct(product);
                 context.go('/products');
               },
             ),
@@ -284,7 +287,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               },
             ),
 
-            /// Nút Đồng ý (thay đổi trạng thái) TODO: cập nhật trạng thái trong db
+            /// Nút Đồng ý (thay đổi trạng thái)
             IconButton(
               icon: const Icon(
                 Icons.check,
@@ -294,7 +297,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               onPressed: () {
                 setState(() {
                     // Cập nhật trạng thái dựa trên lựa chọn của người dùng
-                    productService.updateActive(id, !product.isActive);
+                    productController.updateActive(id, !product.isActive);
                     product.isActive = !product.isActive;
               });
                 Navigator.of(context).pop(); // Đóng hộp thoại

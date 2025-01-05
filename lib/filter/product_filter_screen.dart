@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sales_management_application/authentication/forgot_password_screen.dart';
 import '../products/product_filter.dart';
 import '../products/products_screen.dart';
 import '../views/widgets/forms/ratio_field.dart';
@@ -148,11 +150,6 @@ class _FilterProductScreenState extends State<FilterProductScreen> {
     } else {
       filter.setStatus(false, false, false, false);
     }
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ProductScreen(filter),
-      ),
-    );
+    context.pop(filter);
   }
 }

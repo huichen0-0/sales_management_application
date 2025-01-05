@@ -13,6 +13,7 @@ class Product {
   String? description=''; // Mô tả sản phẩm
   String notes=''; // Ghi chú
   bool isActive = true; // Trạng thái hoạt động
+  bool isDeleted = true;
   DateTime? createdAt; // Ngày tạo sản phẩm
   String? uid='';
 
@@ -33,6 +34,7 @@ class Product {
     this.description,
     required this.notes,
     this.isActive = true,
+    this.isDeleted = true,
     this.createdAt,
     this.uid
   });
@@ -62,13 +64,14 @@ class Product {
       'description': description,
       'notes': notes,
       'isActive': isActive,
-      'created_at': createdAt, // Định dạng ngày tháng
+      'isDeleted': isDeleted,
+      'createdAt': createdAt?.toIso8601String(), // Định dạng ngày tháng
       'uid': uid
     };
   }
   factory Product.fromJSON(Map<String, dynamic> json) {
     return Product(
-      id: json['id'],
+      id: json['id'] ?? '',
       name: json['name'],
       barcode: json['barcode'],
       imageUrl: json['imageUrl'],
@@ -81,7 +84,8 @@ class Product {
       description: json['description'],
       notes: json['notes'],
       isActive: json['isActive'],
-      createdAt: json['createdAt'],
+      isDeleted: json['isDeleted'],
+      createdAt: DateTime.parse(json['createdAt']),
       uid: json['uid']
     );
   }

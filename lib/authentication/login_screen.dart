@@ -31,13 +31,11 @@ class LoginScreen extends StatelessWidget {
                   size: 100,
                   color: Colors.blue,
                 ),
-                const Text(
+                Text(
                   'Quản lý bán hàng',
-                  style: TextStyle(
-                    color: Colors.black,
-                    letterSpacing: 0.2,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    fontSize: 25,
+                    color: Colors.black,
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -90,7 +88,7 @@ class LoginScreen extends StatelessWidget {
                   },
                   submitBtn: 'Đăng nhập',
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
                 /// link đăng ký
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -105,14 +103,6 @@ class LoginScreen extends StatelessWidget {
                         style: TextStyle(color: Colors.blue),
                       ),
                     ),
-                  ],
-                ),
-                /// link hotline TODO: xử lý nhâps vào sdt hotline
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.phone, color: Colors.grey),
-                    Text('Hỗ trợ 1900 0091'),
                   ],
                 ),
               ],

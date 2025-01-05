@@ -10,6 +10,7 @@ class ProductService {
 
   void save(Product product) {
     product.uid = _auth.currentUser!.uid;
+    product.createdAt = DateTime.now();
     firebaseService.insertData("Products", product.toJSON());
   }
 
@@ -85,5 +86,9 @@ class ProductService {
       items.add(i.toJSON());
     }
     return items;
+  }
+  
+  void updateAmount(String id, num amount) {
+    firebaseService.updateData('Products', id, {'quantity': amount});
   }
 }

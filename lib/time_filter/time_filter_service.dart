@@ -13,8 +13,11 @@ class TimeFilterService {
     DateTime from = DateTime(fromDate!.year, fromDate!.month, fromDate!.day);
     DateTime to = DateTime(toDate!.year, toDate!.month, toDate!.day);
     DateTime compareValue = DateTime(createAt.year, createAt.month, createAt.day);
-    if ((compareValue.isAtSameMomentAs(from) || compareValue.isAfter(from)) &&
-        (compareValue.isAtSameMomentAs(to) || compareValue.isBefore(to))) {
+    if (
+          (compareValue.isAtSameMomentAs(from) || compareValue.isAfter(from))
+              &&
+          (compareValue.isAtSameMomentAs(to) || compareValue.isBefore(to))
+       ) {
       return true;
     } else {
       return false;

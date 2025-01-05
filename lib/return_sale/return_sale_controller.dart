@@ -1,9 +1,9 @@
-import 'package:sales_management_application/customers/customer_service.dart';
+import 'package:sales_management_application/customers/service/customer_service.dart';
 import 'package:sales_management_application/products/product_service.dart';
 import 'package:sales_management_application/return_sale/return_invoice_service.dart';
 import 'package:sales_management_application/return_sale/return_sale_filter.dart';
 
-import '../customers/customer.dart';
+import '../customers/model/customer.dart';
 import '../products/product.dart';
 import '../receipt/receipt_detail.dart';
 import '../sort/sorting_controller.dart';

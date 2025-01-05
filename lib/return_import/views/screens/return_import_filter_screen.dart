@@ -6,7 +6,7 @@ import '../../return_import_filter.dart';
 import '/config/constants.dart';
 
 class FilterReturnImportScreen extends StatefulWidget {
-  ReturnImportFilter filter = ReturnImportFilter();
+  ReturnImportFilter filter;
   FilterReturnImportScreen({super.key, required this.filter});
 
   @override
@@ -98,11 +98,6 @@ class _FilterReturnImportScreenState extends State<FilterReturnImportScreen> {
     ReturnImportFilter filter = ReturnImportFilter();
     filter.isFinished = _isCompleted;
     filter.isTemp = _isTemp;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ReturnImportScreen(filter: filter,),
-      ),
-    );
+    context.pop(filter);
   }
 }

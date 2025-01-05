@@ -1,4 +1,4 @@
-import 'export_receipt_detail.dart';
+import 'view/export_receipt_detail.dart';
 
 /// Phiếu xuất hủy
 class ExportCancellationReceipt {
@@ -62,29 +62,13 @@ class ExportCancellationReceipt {
   // Hàm fromJSON
   factory ExportCancellationReceipt.fromJSON(Map<dynamic, dynamic> json) {
     return ExportCancellationReceipt(
-      id: json['id'],
+      id: json['id'] ?? '',
       status: json['status'],
-      details: (json['details'] as List<Object?>)
-          .map((i) {
-            ExportCancellationReceiptDetail result = ExportCancellationReceiptDetail.fromJSON(Map<dynamic, dynamic>.from(i as Map));
-            return result;
-          }).toList(),
+      details: (json['details'] as List<dynamic>)
+            .map((detail) => ExportCancellationReceiptDetail.fromJSON(detail))
+            .toList(),
       createdAt: DateTime.parse(json['createdAt']),
       uid: json['uid']
     );
   }
-
-  // factory ExportCancellationReceipt.fromJSON2(Map<dynamic, dynamic> json) {
-  //   return ExportCancellationReceipt(
-  //     id: json['id'],
-  //     status: json['status'],
-  //     details: (json['details'] as List<Object?>)
-  //         .map((i) {
-  //       ExportCancellationReceiptDetail result = ExportCancellationReceiptDetail.fromJSON(Map<dynamic, dynamic>.from(i as Map));
-  //       return result;
-  //     }).toList(),
-  //     createdAt: DateTime.parse(json['createdAt']),
-  //     uid: json['uid']
-  //   );
-  // }
 }

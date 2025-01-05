@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sales_management_application/config/constants.dart';
-import 'package:sales_management_application/customers/customer_controller.dart';
-import 'package:sales_management_application/customers/customer_filter.dart';
-import '../../../customers/customer.dart';
+import 'package:sales_management_application/customers/controller/customer_controller.dart';
+import 'package:sales_management_application/customers/filter/customer_filter.dart';
+import '../../../customers/model/customer.dart';
 import '../../../search/searching_controller.dart';
 
 class CustomerSelectionSceen extends StatefulWidget {

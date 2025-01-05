@@ -44,12 +44,6 @@ class _ProductScreenState extends State<ProductScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: const Text("Hàng hoá"),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            context.go('/home');
-          },
-        ),
         actions: [
           /// tìm kiếm
           IconButton(
@@ -75,7 +69,15 @@ class _ProductScreenState extends State<ProductScreen> {
           IconButton(
             icon: const Icon(Icons.filter_alt_outlined),
             onPressed: () {
-              context.push('/products/filter', extra: filter);
+              context.push('/products/filter', extra: filter)
+              .then((result) {
+                if (result != null && result is ProductFilter) {
+                  setState(() {
+                    filter = result;
+                    //gán filter
+                  });
+                }
+              });
             },
           ),
         ],
@@ -103,7 +105,7 @@ class _ProductScreenState extends State<ProductScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.go('/products/add');
+          context.push('/products/add');
         },
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add),

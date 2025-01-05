@@ -1,4 +1,4 @@
-import '../customers/customer.dart';
+import '../customers/model/customer.dart';
 import '../payment/payment.dart';
 import '../receipt/receipt.dart';
 import '../receipt/receipt_detail.dart';
