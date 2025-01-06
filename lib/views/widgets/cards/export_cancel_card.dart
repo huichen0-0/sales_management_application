@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../config/constants.dart';
 import '../../../ec/export_receipt.dart';
 import '../../../helper/helper.dart';
 
@@ -17,6 +18,9 @@ class ExportCancellationReceiptCard extends StatelessWidget {
     final status = Helper.getStatusReceipt(receipt.status);
     final totalCancelledValue = Helper.formatCurrency(receipt.totalCancelledValue);
 
+    // Lấy chi tiết sản phẩm đầu tiên và số lượng sản phẩm còn lại
+    final firstDetail = products.isNotEmpty ? products.first : null;
+    final additionalItems = products.length > AppNum.one ? products.length - AppNum.one : AppNum.zero;
     return Card(
       child: ListTile(
         leading: Text(createdAt),
@@ -44,15 +48,27 @@ class ExportCancellationReceiptCard extends StatelessWidget {
             ),
           ],
         ),
-        subtitle: Text(
-          products
-              .map((item) => '${item.product!.name} x${item.cancelledQuantity}')
-              .join(', '),
-          style: const TextStyle(
-            fontSize: 10,
-          ),
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Hiển thị chi tiết sản phẩm đầu tiên
+            if (firstDetail != null)
+              Text(
+                '${firstDetail.product!.name} x${firstDetail.cancelledQuantity} ${firstDetail.product!.unit}',
+                style: const TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+            // Hiển thị số mặt hàng bổ sung nếu có
+            if (additionalItems > AppNum.zero)
+              Text(
+                '+$additionalItems mặt hàng khác',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+              ),
+          ],
         ),
         onTap: () {
           onTap(receipt.id);

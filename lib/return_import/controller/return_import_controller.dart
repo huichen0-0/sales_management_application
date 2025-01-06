@@ -5,6 +5,7 @@ import '../../products/product.dart';
 import '../../products/product_service.dart';
 import '../../receipt/receipt_detail.dart';
 import '../../sort/sorting_controller.dart';
+import '../../statistic/service/statistic_service.dart';
 import '../../suppliers/supplier.dart';
 import '../../suppliers/supplier_service.dart';
 import '../model/return_import_receipt.dart';
@@ -64,8 +65,9 @@ class ReturnImportController {
   }
 
   void saveReceipt(ReturnImportReceipt receipt) {
-    print('get here');
     returnImportService.save(receipt, 'ReturnImportReceipt');
+    final statisticService = StatisticService();
+    if(receipt.status == 2) statisticService.updateStatisticOnReturnImportCreated(receipt);
   }
 
   // Hàm thêm mới/cập nhật phiếu

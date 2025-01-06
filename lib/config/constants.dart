@@ -19,8 +19,16 @@ class AppAttribute {
   static const String totalPaid = 'totalPaid';
   static const String details = 'details';
   static const String product = 'product';
-  static const String supplier = 'supplier';
+  static const String supplier = 'suppliers';
   static const String customer = 'customer';
+  //product statistic
+  static const String totalSoldQuantity = 'totalSoldQuantity';
+  static const String totalImportedQuantity = 'totalImportedQuantity';
+  static const String totalRevenue = 'totalRevenue';
+  static const String totalCost = 'totalCost';
+  static const String totalProfit = 'totalProfit';
+  static const String currentInventoryValue = 'currentInventoryValue';
+  static const String currentInventoryQuantity = 'currentInventoryQuantity';
 }
 
 class AppString {
@@ -203,6 +211,17 @@ class AppString {
   static const String error = 'Đã xảy ra lỗi! Vui lòng thử lại sau!';
 
   static const String vnd = 'VND';
+
+  //product statistic
+  static const String emptyStatistic = 'Chưa có dữ liệu thống kê';
+  static const String productStatistic = 'Thống kê hàng hóa';
+  static const String totalSoldQuantity = 'Tổng số lượng đã bán';
+  static const String totalImportedQuantity = 'Tổng số lượng đã nhập';
+  static const String totalRevenue = 'Tổng doanh thu';
+  static const String totalCost = 'Tổng chi phí';
+  static const String totalProfit = 'Tổng lợi nhuận';
+  static const String currentInventoryValue = 'Tổng tồn kho hiện tại';
+  static const String currentInventoryQuantity = 'Tổng giá trị kho hiện tại';
 }
 
 class AppNum {
@@ -238,7 +257,7 @@ class AppPath {
   static const String importAdd = '/import/add';
   static const String importFilter = '/import/filter';
 
-  ///supplier
+  ///suppliers
   static const String supplier = '/suppliers';
   static const String supplierAdd = '/suppliers/add';
   static const String supplierFilter = '/suppliers/filter';

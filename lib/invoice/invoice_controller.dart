@@ -1,30 +1,34 @@
-import 'package:sales_management_application/customers/service/customer_service.dart';
 import 'package:sales_management_application/invoice/invoice_filter.dart';
 import 'package:sales_management_application/invoice/invoice_service.dart';
 import 'package:sales_management_application/products/product_service.dart';
-import 'package:sales_management_application/time_filter/time_filter_service.dart';
-
 import '../customers/model/customer.dart';
+import '../customers/service/customer_service.dart';
 import '../products/product.dart';
 import '../receipt/receipt_detail.dart';
+import '../statistic/service/statistic_service.dart';
+import '../time_filter/time_filter_service.dart';
 import '/config/constants.dart';
 import '../sort/sorting_controller.dart';
 import 'invoice_receipt.dart';
 
 class InvoiceController {
   //lấy dữ liệu từ db, key gán vào id
-  List<InvoiceReceipt> data = [ ];
+  List<InvoiceReceipt> data = [
+  ];
   InvoiceService invoiceService = InvoiceService();
   ProductService productService = ProductService();
   CustomerService customerService = CustomerService();
   TimeFilterService timeFilterService = TimeFilterService();
 
   // Hàm lấy dữ liệu
-  Future<List<InvoiceReceipt>> getData(InvoiceFilter filter, DateTime? fromDate, DateTime? toDate, String? partnerId) async {
+  Future<List<InvoiceReceipt>> getData(InvoiceFilter filter, String? customerId, DateTime? fromDate, DateTime? toDate) async {
     List<InvoiceReceipt> results = [];
     List<InvoiceReceipt> invoices = await invoiceService.getData(filter);
     for(InvoiceReceipt receipt in invoices) {
-      if (((partnerId != null && partnerId == receipt.partnerId) || partnerId == null) && timeFilterService.isTimeFilterd(receipt.createdAt, fromDate, toDate)) {
+      if (timeFilterService.isTimeFilterd(receipt.createdAt, fromDate, toDate)
+          &&
+          ((customerId != null && receipt.partnerId == customerId) || customerId == null)
+      ) {
         List<ReceiptDetail> detailResult = [];
         for (ReceiptDetail detail in receipt.details) {
           Product product = await productService.getProduct(detail.productId);
@@ -32,28 +36,27 @@ class InvoiceController {
           detailResult.add(detail);
         }
         receipt.details = detailResult;
-        Customer customer = await customerService.getCustomerByKey(
-            receipt.partnerId);
-        receipt.customer = customer;
+        if (receipt.partnerId != '') {
+          Customer customer = await customerService.getCustomerByKey(
+              receipt.partnerId);
+          receipt.customer = customer;
+        }
         results.add(receipt);
-      }
-    }
-    return results;
+      }}
+      return results;
+
   }
 
   void saveReceipt(InvoiceReceipt receipt) {
-    receipt.createdAt = DateTime.now();
-    if (receipt.id == '') {
-      this.invoiceService.saveReceipt(receipt);
-    } else {
-      invoiceService.updateReceipt(receipt);
-    }
+    invoiceService.saveReceipt(receipt);
+    final statisticService = StatisticService();
+    if(receipt.status == 2) statisticService.updateStatisticOnInvoiceCreated(receipt);
   }
 
   /// XỬ LÝ PHIẾU ///
   //tổng giá trị hiên thị, đã hoàn thành mới cộng
-  num getTotalDisplayValue(String attribute, List<InvoiceReceipt> receipts) {
-    return receipts.fold(
+  num getTotalDisplayValue(List<InvoiceReceipt> list, String attribute) {
+    return list.fold(
       AppNum.zero,
       (sum, receipt) {
         var value = receipt.getAttributeValue(attribute);
@@ -63,19 +66,11 @@ class InvoiceController {
   }
 
   //Hủy phiếu
-  bool cancelReceipt(InvoiceReceipt _receipt) {
-    try {
-      invoiceService.removeReceipt(_receipt);
-      return true;
-    } catch(e) {
-      return false;
-    }
+  bool cancelReceipt(String id) {
+    invoiceService.cancelReceipt(id);
+    return true;
   }
 
-  // Hàm thêm mới/cập nhật phiếu
-  void updateReturnedStatus(InvoiceReceipt updatedItem) {
-    this.invoiceService.updateReceiptReturned(updatedItem.id);
-  }
 
   // Hàm lấy phiếu theo ID future
   Future<InvoiceReceipt?> getReceiptByIdAsync(String id) async {
@@ -87,14 +82,19 @@ class InvoiceController {
       detailResult.add(detail);
     }
     receipt.details = detailResult;
-    Customer customer = await customerService.getCustomerByKey(receipt.partnerId);
-    receipt.customer = customer;
+    if (receipt.partnerId != '') {
+      Customer customer = await customerService.getCustomerByKey(receipt.partnerId);
+      receipt.customer = customer;
+    }
     return receipt;
   }
 
   // Hàm lấy phiếu theo ID
-  Future<InvoiceReceipt?> getReceiptById(String id) async {
-    return await invoiceService.getReceiptById(id);
+  InvoiceReceipt? getReceiptById(String id) {
+    return data.firstWhere(
+      (receipt) => receipt.id == id,
+      orElse: () => InvoiceReceipt.empty(),
+    );
   }
 
   // lấy dữ liệu dạng MAP
@@ -178,8 +178,8 @@ class InvoiceController {
 
 
   // Hàm thêm mới/cập nhật phiếu
-  void updateReceiptReturned(String id) {
-    invoiceService.updateReceiptReturned(id);
+  void updateReceiptReturned(String id, bool value) {
+    invoiceService.updateReceiptReturned(id, value);
   }
 
   ///sắp xếp

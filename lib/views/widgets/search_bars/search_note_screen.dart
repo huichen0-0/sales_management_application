@@ -2,6 +2,9 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:sales_management_application/invoice/invoice_receipt.dart';
+import 'package:sales_management_application/order/order.dart';
+import 'package:sales_management_application/return_sale/return_sale_receipt.dart';
 import 'package:sales_management_application/search/searching_controller.dart';
 
 class SearchNoteScreen extends StatefulWidget {
@@ -181,7 +184,15 @@ class _SearchNoteScreenState extends State<SearchNoteScreen> {
                             onTap: () {
                               //chuyển tới trang chi tiết
                               final itemId = item['id'].toString();
-                              context.push('/${widget.dataType}/$itemId');
+                              if (widget.dataType == 'invoice') {
+                                context.push('/${widget.dataType}/$itemId', extra: InvoiceReceipt.fromJson(item));
+                              }
+                              else if (widget.dataType == 'order') {
+                                context.push('/${widget.dataType}/$itemId', extra: Order.fromJson(item));
+                              }
+                              else if (widget.dataType == 'returnInvoice') {
+                                context.push('/${widget.dataType}/$itemId');
+                              }
                             },
                             child: widget.itemBuilder(item),
                           ),

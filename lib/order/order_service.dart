@@ -14,7 +14,7 @@ class OrderService {
 
   void save(Order order, String path) {
     order.createdAt = DateTime.now();
-    if (order.uid == null || order.uid!.isEmpty) {
+    if (order.uid.isEmpty) {
       order.uid = _auth.currentUser!.uid;
       firebaseService.insertData('Order', order.toJson2());
     } else {
@@ -36,7 +36,7 @@ class OrderService {
   }
 
   void cancelReceipt(String id) {
-    firebaseService.updateData('Order', id, {'status': 3});
+    firebaseService.updateData('Order', id, {'status': 0});
   }
 
   void delete(Order order) {
@@ -51,7 +51,7 @@ class OrderService {
     if (filter.isFinished == true && mapValue.status == 2) {
       check += 1;
     }
-    if (filter.isCancelled == true && mapValue.status == 3) {
+    if (filter.isCancelled == true && mapValue.status == 0) {
       check += 1;
     }
     if (check >= 1) {

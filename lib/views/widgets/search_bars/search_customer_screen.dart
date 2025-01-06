@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sales_management_application/config/constants.dart';
-import 'package:sales_management_application/customers/controller/customer_controller.dart';
-import 'package:sales_management_application/customers/filter/customer_filter.dart';
+import '../../../customers/controller/customer_controller.dart';
+import '../../../customers/filter/customer_filter.dart';
 import '../../../customers/model/customer.dart';
 import '../../../search/searching_controller.dart';
 
@@ -22,27 +21,23 @@ class CustomerSelectionSceen extends StatefulWidget {
 class _CustomerSelectionSceenState extends State<CustomerSelectionSceen> {
   //controller lấy input
   final TextEditingController _textController = TextEditingController();
-
+  CustomerController customerController = CustomerController();
   //controller tìm kiếm
   late SearchingController _searchingController;
-  CustomerController customerController = CustomerController();
+  CustomerFilter filter = CustomerFilter.empty();
 
 //fake dữ liệu danh sách sản phẩm //sau lấy từ db rồi chuyển sang dạng map
-  List<Customer> customers = [];
-  CustomerFilter customerFilter = CustomerFilter.empty();
+  List<Map<String, dynamic>> customers = [ ];
 
   @override
   void initState() {
     super.initState();
-
-    customerFilter.isInactive = false;
-    customerFilter.isActive = true;
-
+    filter.isInactive = false;
     // Khởi tạo SearchingController với dữ liệu đầu vào
     _searchingController = SearchingController(
-      searchData: customerController.convertToJson(customers),
+      searchData: customers,
       searchOptions: [
-        {'searchKey': AppAttribute.name, 'tag': '', 'hint': AppString.selectCustomer}
+        {'searchKey': 'name', 'tag': '', 'hint': 'Chọn khách hàng'}
       ],
     );
 
@@ -55,24 +50,24 @@ class _CustomerSelectionSceenState extends State<CustomerSelectionSceen> {
 
   // Hàm xử lý khi nhấn vào icon x
   void _onCancelIconPressed() {
-    print('Đặt lại thanh tìm kiếm');
     _textController.clear();
   }
 
   // Hàm xử lý khi nhấn vào icon +
   void _onAddIconPressed() {
-    context.push(AppPath.customerAdd);
+    context.push('/customers/add');
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: const Text(AppString.selectCustomer),
+        title: const Text('Chọn nhà cung cấp'),
       ),
       body: FutureBuilder<List<Customer>>(
-        future: customerController.getCustomerListToSearch(customerFilter), // Pass the Future function here
+        future: customerController.getCustomerListToSearch(filter), // Pass the Future function here
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Show a loading indicator while waiting for data
@@ -81,7 +76,7 @@ class _CustomerSelectionSceenState extends State<CustomerSelectionSceen> {
             // Handle any error that occurs during data fetching
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-            customers = snapshot.data!;
+            customers = customerController.convertToJson(snapshot.data!);
           }
           return SingleChildScrollView(
             child: Padding(
@@ -125,11 +120,11 @@ class _CustomerSelectionSceenState extends State<CustomerSelectionSceen> {
                         itemBuilder: (context, index) {
                           final customer = customers[index];
                           return ListTile(
-                            title: Text(customer.name),
+                            title: Text(customer['name']),
                             leading: const Icon(Icons.image, size: 30),
-                            trailing: Text(customer.phoneNumber),
+                            trailing: Text(customer['phoneNumber']),
                             onTap: () {
-                              widget.onCustomerTap(customer);
+                              widget.onCustomerTap(Customer.fromJson(customer));
                               _onCancelIconPressed();
                             },
                           );
@@ -145,7 +140,6 @@ class _CustomerSelectionSceenState extends State<CustomerSelectionSceen> {
                               // Số lượng kết quả tìm kiếm
                               itemCount: _searchingController.searchResults.length,
                               itemBuilder: (context, index) {
-                                //TODO: đã rút gọn
                                 Customer customer = Customer.fromJson(
                                     _searchingController.searchResults[index]);
                                 return ListTile(
@@ -174,8 +168,7 @@ class _CustomerSelectionSceenState extends State<CustomerSelectionSceen> {
             ),
           );
         },
-      )
-      ,
+      ),
     );
   }
 }

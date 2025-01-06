@@ -30,6 +30,9 @@ import 'package:sales_management_application/return_sale/return_sale_filter_scre
 import 'package:sales_management_application/return_sale/return_sale_home_screen.dart';
 import 'package:sales_management_application/return_sale/return_sale_receipt.dart';
 import 'package:sales_management_application/return_sale/return_sale_update_screen.dart';
+import 'package:sales_management_application/statistic/product_statistic/product_statistic_screen.dart';
+import 'package:sales_management_application/statistic/sale_statistic/daily_sale_statistic_screen.dart';
+import 'package:sales_management_application/statistic/sale_statistic/sale_statistic_screen.dart';
 import 'package:sales_management_application/suppliers/add_supplier_screen.dart';
 import 'package:sales_management_application/suppliers/edit_supplier_screen.dart';
 import 'package:sales_management_application/suppliers/supplier.dart';
@@ -67,7 +70,6 @@ import 'inventory_check/ic_filter_screen.dart';
 import 'inventory_check/ic_home_screen.dart';
 import 'inventory_check/ic_update_screen.dart';
 import 'inventory_check/inventory_check_receipt.dart';
-import 'invoice/invoice_controller.dart';
 import 'invoice/invoice_detail_screen.dart';
 import 'invoice/invoice_filter.dart';
 import 'invoice/invoice_filter_screen.dart';
@@ -75,7 +77,6 @@ import 'invoice/invoice_home_screen.dart';
 import 'invoice/invoice_receipt.dart';
 import 'invoice/invoice_update_screen.dart';
 import 'order/order.dart';
-import 'order/order_controller.dart';
 import 'order/order_detail_screen.dart';
 import 'order/order_filter_screen.dart';
 import 'order/order_home_screen.dart';
@@ -135,7 +136,7 @@ class MyApp extends StatelessWidget {
         ),
         GoRoute(
           path: '/register',
-          builder: (context, state) => RegisterScreen(),
+          builder: (context, state) => const RegisterScreen(),
         ),
         GoRoute(
           path: '/tac',
@@ -152,7 +153,7 @@ class MyApp extends StatelessWidget {
           builder: (context, state) {
             Object? extraObject = state.extra;
             if (extraObject == null) {
-              return InvoiceScreen(filter: InvoiceFilter());
+              return InvoiceScreen(filter: InvoiceFilter(), customerId: null,);
             } else {
               InvoiceFilter filter = extraObject as InvoiceFilter;
               return InvoiceScreen(filter: filter);
@@ -168,7 +169,7 @@ class MyApp extends StatelessWidget {
             ),
             GoRoute(
               path: 'add',
-              builder: (context, state) => UpdateInvoiceScreen(),
+              builder: (context, state) => const UpdateInvoiceScreen(),
             ),
             GoRoute(
               path: ':id',
@@ -183,8 +184,6 @@ class MyApp extends StatelessWidget {
                 GoRoute(
                   path: 'edit',
                   builder: (context, state) {
-                    final id = state.pathParameters['id']!; // Lấy ID từ URL
-                    final InvoiceController controller = InvoiceController();
                     // Lấy dữ liệu
                     final InvoiceReceipt? existingInvoice = state.extra as InvoiceReceipt;
                     return UpdateInvoiceScreen(existingInvoice: existingInvoice,);
@@ -193,6 +192,26 @@ class MyApp extends StatelessWidget {
               ],
             ),
           ],
+        ),
+        ///statistic
+        GoRoute(
+          path: '/productStatistic',
+          builder: (context, state) {
+            return const ProductStatisticScreen();
+          },
+        ),
+        GoRoute(
+          path: '/saleStatistic',
+          builder: (context, state) {
+            return const SaleStatisticScreen();
+          },
+        ),
+        GoRoute(
+          path: '/dailySaleStatistic',
+          builder: (context, state) {
+            final date = state.extra as DateTime;
+            return DailySaleStatisticScreen(statisticDate: date);
+          },
         ),
         ///return invoice
         GoRoute(
@@ -242,16 +261,12 @@ class MyApp extends StatelessWidget {
               path: ':id',
               builder: (context, state) {
                 final id = state.pathParameters['id']!; // Lấy ID từ URL
-
-                return ReturnInvoiceDetailScreen(
-                  receiptId: id,
-                );
+                return ReturnInvoiceDetailScreen(receiptId: id,);
               },
               routes: [
                 GoRoute(
                   path: 'edit',
                   builder: (context, state) {
-                    final id = state.pathParameters['id']!; // Lấy ID từ URL
                     ReturnInvoiceReceipt receipt = state.extra as ReturnInvoiceReceipt;
                     return UpdateReturnInvoiceScreen(receipt: receipt,);
                   },
@@ -413,7 +428,7 @@ class MyApp extends StatelessWidget {
     } else {
     EcFilter filter = extraObject as EcFilter;
     return ExportCancellationScreen(filter);
-    };
+    }
           },
           routes: [
             GoRoute(
@@ -572,7 +587,6 @@ class MyApp extends StatelessWidget {
                   builder: (context, state) {
                     List<dynamic> extraList = (state.extra as List);
                     ImportReceipt ir = extraList.elementAt(1);
-                    final String key = extraList.elementAt(0);
                     return UpdateImportScreen(existingReceipt: ir);
                   },
                 ),
@@ -615,13 +629,10 @@ class MyApp extends StatelessWidget {
                 GoRoute(
                   path: 'edit',
                   builder: (context, state) {
-                    final id = state.pathParameters['id']!; // Lấy ID từ URL
-                    final OrderController controller = OrderController();
-                    // Lấy dữ liệu
-                    final Order? existingOrder = controller.getOrderById(id);
-                    return UpdateOrderScreen(
-                      existingOrder: existingOrder,
-                    );
+                    // final OrderController controller = OrderController();
+                    // final Order? existingOrder = controller.getOrderById(id);
+                    Order existingOrder = state.extra as Order;
+                    return UpdateOrderScreen(existingOrder: existingOrder,);
                   },
                 ),
               ],
@@ -682,7 +693,6 @@ class MyApp extends StatelessWidget {
                   builder: (context, state) {
                     List<dynamic> extraList = (state.extra as List);
                     ReturnImportReceipt receipt = extraList.elementAt(1);
-                    final String key = extraList.elementAt(0);
                     return UpdateReturnImportScreen(existingReceipt: receipt);
                   },
                 ),

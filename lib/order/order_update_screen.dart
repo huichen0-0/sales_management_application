@@ -46,8 +46,7 @@ class UpdateOrderScreenState extends State<UpdateOrderScreen> {
   // Controller cho order
   final OrderController _orderController = OrderController();
   InvoiceController invoiceController = InvoiceController();
-  // Timer để debounce (trì hoãn) việc tìm kiếm
-  Timer? _debounce;
+  final _productController = ProductController();
 
   // Trạng thái mở rộng của FloatingActionButton
   bool _isExpanded = false;
@@ -59,26 +58,25 @@ class UpdateOrderScreenState extends State<UpdateOrderScreen> {
     ProductFilter filter = ProductFilter();
     filter.isActive = true;
     filter.isInactive = false;
-    _futureAllProducts = productController.getProductList(filter);
-    //Kiểm tra có order truyền qua không?
-    if (widget.existingOrder != null) {
-      //lâý order để chỉnh sửa
-      _order = widget.existingOrder!;
-      //Loại những product đã trong order ra khỏi danh sách tất cả product
-      for (var detail in _order.details) {
-        _allProducts.remove(detail.product);
-      }
-    }
-  }
+    _futureAllProducts = productController.getProductList(filter).then((products) {
+      setState(() {
+        _allProducts = products;
+        //Kiểm tra có order truyền qua không?
+        if (widget.existingOrder != null) {
+          //lâý order để chỉnh sửa
+          _order = widget.existingOrder!;
+          // Lọc ra các ID sản phẩm đã có trong đơn hàng
+          final existingProductIds = _order.details.map((detail) => detail.productId).toSet();
 
-  // Hàm xử lý sự kiện khi người dùng nhập vào TextField tìm kiếm
-  void _onSearch(String query) {
-    // Nếu có debounce đang chạy, hủy nó
-    // if (_debounce?.isActive ?? false) _debounce?.cancel();
-    // Tạo một Timer mới, sau 500ms sẽ gọi hàm filterProducts
-    // _debounce = Timer(const Duration(milliseconds: 500), () {
-      _filterProducts(query);
-    // });
+          // Loại bỏ các sản phẩm có ID trùng với sản phẩm trong đơn hàng ra khỏi _filteredProducts
+          _allProducts.removeWhere((product) => existingProductIds.contains(product.id)); //Loại những product đã trong order ra khỏi danh sách tất cả product
+
+        }
+        _filterProducts(''); // Gọi hàm này sau khi lấy dữ liệu
+      });
+      return products; // Trả về để FutureBuilder hoạt động đúng
+    });
+
   }
 
   // Hàm xử lý khi người dùng chọn một sản phẩm
@@ -94,7 +92,7 @@ class UpdateOrderScreenState extends State<UpdateOrderScreen> {
       _searchController.clear();
       // Thêm sản phẩm đã chọn vào danh sách _newOrder
       _order.details.add(
-        OrderDetail(productId: product.id!, product: product, quantity: 1),
+        OrderDetail(productId: product.id, product: product, quantity: 1),
       );
     });
   }
@@ -130,8 +128,9 @@ class UpdateOrderScreenState extends State<UpdateOrderScreen> {
         final lowerCaseQuery = query.toLowerCase();
         // Lọc danh sách _allProducts dựa trên từ khóa
         _filteredProducts = _allProducts
-            .where(
-                (product) => product.toJSON().toString().toLowerCase().contains(lowerCaseQuery))
+            .where((product) =>
+        product.name.toLowerCase().contains(lowerCaseQuery) ||
+            (product.sellingPrice.toString().contains(lowerCaseQuery)))
             .toList();
         // Hiển thị overlay kết quả tìm kiếm
         _showOverlay();
@@ -181,7 +180,6 @@ class UpdateOrderScreenState extends State<UpdateOrderScreen> {
   void dispose() {
     // Giải phóng resources khi widget không còn sử dụng
     _searchController.dispose();
-    _debounce?.cancel();
     _removeOverlay();
     super.dispose();
   }
@@ -191,13 +189,9 @@ class UpdateOrderScreenState extends State<UpdateOrderScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: const Text('Đặt hàng'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            context.pop();
-          },
-        ),
+        title: widget.existingOrder != null
+            ? const Text('Tạo đơn đặt hàng')
+            : const Text('Cập nhật đơn đặt hàng'),
       ),
       body: _buildBody(),
       persistentFooterButtons: [
@@ -211,21 +205,17 @@ class UpdateOrderScreenState extends State<UpdateOrderScreen> {
 
   ///Hàm xây dựng body
   Widget _buildBody() {
-    ProductFilter filter = ProductFilter();
-    filter.isActive = true;
-    filter.isInactive = false;
     return FutureBuilder<List<Product>>(
       future: _futureAllProducts, // Pass the Future function here
       builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // Show a loading indicator while waiting for data
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            // Handle any error that occurs during data fetching
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-            _allProducts = snapshot.data!;
-          }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Show a loading indicator while waiting for data
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          // Handle any error that occurs during data fetching
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+        }
         return Stack(
           children: [
             Column(
@@ -259,7 +249,9 @@ class UpdateOrderScreenState extends State<UpdateOrderScreen> {
                 : null,
             border: const OutlineInputBorder(),
           ),
-          onChanged: _onSearch,
+          onChanged: (value) {
+            _filterProducts(value);
+          },
         ),
       ),
     );
@@ -319,15 +311,16 @@ class UpdateOrderScreenState extends State<UpdateOrderScreen> {
           IconButton(
               icon: const Icon(Icons.add),
               onPressed: () {
-                orderDetail.quantity < product.quantity
-                    ? _updateQuantity(
+                // orderDetail.quantity < product.quantity
+                //     ?
+                    _updateQuantity(
                         index,
                         orderDetail.quantity + 1,
-                      )
-                    : _showSnackBar(
-                        'Số lượng mặt hàng "${orderDetail.product!.name}" đã đạt tối đa!',
-                        Colors.red,
                       );
+                    // : _showSnackBar(
+                    //     'Số lượng mặt hàng "${orderDetail.product!.name}" đã đạt tối đa!',
+                    //     Colors.red,
+                    //   );
               }),
         ],
       ),
@@ -487,16 +480,25 @@ class UpdateOrderScreenState extends State<UpdateOrderScreen> {
 
   /// xử lý khi nhấn thanh toán
   void _handlePayment() {
-    var newInvoice = _orderController.createInvoiceBasedOnOrder(_order);
-    context.push(AppPath.salePayment, extra: newInvoice).then(
-      (result) {
-        if (result != null && result is InvoiceReceipt) {
-          //TODO: insert hóa đơn vào db, dùng invoice controller?
-          _orderController.saveComplete(_order);
-          invoiceController.saveReceipt(newInvoice);
-          context.pop();
-        }
-      },
-    );
+    final check = _order.details.any((i) => i.quantity > i.product!.quantity);
+    if (check) {
+      _showSnackBar(
+            'Số lượng tồn kho không đủ để thanh toán',
+            Colors.red,
+          );
+    } else {
+      var newInvoice = _orderController.createInvoiceBasedOnOrder(_order);
+      context.push(AppPath.salePayment, extra: newInvoice).then(
+            (result) {
+          if (result != null && result is InvoiceReceipt) {
+            //TODO: insert hóa đơn vào db, dùng invoice controller?
+            _orderController.saveComplete(_order);
+            invoiceController.saveReceipt(result);
+            _productController.subAmount(result);
+            context.pop();
+          }
+        },
+      );
+    }
   }
 }

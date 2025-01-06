@@ -20,7 +20,7 @@ class _MainScreenState extends State<MainScreen> {
   //danh sách trang trên nav
   final List<Widget> _pages = [
     const WidgetScreen(),
-    InvoiceScreen(filter: InvoiceFilter()),
+    InvoiceScreen(filter: InvoiceFilter(), customerId: '',),
     OrderScreen(filter: OrderFilter()),
     ProductScreen(ProductFilter()),
     const WidgetScreen(),

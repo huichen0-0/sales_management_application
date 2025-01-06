@@ -9,12 +9,16 @@ class ReturnInvoiceService {
 
   void saveReceipt(ReturnInvoiceReceipt receipt) {
     receipt.createdAt = DateTime.now();
-    receipt.uid = _auth.currentUser!.uid;
-    this.firebaseService.insertData('ReturnInvoiceReceipt', receipt.toJson2());
+    if (receipt.uid.isEmpty) {
+      receipt.uid = _auth.currentUser!.uid;
+      firebaseService.insertData('ReturnInvoiceReceipt', receipt.toJson2());
+    } else {
+      firebaseService.updateData('ReturnInvoiceReceipt', receipt.id, receipt.toJson2());
+    }
   }
 
   void updateReceipt(String id) {
-    this.firebaseService.updateData('ReturnInvoiceReceipt', id, {});
+    firebaseService.updateData('ReturnInvoiceReceipt', id, {});
   }
 
   Future<List<ReturnInvoiceReceipt>> getData(ReturnInvoiceFilter filter) async {
@@ -52,6 +56,28 @@ class ReturnInvoiceService {
   }
 
   Future<ReturnInvoiceReceipt> getReceiptById(String id) async {
-    return ReturnInvoiceReceipt.fromJson(await firebaseService.getDataByKey('ReturnInvoiceReceipt', id));
+    final receipt = await firebaseService.getDataByKey('ReturnInvoiceReceipt', id);
+    receipt['id'] = id;
+    return ReturnInvoiceReceipt.fromJson(receipt);
+  }
+  Future<List<ReturnInvoiceReceipt>> getCompletedReceipts(DateTime? date) async {
+    List<ReturnInvoiceReceipt> receipts = [];
+    Map<String, Object> result = await firebaseService.readData('ReturnInvoiceReceipt');
+    result.forEach((key, value) {
+      final receipt =
+      ReturnInvoiceReceipt.fromJson(Map<dynamic, dynamic>.from(value as Map));
+      receipt.id = key;
+      if (receipt.uid == _auth.currentUser!.uid && receipt.status == 2) {
+        if (date == null) {
+          receipts.add(receipt);
+        } else {
+          if (receipt.createdAt.isAfter(date)) receipts.add(receipt);
+        }
+      }
+    });
+    return receipts;
+  }
+  void cancelReceipt(String id) {
+    firebaseService.delete('ReturnInvoiceReceipt', id);
   }
 }

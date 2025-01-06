@@ -6,7 +6,7 @@ import 'package:sales_management_application/time_filter/time_filter_controller.
 import '../../../views/widgets/search_bars/search_note_screen.dart';
 import '../../../views/widgets/sheets/display_bottom_sheet.dart';
 import '../helper/helper.dart';
-import '../views/widgets/cards/invoice_card.dart';
+import 'invoice_card.dart';
 import '/config/constants.dart';
 import '/views/widgets/sheets/sorting_bottom_sheet.dart';
 import '/views/widgets/sheets/time_filter_bottom_sheet.dart';
@@ -14,9 +14,10 @@ import 'invoice_controller.dart';
 import 'invoice_receipt.dart';
 
 class InvoiceScreen extends StatefulWidget {
+  String? customerId;
+  DateTime? date;
   InvoiceFilter filter = InvoiceFilter();
-  String? partnerId;
-  InvoiceScreen({super.key, required this.filter, this.partnerId});
+  InvoiceScreen({super.key, required this.filter, this.customerId, this.date});
 
   @override
   InvoiceScreenState createState() => InvoiceScreenState(this.filter);
@@ -40,10 +41,10 @@ class InvoiceScreenState extends State<InvoiceScreen> {
   DateTime? toDate;
 
   // controller hóa đơn
-  final InvoiceController _controller = InvoiceController();
+  final _controller = InvoiceController();
 
   //dữ liệu sau khi lấy
-  List<InvoiceReceipt>? _receipts;
+  List<InvoiceReceipt> _receipts = [];
 
   InvoiceFilter filter = InvoiceFilter();
   TimeFilterController timeFilterController = TimeFilterController();
@@ -56,14 +57,19 @@ class InvoiceScreenState extends State<InvoiceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<DateTime?> timeRange = timeFilterController.getTimeRange(_selectedOption, fromDate, toDate);
+    List<DateTime?> timeRange =
+    timeFilterController.getTimeRange(_selectedOption, fromDate, toDate);
     fromDate = timeRange[0]!;
     toDate = timeRange[1];
+    if(widget.date != null) {
+      fromDate = widget.date;
+      toDate = widget.date;
+    }
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: _buildAppBar(context),
       body: FutureBuilder<List<InvoiceReceipt>>(
-        future: _controller.getData(filter, fromDate, toDate, widget.partnerId),
+        future: _controller.getData(filter, widget.customerId, fromDate, toDate),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -72,26 +78,25 @@ class InvoiceScreenState extends State<InvoiceScreen> {
           } else if (snapshot.hasData && snapshot.data!.isEmpty) {
             return _buildEmptyView();
           } else {
-            _receipts = snapshot.data;
+            _receipts = snapshot.data!;
             //sắp xếp
-            _receipts = _controller.sortReceipts(
-              _receipts!, _selectedSorting, _displayAttribute);
+            _receipts = _controller.sortReceipts(_receipts!, _selectedSorting, _displayAttribute);
             return _buildItemList(context, _receipts!);
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: widget.date == null ? FloatingActionButton(
         onPressed: () => context.push(AppPath.invoiceAdd),
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add),
-      ),
+      ) : null,
     );
   }
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.blue,
-      title: const Text(AppString.invoice, style: TextStyle(color: Colors.white)),
+      title: widget.date == null ? const Text(AppString.invoice, style: TextStyle(color: Colors.white)) : Text(Helper.formatDate(widget.date!)),
       actions: [
         IconButton(
           icon: const Icon(Icons.search, color: Colors.white),
@@ -103,50 +108,9 @@ class InvoiceScreenState extends State<InvoiceScreen> {
           icon: const Icon(Icons.sort, color: Colors.white),
           onPressed: () => _showSortingOptions(context),
         ),
-        IconButton(
+        if(widget.date == null) IconButton(
           icon: const Icon(Icons.filter_alt_outlined, color: Colors.white),
           onPressed: () => _openFilterScreen(),
-        ),
-      ],
-    );
-  }
-  
-  Widget _buildRow(List<InvoiceReceipt> receipts) {
-    final totalDisplayValue = Helper.formatCurrency(
-        _controller.getTotalDisplayValue(_displayAttribute, receipts));
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        TextButton.icon(
-          icon: const Icon(Icons.calendar_today, color: Colors.black),
-          label: Text(_selectedOption,
-              style: const TextStyle(color: Colors.black)),
-          onPressed: () {
-            _showTimeFilterOptions();
-          },
-        ),
-
-        TextButton.icon(
-          onPressed: () {
-            // Mở Bottom Sheet để chọn Tổng mua
-            _showDisplayOptions(context);
-          },
-          label: Text(
-            _selectedDisplay,
-            style: const TextStyle(color: Colors.black),
-          ),
-          icon: const Icon(
-            Icons.keyboard_arrow_down,
-            color: Colors.black,
-          ),
-          iconAlignment: IconAlignment.end,
-        ),
-        Text(
-          totalDisplayValue,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
         ),
       ],
     );
@@ -154,27 +118,104 @@ class InvoiceScreenState extends State<InvoiceScreen> {
 
   Widget _buildEmptyView() {
     return ListView(
-
       padding: const EdgeInsets.all(8.0),
       children: [
-          _buildRow([]),
-          const Icon(Icons.remove_shopping_cart, size: 100, color: Colors.blue),
-          const SizedBox(height: 20),
-          const Center(child: Text(
-            AppString.emptyInvoiceReceipt,
-            style: TextStyle(fontSize: 16, color: Colors.grey),
-          )),
-        ],
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            if(widget.date == null) TextButton.icon(
+              icon: const Icon(Icons.calendar_today, color: Colors.black),
+              label: Text(_selectedOption,
+                  style: const TextStyle(color: Colors.black)),
+              onPressed: () {
+                _showTimeFilterOptions();
+              },
+            ),
+
+            ///nút lọc hiển thị TODO: cần xử lý áp dụng
+             Text(
+              _selectedDisplay,
+              style: const TextStyle(color: Colors.black),
+            ),
+
+            //tổng tiền theo hiển thị TODO: thay đổi theo tùy chọn
+            const Text(
+              '0',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        const Text(
+          '0 hóa đơn',
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 30),
+
+        const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.remove_shopping_cart, size: 100, color: Colors.blue),
+              SizedBox(height: 20),
+              Text(
+                AppString.emptyOrder,
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            ],
+          ),
+        )
+      ],
     );
   }
 
   Widget _buildItemList(BuildContext context, List<InvoiceReceipt> receipts) {
     final groupedReceipts =
     groupBy(receipts, (item) => Helper.formatDate(item.createdAt));
+    final totalDisplayValue = Helper.formatCurrency(
+        _controller.getTotalDisplayValue(receipts, _displayAttribute));
     return ListView(
       padding: const EdgeInsets.all(8.0),
       children: [
-        _buildRow(receipts),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            if(widget.date == null) TextButton.icon(
+              icon: const Icon(Icons.calendar_today, color: Colors.black),
+              label: Text(_selectedOption,
+                  style: const TextStyle(color: Colors.black)),
+              onPressed: () {
+                _showTimeFilterOptions();
+              },
+            ),
+
+            TextButton.icon(
+              onPressed: () {
+                // Mở Bottom Sheet để chọn Tổng mua
+                _showDisplayOptions(context);
+              },
+              label: Text(
+                _selectedDisplay,
+                style: const TextStyle(color: Colors.black),
+              ),
+              icon: const Icon(
+                Icons.keyboard_arrow_down,
+                color: Colors.black,
+              ),
+              iconAlignment: IconAlignment.end,
+            ),
+            Text(
+              totalDisplayValue,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 10),
         Text(
           '${receipts.length} hóa đơn',
@@ -194,6 +235,8 @@ class InvoiceScreenState extends State<InvoiceScreen> {
                   onTap: (id) {
                     return context.push('${AppPath.invoice}/$id', extra: receipt);
                   },
+                  fromDate: fromDate,
+                  toDate: toDate,
                 ),
             ],
           ),
@@ -211,8 +254,6 @@ class InvoiceScreenState extends State<InvoiceScreen> {
             print('Lựa chọn: $option, Bắt đầu: $startDate, Kết thúc: $endDate');
             setState(() {
               _selectedOption = option;
-              fromDate = startDate;
-              toDate = endDate;
               List<DateTime?> timeRange = timeFilterController.getTimeRange(_selectedOption, fromDate, toDate);
               fromDate = timeRange[0]!;
               toDate = timeRange[1];
@@ -232,8 +273,8 @@ class InvoiceScreenState extends State<InvoiceScreen> {
           sale: true,
           selectedDisplay: _selectedDisplay,
           onSelectDisplay: (option) {
-            _displayAttribute = Helper.getAttribute(option);
             setState(() {
+              _displayAttribute = Helper.getAttribute(option);
               _selectedDisplay = option;
             });
           },
@@ -255,6 +296,7 @@ class InvoiceScreenState extends State<InvoiceScreen> {
           onSelectSorting: (option) {
             setState(() {
               _selectedSorting = option;
+
             });
           },
         );
@@ -289,11 +331,12 @@ class InvoiceScreenState extends State<InvoiceScreen> {
           },
           title: AppString.searchInvoiceReceipt,
           itemBuilder: (item) {
-            final receipt = InvoiceReceipt.fromJson(item);
             return InvoiceReceiptCard(
               displayValue: _displayAttribute,
-              receipt: receipt, //chuyển về object
-              onTap: (id) => context.push('${AppPath.invoice}/$id', extra: receipt),
+              receipt: InvoiceReceipt.fromJson(item), //chuyển về object
+              onTap: (id) => context.push('${AppPath.invoice}/$id', extra: InvoiceReceipt.fromJson(item)),
+              fromDate: fromDate,
+              toDate: toDate,
             );
           },
         ),
@@ -305,8 +348,9 @@ class InvoiceScreenState extends State<InvoiceScreen> {
   Future<void> _openFilterScreen() async {
     final result = await context.push(AppPath.invoiceFilter, extra: filter);
     // Đường dẫn đến trang lọc
-    if (result != null && result is Map<String, dynamic>) {
+    if (result != null && result is InvoiceFilter) {
       setState(() {
+        filter = result;
       });
     }
   }

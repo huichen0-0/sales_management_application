@@ -27,7 +27,7 @@ class ReturnInvoiceReceiptCard extends StatelessWidget {
       child: ListTile(
         leading: Text(createdAt),
         title: Text(
-          receipt.customer!.name,
+          receipt.customer?.name ?? AppString.retailCustomer,
           style:
           const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
         ),

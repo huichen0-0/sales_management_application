@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sales_management_application/invoice/invoice_controller.dart';
 import 'package:sales_management_application/invoice/invoice_receipt.dart';
+import 'package:sales_management_application/return_sale/return_sale_filter.dart';
 
 import '../config/constants.dart';
 import '../helper/helper.dart';
@@ -13,7 +15,6 @@ import 'return_sale_receipt.dart';
 
 class ReturnInvoiceDetailScreen extends StatefulWidget {
   final String receiptId;
-
   const ReturnInvoiceDetailScreen({super.key, required this.receiptId});
 
   @override
@@ -25,6 +26,7 @@ class _ReturnInvoiceDetailScreenState extends State<ReturnInvoiceDetailScreen> {
   //nhập hàng controller
   final ReturnInvoiceController returnInvoiceController = ReturnInvoiceController();
   late Future<ReturnInvoiceReceipt?> _receiptFuture;
+  final invoiceController = InvoiceController();
 
   @override
   void initState() {
@@ -45,11 +47,11 @@ class _ReturnInvoiceDetailScreenState extends State<ReturnInvoiceDetailScreen> {
           return const Center(child: Text(AppString.errorNonExistentReceipt));
         }
 
-        final receipt = snapshot.data!;
+        var receipt = snapshot.data!;
         final createdAt = Helper.formatDateTime(receipt.createdAt);
         final status = Helper.getStatusReceipt(receipt.status);
         final totalReturnInvoiceValue =
-        Helper.formatCurrency(receipt.totalImportValue);
+        Helper.formatCurrency(receipt.totalSaleValue);
 
         return Scaffold(
           appBar: AppBar(
@@ -60,7 +62,15 @@ class _ReturnInvoiceDetailScreenState extends State<ReturnInvoiceDetailScreen> {
               ///nút sửa
               IconButton(
                 onPressed: () {
-                  context.push('${AppPath.returnInvoice}/${widget.receiptId}/edit', extra: receipt);
+                  context.push('${AppPath.returnInvoice}/${widget.receiptId}/edit', extra: receipt)
+                  .then((result) {
+                    if (result != null && result is ReturnInvoiceReceipt) {
+                      setState(() {
+                        receipt = result;
+                      });
+                    }
+                  });
+                  ;
                 },
                 icon: const Icon(Icons.edit),
               ),
@@ -68,7 +78,7 @@ class _ReturnInvoiceDetailScreenState extends State<ReturnInvoiceDetailScreen> {
               ///nút xóa
               IconButton(
                 onPressed: () {
-                  _handleCancelReceipt();
+                  _handleCancelReceipt(receipt);
                 },
                 icon: const Icon(Icons.delete),
               ),
@@ -112,18 +122,20 @@ class _ReturnInvoiceDetailScreenState extends State<ReturnInvoiceDetailScreen> {
                 ListTile(
                   leading: const Icon(Icons.person),
                   title: Text(
-                    receipt.customer!.name,
+                    receipt.partnerId != '' ?  receipt.customer!.name : AppString.retailCustomer,
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, color: Colors.blue),
                   ),
-                  subtitle: Text(
+                  subtitle: receipt.partnerId != '' ? Text(
                     receipt.customer!.phoneNumber,
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 14),
-                  ),
+                  ) : null,
                   onTap: () {
-                    //đi tới trang xem ncc chi tiết
-                    context.push('${AppPath.customer}/${receipt.partnerId}', extra: receipt.customer);
+                    //đi tới trang xem KH chi tiết
+                    if(receipt.partnerId != '') {
+                      context.push('${AppPath.customer}/${receipt.partnerId}', extra: receipt.customer);
+                    }
                   },
                 ),
                 ListTile(
@@ -135,8 +147,7 @@ class _ReturnInvoiceDetailScreenState extends State<ReturnInvoiceDetailScreen> {
                   ),
                   trailing: const Icon(Icons.arrow_forward_ios),
                   onTap: () {
-                    //đi tới trang xem phieu nhap chi tiết
-                    context.push('${AppPath.invoice}/${receipt.invoiceReceiptId}', extra: InvoiceReceipt.empty());
+                     context.push('${AppPath.invoice}/${receipt.invoiceReceiptId}', extra: InvoiceReceipt.empty());
                   },
                 ),
                 ListView.builder(
@@ -154,7 +165,7 @@ class _ReturnInvoiceDetailScreenState extends State<ReturnInvoiceDetailScreen> {
                             fontSize: 14, fontWeight: FontWeight.bold),
                       ),
                       subtitle: Text(
-                          '${Helper.formatCurrency(detail.product!.capitalPrice)}'
+                          '${Helper.formatCurrency(detail.product!.sellingPrice)}'
                               ' x${Helper.formatCurrency(detail.quantity)} ${detail.product!.unit}'),
                       onTap: null,
                     );
@@ -178,42 +189,10 @@ class _ReturnInvoiceDetailScreenState extends State<ReturnInvoiceDetailScreen> {
                   ],
                 ),
                 if(receipt.status == AppNum.two) _buildSummaryRow(AppString.amountDue,
-                    Helper.formatCurrency(receipt.importDue)),
+                    Helper.formatCurrency(receipt.saleDue)),
               ],
             ),
           ),
-          // trạng thái phiếu hoàn thành mới hiển thị nút thanh toán nợ(nếu có)
-          bottomNavigationBar: receipt.status == AppNum.two
-              ? Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 8.0, vertical: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                /// nút thanh toán nợ
-                ElevatedButton(
-                  onPressed: receipt.importDue > 0
-                      ? () {
-                    context
-                        .push(AppPath.payment, extra: receipt)
-                        .then((result) {
-                      if (result != null && result is Receipt) {
-                        //TODO: tạo phiếu mới vào db
-                        returnInvoiceController.saveReceipt(receipt);
-                        context.pop();
-                      }
-                    });
-                  }
-                      : null,
-                  // TODO: xử lý nút
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue),
-                  child: const Text(AppString.payOffDebt),
-                ),
-              ],
-            ),
-          )
-              : null,
         );
       },
     );
@@ -263,14 +242,15 @@ class _ReturnInvoiceDetailScreenState extends State<ReturnInvoiceDetailScreen> {
   }
 
   /// Hàm hiển thị hộp thoại xác nhận hủy phiếu
-  void _handleCancelReceipt() {
+  void _handleCancelReceipt(ReturnInvoiceReceipt receipt) {
     ConfirmationDialog.show(
       context: context,
       title: AppString.confirmCancelTitle,
       content: AppString.confirmCancelContent,
       onConfirm: () {
-        final success = returnInvoiceController.cancelReceipt();
+        final success = returnInvoiceController.cancelReceipt(widget.receiptId);
         if (success) {
+          invoiceController.updateReceiptReturned(receipt.invoiceReceiptId, false);
           Navigator.of(context).pop();
           _showSnackBar(AppString.successCancel, Colors.green);
         } else {

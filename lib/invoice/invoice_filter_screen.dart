@@ -97,11 +97,6 @@ class _FilterInvoiceScreenState extends State<FilterInvoiceScreen> {
     InvoiceFilter filter = InvoiceFilter();
     filter.isCompleted = _isCompleted;
     filter.isTemp = _isTemp;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => InvoiceScreen(filter: filter,),
-      ),
-    );
+    context.pop(filter);
   }
 }

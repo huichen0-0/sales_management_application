@@ -39,14 +39,14 @@ class InvoiceReceipt extends Receipt {
     partnerId: json['partnerId'],
     customer: json['customer'] != null
         ? Customer.fromJson(json['customer'])
-        : Customer.empty(),
+        : null,
     details: (json['details'] as List<dynamic>)
         .map((detail) => ReceiptDetail.fromJson(detail))
         .toList(),
     payments: json['payments'] == null ? [] : (json['payments'] as List<dynamic>)
         .map((payment) => Payment.fromJson(payment))
         .toList(),
-    createdAt: DateTime.parse(json['createdAt']),
+    createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now(),
     status: json['status'],
     returned: json['returned'],
     uid: json['uid']

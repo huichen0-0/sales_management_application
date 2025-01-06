@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sales_management_application/invoice/invoice_controller.dart';
 import '../helper/helper.dart';
+import '../products/product_controller.dart';
 import '../receipt/receipt.dart';
 import '/config/constants.dart';
 import 'return_sale_controller.dart';
@@ -25,6 +26,7 @@ class _UpdateReturnInvoiceScreenState extends State<UpdateReturnInvoiceScreen> {
   late ReturnInvoiceReceipt _receipt;
   final ReturnInvoiceController returnInvoiceController = ReturnInvoiceController();
   final InvoiceController invoiceController = InvoiceController();
+  ProductController productController = ProductController();
 
   @override
   void initState() {
@@ -41,49 +43,28 @@ class _UpdateReturnInvoiceScreenState extends State<UpdateReturnInvoiceScreen> {
         title: Text(_receipt.id == ''
             ? AppString.createReturnInvoice
             : AppString.updateReturnInvoice),
-        actions: [
-          IconButton(
-            onPressed: () {
-              // TODO: Thêm logic cho nút thông tin
-            },
-            icon: const Icon(Icons.info_outline),
-          ),
-        ],
       ),
       body: Column(
         children: [
           // Thông tin chung về phiếu trả hàng
           Container(
             padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'NCC',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    Text(
-                      _receipt.customer!.name,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      _receipt.id,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    Text(
-                      Helper.formatDateTime(_receipt.createdAt),
-                    ),
-                  ],
-                ),
-              ],
+            child:  ListTile(
+              leading: const Icon(Icons.person),
+              title: Text(
+                _receipt.partnerId != '' ?  _receipt.customer!.name : AppString.retailCustomer,
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, color: Colors.blue),
+              ),
+              subtitle: _receipt.partnerId != '' ? Text(
+                _receipt.customer!.phoneNumber,
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: 14),
+              ) : null,
+              onTap: () {
+                //đi tới trang xem KH chi tiết
+                if(_receipt.partnerId != '') context.push('${AppPath.customer}/${_receipt.partnerId}');
+              },
             ),
           ),
           // Danh sách hàng hóa
@@ -125,7 +106,7 @@ class _UpdateReturnInvoiceScreenState extends State<UpdateReturnInvoiceScreen> {
                                 detail.product!.name,
                               ),
                               Text(
-                                Helper.formatCurrency(detail.product!.capitalPrice),
+                                Helper.formatCurrency(detail.product!.sellingPrice),
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                             ],
@@ -190,12 +171,16 @@ class _UpdateReturnInvoiceScreenState extends State<UpdateReturnInvoiceScreen> {
               // đến trang thanh toán
               context.push(AppPath.salePayment, extra: _receipt).then((result) {
                 //thanh toan xong
-                if (result != null && result is Receipt) {
-                  //TODO: cần insert phiếu trả vào db
-                  //TODO: cần update returned = true cho phiếu nhập
-                  invoiceController.updateReceiptReturned(_receipt.invoiceReceiptId);
-                  returnInvoiceController.saveReceipt(_receipt);
-                  context.pop();
+                if (result != null && result is ReturnInvoiceReceipt) {
+                  final receipt = result;
+                  receipt.id = _receipt.id;
+                  if(result.status == 2){
+                    receipt.details.removeWhere((e) => e.quantity <= 0);
+                    productController.addAmount(receipt);
+                  }
+                  invoiceController.updateReceiptReturned(receipt.invoiceReceiptId, true);
+                  returnInvoiceController.saveReceipt(receipt);
+                  context.pop(receipt);
                 }
               });
             } else {

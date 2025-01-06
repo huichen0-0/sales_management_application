@@ -35,7 +35,7 @@ class ReturnInvoiceReceipt extends Receipt {
 
 
   factory ReturnInvoiceReceipt.fromJson(Map<dynamic, dynamic> json) => ReturnInvoiceReceipt(
-    id: json['id'],
+    id: json['id'] ?? '',
     partnerId: json['partnerId'],
     invoiceReceiptId: json['invoiceReceiptId'],
     customer: json['customer'] != null
@@ -63,9 +63,8 @@ class ReturnInvoiceReceipt extends Receipt {
     'createdAt': createdAt.toIso8601String(),
     'status': status,
     ///(dùng cho sắp xếp)
-    'totalValue': totalImportValue, //tổng tiền
+    'totalSaleValue': totalSaleValue, //tổng tiền
     'totalPaid': amountPaid, //đã trả
-    'totalDue': importDue, //còn nợ
     'uid': uid
   };
 

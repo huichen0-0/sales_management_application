@@ -40,7 +40,7 @@ class Order {
   }
 
   factory Order.fromJson(Map<dynamic, dynamic> json) => Order(
-        id: json['id'],
+        id: json['id'] ?? '',
         customerId: json['customerId'],
         customer: json['customer'] != null
             ? Customer.fromJson(json['customer'])
@@ -48,7 +48,7 @@ class Order {
         details: (json['details'] as List<dynamic>)
             .map((detail) => OrderDetail.fromJson(detail))
             .toList(),
-        createdAt: DateTime.parse(json['createdAt']),
+        createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now(),
         status: json['status'],
         uid: json['uid']
       );

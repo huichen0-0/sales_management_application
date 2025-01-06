@@ -11,7 +11,6 @@ import '../order/overlay.dart';
 import '../products/product.dart';
 import '../products/product_filter.dart';
 import '../receipt/receipt_detail.dart';
-import '../views/widgets/dialogs/confirmation_dialog.dart';
 
 class UpdateInvoiceScreen extends StatefulWidget {
   final InvoiceReceipt? existingInvoice;
@@ -24,7 +23,7 @@ class UpdateInvoiceScreen extends StatefulWidget {
 
 class UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
   // Danh sách tất cả sản phẩm có trong cửa hàng
-  List<Product> _allProducts = [  ];
+  List<Product> _allProducts = [];
 
   // Đối tượng invoice mới
   InvoiceReceipt _invoice = InvoiceReceipt.empty();
@@ -41,8 +40,6 @@ class UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
   // Controller cho TextField tìm kiếm
   final TextEditingController _searchController = TextEditingController();
 
-  // Timer để debounce (trì hoãn) việc tìm kiếm
-  Timer? _debounce;
   ProductController productController = ProductController();
   late Future<List<Product>> _futureAllProducts;
   InvoiceController invoiceController = InvoiceController();
@@ -53,27 +50,26 @@ class UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
     ProductFilter filter = ProductFilter();
     filter.isActive = true;
     filter.isInactive = false;
-    _futureAllProducts = productController.getProductList(filter);
-    //Kiểm tra có invoice truyền qua không?
-    if (widget.existingInvoice != null) {
-      //lâý invoice để chỉnh sửa
-      _invoice = widget.existingInvoice!;
-      //Loại những product đã trong invoice ra khỏi danh sách tất cả product
-      for (var detail in _invoice.details) {
-        _allProducts.remove(detail.product);
-      }
-    }
-    // Khởi tạo danh sách _filteredProducts bằng danh sách _allProducts
-    _filteredProducts = List.from(_allProducts);
-  }
+    filter.isAvailable = true;
+    _futureAllProducts = productController.getProductList(filter).then((products) {
+      setState(() {
+        _allProducts = products;
+        //Kiểm tra có order truyền qua không?
+        if (widget.existingInvoice != null) {
+          // print(widget.existingInvoice?.toJson2());
+          //lâý order để chỉnh sửa
+          _invoice = widget.existingInvoice!;
+          // Lọc ra các ID sản phẩm đã có trong đơn hàng
+          final existingProductIds =
+              _invoice.details.map((detail) => detail.productId).toSet();
 
-  // Hàm xử lý sự kiện khi người dùng nhập vào TextField tìm kiếm
-  void _onSearch(String query) {
-    // Nếu có debounce đang chạy, hủy nó
-    if (_debounce?.isActive ?? false) _debounce?.cancel();
-    // Tạo một Timer mới, sau 500ms sẽ gọi hàm filterProducts
-    _debounce = Timer(const Duration(milliseconds: 200), () {
-      _filterProducts(query);
+          // Loại bỏ các sản phẩm có ID trùng với sản phẩm trong đơn hàng ra khỏi _filteredProducts
+          _allProducts.removeWhere((product) => existingProductIds.contains(product
+              .id)); //Loại những product đã trong order ra khỏi danh sách tất cả product
+        }
+        _filterProducts(''); // Gọi hàm này sau khi lấy dữ liệu
+      });
+      return products; // Trả về để FutureBuilder hoạt động đúng
     });
   }
 
@@ -90,7 +86,7 @@ class UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
       _searchController.clear();
       // Thêm sản phẩm đã chọn vào danh sách _newInvoice
       _invoice.details.add(
-        ReceiptDetail(productId: product.id!, product: product, quantity: 1),
+        ReceiptDetail(productId: product.id, product: product, quantity: 1),
       );
     });
   }
@@ -126,8 +122,8 @@ class UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
         final lowerCaseQuery = query.toLowerCase();
         // Lọc danh sách _allProducts dựa trên từ khóa
         _filteredProducts = _allProducts
-            .where(
-                (product) => product.toJSON().toString().contains(lowerCaseQuery))
+            .where((product) =>
+                product.toJSON().toString().contains(lowerCaseQuery))
             .toList();
         // Hiển thị overlay kết quả tìm kiếm
         _showOverlay();
@@ -176,7 +172,6 @@ class UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
   void dispose() {
     // Giải phóng resources khi widget không còn sử dụng
     _searchController.dispose();
-    _debounce?.cancel();
     _removeOverlay();
     super.dispose();
   }
@@ -186,14 +181,9 @@ class UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: const Text('Bán hàng'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            // context.go('/suppliers');
-            context.pop();
-          },
-        ),
+        title: widget.existingInvoice == null
+            ? const Text('Tạo hóa đơn bán hàng')
+            : const Text('Cập nhật hóa đơn bán hàng'),
       ),
       body: _buildBody(),
       persistentFooterButtons: [
@@ -207,9 +197,6 @@ class UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
 
   ///Hàm xây dựng body
   Widget _buildBody() {
-    ProductFilter filter = ProductFilter();
-    filter.isActive = true;
-    filter.isInactive = false;
     return FutureBuilder<List<Product>>(
       future: _futureAllProducts, // Pass the Future function here
       builder: (context, snapshot) {
@@ -220,7 +207,6 @@ class UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
           // Handle any error that occurs during data fetching
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-          _allProducts = snapshot.data!;
         }
         return Stack(
           children: [
@@ -255,7 +241,9 @@ class UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
                 : null,
             border: const OutlineInputBorder(),
           ),
-          onChanged: _onSearch,
+          onChanged: (value) {
+            _filterProducts(value);
+          },
         ),
       ),
     );
@@ -412,14 +400,15 @@ class UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
     );
   }
 
-  ///
+  /// xây dựng nút "+"
   Widget _buildFloatingActionButtons() {
     return FloatingActionButton(
       onPressed: () {
-         context.push(AppPath.salePayment, extra: _invoice).then(
+        context.push(AppPath.salePayment, extra: _invoice).then(
           (result) {
             if (result != null && result is InvoiceReceipt) {
               invoiceController.saveReceipt(_invoice);
+              if(_invoice.status == 2) productController.subAmount(_invoice);
               context.pop();
             }
           },
@@ -429,5 +418,4 @@ class UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
       child: const Icon(Icons.check, color: Colors.white),
     );
   }
-
 }

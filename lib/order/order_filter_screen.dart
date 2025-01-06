@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sales_management_application/order/order_home_screen.dart';
 import '/config/constants.dart';
 import 'order_filter.dart';
@@ -109,11 +110,6 @@ class _FilterOrderScreenState extends State<FilterOrderScreen> {
     filter.isFinished = _isCompleted;
     filter.isTemp = _isTemp;
     filter.isCancelled = _isCancelled;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OrderScreen(filter: filter),
-      ),
-    );
+   context.pop(filter);
   }
 }

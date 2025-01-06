@@ -97,11 +97,6 @@ class _FilterReturnInvoiceScreenState extends State<FilterReturnInvoiceScreen> {
     ReturnInvoiceFilter filter = ReturnInvoiceFilter();
     filter.isFinished = _isCompleted;
     filter.isTemp = _isTemp;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ReturnInvoiceScreen(filter: filter,),
-      ),
-    );
+    context.pop(filter);
   }
 }

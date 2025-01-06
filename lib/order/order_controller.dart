@@ -1,12 +1,8 @@
-import 'package:sales_management_application/customers/model/customer.dart';
 import 'package:sales_management_application/invoice/invoice_receipt.dart';
 import 'package:sales_management_application/products/product_service.dart';
-import 'package:sales_management_application/suppliers/supplier.dart';
-import 'package:sales_management_application/suppliers/supplier_service.dart';
 import 'package:sales_management_application/time_filter/time_filter_service.dart';
+import '../customers/model/customer.dart';
 import '../customers/service/customer_service.dart';
-import '../import/import_filter.dart';
-import '../products/product.dart';
 import '../receipt/receipt_detail.dart';
 import '../return_import/return_import_filter.dart';
 import '../sort/sorting_controller.dart';
@@ -26,23 +22,25 @@ class OrderController {
    TimeFilterService timeFilterService = TimeFilterService();
 
   // Hàm lấy dữ liệu
-  Future<List<Order>> getData(OrderFilter filter, DateTime? fromDate, DateTime? toDate, String? partnerId) async {
+  Future<List<Order>> getData(OrderFilter filter, String? customerId, DateTime? fromDate, DateTime? toDate) async {
 
     List<Order> results = [];
     List<Order> orders = await orderService.getData(filter);
-    for(Order i in orders) {
-      if (((partnerId != null && partnerId == i.customerId) || partnerId == null) && timeFilterService.isTimeFilterd(i.createdAt, fromDate, toDate)) {
+    for(Order o in orders) {
+      if (timeFilterService.isTimeFilterd(o.createdAt, fromDate, toDate)
+            &&
+          ((customerId == null) || (customerId != null && o.customerId == customerId))
+      ) {
         List<OrderDetail> detailResult = [];
-        for (OrderDetail detail in i.details) {
-          Product product = await productService.getProduct(detail.productId);
-          detail.product = product;
+        for (OrderDetail detail in o.details) {
+          detail.product = await productService.getProduct(detail.productId);
           detailResult.add(detail);
         }
-        i.details = detailResult;
+        o.details = detailResult;
         Customer customer = await customerService.getCustomerByKey(
-            i.customerId);
-        i.customer = customer;
-        results.add(i);
+           o.customerId);
+        o.customer = customer;
+        results.add(o);
       }
     }
     return results;

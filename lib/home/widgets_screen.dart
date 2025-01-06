@@ -147,21 +147,21 @@ class WidgetScreen extends StatelessWidget {
                       'icon': Icons.insert_chart_outlined,
                       'label': 'Cuối ngày',
                       'action': () {
-                        context.push('/home');
+                        context.push('/dailySaleStatistic');
                       },
                     },
                     {
                       'icon': Icons.inventory_outlined,
                       'label': 'Hàng hóa',
                       'action': () {
-                        context.push('/home');
+                        context.push('/productStatistic');
                       },
                     },
                     {
                       'icon': Icons.area_chart,
                       'label': 'Bán hàng',
                       'action': () {
-                        context.push('/home');
+                        context.push('/saleStatistic');
                       },
                     },
                   ],

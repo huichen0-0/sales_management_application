@@ -110,7 +110,7 @@ class SalePaymentScreenState extends State<SalePaymentScreen> {
         ),
         //đi tới trang xem kh chi tiết nếu không phải khách lẻ
         onTap: () => _receipt.customer != null
-            ? context.push('${AppPath.customer}/${_receipt.partnerId}')
+            ? context.push('${AppPath.customer}/${_receipt.partnerId}', extra: _receipt.customer)
             : null,
       ),
     );
@@ -189,47 +189,6 @@ class SalePaymentScreenState extends State<SalePaymentScreen> {
       ),
     );
   }
-
-  // Widget _buildDiscountRow() {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(vertical: 6),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //       children: [
-  //         const Text("Giảm giá (%)",
-  //             style: TextStyle(
-  //               fontSize: 16,
-  //             )),
-  //         SizedBox(
-  //           width: 60,
-  //           child: TextField(
-  //             controller: _discountController,
-  //             textAlign: TextAlign.end,
-  //             decoration: const InputDecoration(
-  //               border: UnderlineInputBorder(),
-  //               focusedBorder: UnderlineInputBorder(
-  //                 borderSide:
-  //                     BorderSide(color: Colors.blue), // Thay đổi màu khi focus
-  //               ),
-  //               suffix: Text("%"),
-  //             ),
-  //             keyboardType: TextInputType.number,
-  //             inputFormatters: [
-  //               FilteringTextInputFormatter.digitsOnly,
-  //             ],
-  //             onChanged: (value) {
-  //               setState(() {
-  //                 value.isEmpty
-  //                     ? _discountController.text = '0'
-  //                     : _discount = num.parse(value);
-  //               });
-  //             },
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   Widget _buildRowInfo(String label, String value, {Color? color}) {
     return Padding(
@@ -325,20 +284,28 @@ class SalePaymentScreenState extends State<SalePaymentScreen> {
   }
 
   void _handleCompletePayment() {
-    ConfirmationDialog.show(
-      context: context,
-      title: AppString.confirmCompleteTitle,
-      content: AppString.confirmCompleteContent,
-      onConfirm: () {
-        _controller.updateAmountPaid(_amountController.text);
-        final success = _controller.completePayment(_excessAmount);
-        if (success) {
-          widget.onSubmit(_controller.receipt);
-          _showSnackBar(AppString.successComplete, Colors.green);
-        } else {
-          _showSnackBar(AppString.errorInvalidAmount, Colors.red);
-        }
-      },
-    );
+    final isEnough = _receipt.details.any((i) => i.quantity > i.product!.quantity ? true : false);
+    if (isEnough && check) {
+      _showSnackBar(
+        'Số lượng tồn kho không đủ để thanh toán',
+        Colors.red,
+      );
+    } else {
+      ConfirmationDialog.show(
+        context: context,
+        title: AppString.confirmCompleteTitle,
+        content: AppString.confirmCompleteContent,
+        onConfirm: () {
+          _controller.updateAmountPaid(_amountController.text);
+          final success = _controller.completePayment(_excessAmount);
+          if (success) {
+            widget.onSubmit(_controller.receipt);
+            _showSnackBar(AppString.successComplete, Colors.green);
+          } else {
+            _showSnackBar(AppString.errorInvalidAmount, Colors.red);
+          }
+        },
+      );
+    }
   }
 }

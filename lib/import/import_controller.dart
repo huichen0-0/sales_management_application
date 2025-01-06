@@ -6,6 +6,7 @@ import 'package:sales_management_application/time_filter/time_filter_service.dar
 import '../products/product.dart';
 import '../receipt/receipt_detail.dart';
 import '../sort/sorting_controller.dart';
+import '../statistic/service/statistic_service.dart';
 import '../suppliers/supplier.dart';
 import 'import_filter.dart';
 import 'import_receipt.dart';
@@ -104,6 +105,8 @@ class ImportController {
 
   void saveReceipt(ImportReceipt receipt) {
     importService.save(receipt, 'ImportReceipt');
+    final statisticService = StatisticService();
+    if(receipt.status == 2) statisticService.updateStatisticOnImportCreated(receipt);
   }
 
   // lấy dữ liệu dạng MAP

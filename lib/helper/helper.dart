@@ -3,7 +3,7 @@ import 'package:sales_management_application/config/constants.dart';
 
 class Helper {
   static String formatCurrency(num amount) {
-    final formatter = NumberFormat('###,###,###,###');
+    final formatter = NumberFormat('#,###');
     return formatter.format(amount);
   }
 
@@ -43,22 +43,43 @@ class Helper {
     // Chuyển đổi chuỗi thành số để định dạng lại
     return num.tryParse(numericString);
   }
-//TODO: thừa, sửa trong model + bỏ hàm naày
+
   static String getAttribute(String value){
     switch (value) {
-      //Tổng nợ NCC
+    //Tổng số lượng sản phẩm đã bán
+      case AppString.totalSoldQuantity:
+        return AppAttribute.totalSoldQuantity;
+    //Tổng số lượng sản phẩm đã nhập
+      case AppString.totalImportedQuantity:
+        return AppAttribute.totalImportedQuantity;
+    //Tổng Tổng doanh thu
+      case AppString.totalRevenue:
+        return AppAttribute.totalRevenue;
+    //Tổng chi phí
+      case AppString.totalCost:
+        return AppAttribute.totalCost;
+    //Tổng lợi nhuận
+      case AppString.totalProfit:
+        return AppAttribute.totalProfit;
+    //Tổng số lượng tồn kho
+      case AppString.currentInventoryQuantity:
+        return AppAttribute.currentInventoryQuantity;
+    //Tổng giá trị tồn kho
+      case AppString.currentInventoryValue:
+        return AppAttribute.currentInventoryValue;
+    //Tổng nợ NCC
       case AppString.totalImportDue:
         return AppAttribute.importDue;
-        //Tổng khách nợ
+    //Tổng khách nợ
       case AppString.totalSaleDue:
         return AppAttribute.saleDue;
-        //Tổng tiền hàng bán
+    //Tổng tiền hàng bán
       case AppString.totalSaleValue:
         return AppAttribute.totalSaleValue;
     //Đã thanh toán
       case AppString.totalPaid:
         return AppAttribute.totalPaid;
-        //tong tien hang nhập
+    //tong tien hang nhập
       default:
         return AppAttribute.totalCapitalValue;
     }

@@ -5,6 +5,7 @@ import 'package:sales_management_application/import/import_receipt.dart';
 import 'package:sales_management_application/inventory_check/inventory_check_receipt.dart';
 import 'package:sales_management_application/products/product.dart';
 import 'package:sales_management_application/products/product_service.dart';
+import 'package:sales_management_application/receipt/receipt.dart';
 import 'package:sales_management_application/receipt/receipt_detail.dart';
 import 'package:sales_management_application/return_import/model/return_import_receipt.dart';
 
@@ -41,7 +42,7 @@ class ProductController {
     productService.deleteProduct(product.id);
   }
 
-  void addAmount(ImportReceipt receipt) {
+  void addAmount(Receipt receipt) {
     for(ReceiptDetail i in receipt.details) {
       num currentQuantity = i.product!.quantity;
       num updatedQuantity = currentQuantity + i.quantity;
@@ -49,7 +50,7 @@ class ProductController {
     }
   }
 
-  void subAmount(ReturnImportReceipt receipt) {
+  void subAmount(Receipt receipt) {
     for(ReceiptDetail i in receipt.details) {
       num currentQuantity = i.product!.quantity;
       num updatedQuantity = currentQuantity - i.quantity;

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sales_management_application/return_sale/return_sale_receipt.dart';
 import '../helper/helper.dart';
+import '../invoice/invoice_controller.dart';
+import '../invoice/invoice_receipt.dart';
+import '../products/product_controller.dart';
 import '../receipt/receipt.dart';
 import '/config/constants.dart';
 import '../../../views/widgets/dialogs/confirmation_dialog.dart';
@@ -18,6 +22,8 @@ class OrderDetailScreen extends StatefulWidget {
 class _OrderDetailScreenState extends State<OrderDetailScreen> {
   //nhập hàng controller
   final OrderController _controller = OrderController();
+  InvoiceController invoiceController = InvoiceController();
+  final _productController = ProductController();
   Order _order;
   _OrderDetailScreenState(this._order);
 
@@ -131,7 +137,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
         ///nút sửa
         IconButton(
           onPressed: () {
-            context.push('${AppPath.order}/${_order.id}/edit');
+            context.push('${AppPath.order}/${_order.id}/edit', extra: _order);
           },
           icon: const Icon(Icons.edit),
         ),
@@ -155,33 +161,34 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
         children: [
           ElevatedButton(
             onPressed: () {
-              final newInvoice = _controller.createInvoiceBasedOnOrder(_order);
-              //tới trang thanh toán (tạo hóa đơn)
-              context.push(AppPath.salePayment, extra: newInvoice)
-                  .then((result) {
-                    //trả về từ trang sale payment
-                if (result != null && result is Receipt) {
-                  //TODO: insert hóa đơn vào db, cập nhật order thành hoàn thành
-                  _order.status = AppNum.two;
-                  _controller.updateOrder(updatedItem: _order);
-                  context.pop();
-                }
-              });
+              final check = _order.details.any((i) => i.quantity > i.product!.quantity ? true : false);
+              if (check) {
+                _showSnackBar(
+                  'Số lượng tồn kho không đủ để thanh toán',
+                  Colors.red,
+                );
+              } else {
+                final newInvoice = _controller.createInvoiceBasedOnOrder(
+                    _order);
+                context.push(AppPath.salePayment, extra: newInvoice)
+                    .then((result) {
+                  //trả về từ trang sale payment
+                  if (result != null && result is InvoiceReceipt) {
+                    //TODO: insert hóa đơn vào db, cập nhật order thành hoàn thành
+                    _controller.saveComplete(_order);
+                    invoiceController.saveReceipt(result);
+                    _productController.subAmount(result);
+                    setState(() {
+                      _order.status = AppNum.two;
+                    });
+                  }
+                });
+              }
             },
             // TODO: xử lý nút
             style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
             child: const Text(AppString.pay),
           ),
-          // ElevatedButton(
-          //   onPressed: //đã trả hàng thì vô hiệu nút
-          //   !_order.returned
-          //       ? () async {
-          //     context.push(AppPath.returnOrderAdd, extra: _order);
-          //   }
-          //       : null, // TODO: xử lý nút
-          //   style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-          //   child: const Text(AppString.returnOrder),
-          // ),
         ],
       ),
     );

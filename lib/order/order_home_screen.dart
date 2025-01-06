@@ -13,9 +13,10 @@ import 'order_card.dart';
 import 'order_controller.dart';
 
 class OrderScreen extends StatefulWidget {
+  String? customerId;
   OrderFilter filter = OrderFilter();
-  String? partnerId;
-  OrderScreen({super.key, required this.filter, this.partnerId});
+
+  OrderScreen({super.key, required this.filter, this.customerId});
 
   @override
   OrderScreenState createState() => OrderScreenState(this.filter);
@@ -38,10 +39,9 @@ class OrderScreenState extends State<OrderScreen> {
   //dữ liệu sau khi lấy
   List<Order>? _orders;
 
-  //bộ loc
-  Map<String, dynamic> _filters = {};
   OrderFilter filter = OrderFilter();
   TimeFilterController timeFilterController = TimeFilterController();
+
   OrderScreenState(this.filter);
 
   @override
@@ -52,14 +52,15 @@ class OrderScreenState extends State<OrderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<DateTime?> timeRange = timeFilterController.getTimeRange(_selectedOption, fromDate, toDate);
+    List<DateTime?> timeRange =
+        timeFilterController.getTimeRange(_selectedOption, fromDate, toDate);
     fromDate = timeRange[0]!;
     toDate = timeRange[1];
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: _buildAppBar(context),
       body: FutureBuilder<List<Order>>(
-        future: _controller.getData(filter, fromDate, toDate, widget.partnerId),
+        future: _controller.getData(filter, widget.customerId, fromDate, toDate),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -70,8 +71,7 @@ class OrderScreenState extends State<OrderScreen> {
           } else {
             _orders = snapshot.data;
             //sắp xếp
-            _orders =
-                _controller.sortOrders(_orders!, _selectedSorting);
+            _orders = _controller.sortOrders(_orders!, _selectedSorting);
             return _buildItemList(context, _orders!);
           }
         },
@@ -87,8 +87,7 @@ class OrderScreenState extends State<OrderScreen> {
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.blue,
-      title:
-          const Text(AppString.order, style: TextStyle(color: Colors.white)),
+      title: const Text(AppString.order, style: TextStyle(color: Colors.white)),
       actions: [
         IconButton(
           icon: const Icon(Icons.search, color: Colors.white),
@@ -109,18 +108,58 @@ class OrderScreenState extends State<OrderScreen> {
   }
 
   Widget _buildEmptyView() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.remove_shopping_cart, size: 100, color: Colors.blue),
-          SizedBox(height: 20),
-          Text(
-            AppString.emptyOrder,
-            style: TextStyle(fontSize: 16, color: Colors.grey),
+    return ListView(
+      padding: const EdgeInsets.all(8.0),
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton.icon(
+              icon: const Icon(Icons.calendar_today, color: Colors.black),
+              label: Text(_selectedOption,
+                  style: const TextStyle(color: Colors.black)),
+              onPressed: () {
+                _showTimeFilterOptions();
+              },
+            ),
+
+            ///nút lọc hiển thị TODO: cần xử lý áp dụng
+            const Text(
+              '${AppString.totalAmount}:',
+              style: TextStyle(color: Colors.black),
+            ),
+
+            //tổng tiền theo hiển thị TODO: thay đổi theo tùy chọn
+            const Text(
+              '0',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        const Text(
+          '0 đơn đặt hàng',
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 30),
+
+        const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.remove_shopping_cart, size: 100, color: Colors.blue),
+              SizedBox(height: 20),
+              Text(
+                AppString.emptyOrder,
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            ],
           ),
-        ],
-      ),
+        )
+      ],
     );
   }
 
@@ -176,7 +215,7 @@ class OrderScreenState extends State<OrderScreen> {
                 OrderCard(
                   order: order,
                   onTap: (id) {
-                    return context.push('${AppPath.order}/$id', extra: order);
+                    context.push('${AppPath.order}/$id', extra: order);
                   },
                 ),
             ],
@@ -194,7 +233,8 @@ class OrderScreenState extends State<OrderScreen> {
           onOptionSelected: (option, startDate, [endDate]) {
             setState(() {
               _selectedOption = option;
-              List<DateTime?> timeRange = timeFilterController.getTimeRange(_selectedOption, startDate, endDate);
+              List<DateTime?> timeRange = timeFilterController.getTimeRange(
+                  _selectedOption, startDate, endDate);
               fromDate = timeRange[0]!;
               toDate = timeRange[1];
             });
@@ -244,7 +284,7 @@ class OrderScreenState extends State<OrderScreen> {
           ],
           //chuyển sang map để tìm kiếm
           searchData: _controller.convertToJSON(_orders),
-          dataType: 'invoice',
+          dataType: 'order',
           onCancel: () {
             // Hủy tìm kiếm và đóng trang tìm kiếm
             Navigator.pop(context);
@@ -253,7 +293,7 @@ class OrderScreenState extends State<OrderScreen> {
           itemBuilder: (item) {
             return OrderCard(
               order: Order.fromJson(item), //chuyển về object
-              onTap: (id) => context.push('${AppPath.invoice}/$id'),
+              onTap: (id) => context.push('${AppPath.order}/$id', extra: Order.fromJson(item)),
             );
           },
         ),
@@ -265,9 +305,9 @@ class OrderScreenState extends State<OrderScreen> {
   Future<void> _openFilterScreen() async {
     final result = await context.push(AppPath.orderFilter, extra: filter);
     // Đường dẫn đến trang lọc
-    if (result != null && result is Map<String, dynamic>) {
+    if (result != null && result is OrderFilter) {
       setState(() {
-        _filters = result;
+        filter = result;
       });
     }
   }

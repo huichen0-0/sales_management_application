@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sales_management_application/suppliers/supplier-controller.dart';
 import 'package:sales_management_application/suppliers/supplier.dart';
-import 'package:sales_management_application/suppliers/supplier_service.dart';
 
 class SupplierDetailScreen extends StatefulWidget {
   const SupplierDetailScreen({super.key, required this.id});

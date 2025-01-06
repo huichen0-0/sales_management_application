@@ -1,12 +1,16 @@
-import 'package:sales_management_application/customers/service/customer_service.dart';
+
 import 'package:sales_management_application/products/product_service.dart';
 import 'package:sales_management_application/return_sale/return_invoice_service.dart';
 import 'package:sales_management_application/return_sale/return_sale_filter.dart';
 
+import '../config/constants.dart';
 import '../customers/model/customer.dart';
+import '../customers/service/customer_service.dart';
 import '../products/product.dart';
 import '../receipt/receipt_detail.dart';
 import '../sort/sorting_controller.dart';
+import '../statistic/service/statistic_service.dart';
+import '../time_filter/time_filter_service.dart';
 import 'return_sale_receipt.dart';
 
 class ReturnInvoiceController {
@@ -14,46 +18,57 @@ class ReturnInvoiceController {
   ReturnInvoiceService returnInvoiceService = ReturnInvoiceService();
   ProductService productService = ProductService();
   CustomerService customerService = CustomerService();
+  TimeFilterService timeFilterService = TimeFilterService();
 
   //lấy dữ liệu từ db, key gán vào id
   List<ReturnInvoiceReceipt> data = [ ];
 
   // Hàm lấy dữ liệu
-  Future<List<ReturnInvoiceReceipt>> getReturnInvoiceList(ReturnInvoiceFilter filter) async {
+  Future<List<ReturnInvoiceReceipt>> getReturnInvoiceList(ReturnInvoiceFilter filter, String? customerId, DateTime? fromDate, DateTime? toDate) async {
     List<ReturnInvoiceReceipt> results = [];
     List<ReturnInvoiceReceipt> returnInvoices = await returnInvoiceService.getData(filter);
     for(ReturnInvoiceReceipt receipt in returnInvoices) {
-      List<ReceiptDetail> detailResult = [];
+      if (timeFilterService.isTimeFilterd(receipt.createdAt, fromDate, toDate)
+          &&
+          ((customerId == null) || (customerId != null && receipt.partnerId == customerId))
+      ) {
+        List<ReceiptDetail> detailResult = [];
       for(ReceiptDetail detail in receipt.details) {
         Product product = await productService.getProduct(detail.productId);
         detail.product = product;
         detailResult.add(detail);
       }
       receipt.details = detailResult;
-      Customer customer = await customerService.getCustomerByKey(receipt.partnerId);
-      receipt.customer = customer;
+        if (receipt.partnerId != '') {
+          Customer customer = await customerService.getCustomerByKey(
+              receipt.partnerId);
+          receipt.customer = customer;
+        }
       results.add(receipt);
-    }
+    }}
     return results;
   }
 
   void saveReceipt(ReturnInvoiceReceipt receipt) {
     returnInvoiceService.saveReceipt(receipt);
+    final statisticService = StatisticService();
+    if(receipt.status == 2) statisticService.updateStatisticOnReturnSaleCreated(receipt);
   }
 
   /// XỬ LÝ PHIẾU ///
   //tổng giá trị hiên thị, đã hoàn thành mới cộng
-  num getTotalDisplayValue(String attribute) {
-    return data.fold(
-      0,
+  num getTotalDisplayValue(List<ReturnInvoiceReceipt> list, String attribute) {
+    return list.fold(
+      AppNum.zero,
           (sum, receipt) {
         var value = receipt.getAttributeValue(attribute);
-        return sum + (receipt.status == 2 ? value : 0);
+        return sum + (receipt.status == AppNum.two ? value : AppNum.zero);
       },
     );
   }
   //Hủy phiếu
-  bool cancelReceipt() {
+  bool cancelReceipt(String id) {
+    returnInvoiceService.cancelReceipt(id);
     return true;
   }
 
@@ -67,8 +82,11 @@ class ReturnInvoiceController {
       detailResult.add(detail);
     }
     receipt.details = detailResult;
-    Customer customer = await customerService.getCustomerByKey(receipt.partnerId);
-    receipt.customer = customer;
+    if (receipt.partnerId != '') {
+      Customer customer = await customerService.getCustomerByKey(
+          receipt.partnerId);
+      receipt.customer = customer;
+    }
     return receipt;
   }
 
