@@ -11,7 +11,7 @@ import '../controller/ec_controller.dart';
 import '../../products/product_controller.dart';
 import '../export_receipt.dart';
 import 'export_receipt_detail.dart';
-import '/views/widgets/search_bars/search_product.dart';
+import '/search/search_product.dart';
 import 'ec_home_screen.dart';
 
 class UpdateExportCancellationScreen extends StatefulWidget {
@@ -45,7 +45,6 @@ class _UpdateExportCancellationScreenState extends State<UpdateExportCancellatio
   Widget build(BuildContext context) {
     ProductFilter filter = ProductFilter();
     filter.isInactive = false;
-    filter.isAvailable = true;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -138,18 +137,26 @@ class _UpdateExportCancellationScreenState extends State<UpdateExportCancellatio
   }
 
   void _addEc() {
-    ConfirmationDialog.show(
-      context: context,
-      title: 'Thêm đơn xuất hủy',
-      content: 'Bạn có chắc muốn thêm đơn này không?',
-      onConfirm: () {
-        receipt?.status = 2;
-        _controller.save(receipt!);
-        productController.subAmountEc(receipt!);
-        context.pop();
-        _showSnackBar('Tạo đơn thành công!', Colors.green);
-      },
-    );
+    final check = receipt!.details.any((i) => i.cancelledQuantity > i.product!.quantity ? true : false);
+    if (check) {
+      _showSnackBar(
+        'Số lượng tồn kho không đủ để thanh toán',
+        Colors.red,
+      );
+    } else {
+      ConfirmationDialog.show(
+        context: context,
+        title: 'Thêm đơn xuất hủy',
+        content: 'Bạn có chắc muốn thêm đơn này không?',
+        onConfirm: () {
+          receipt?.status = 2;
+          _controller.save(receipt!);
+          productController.subAmountEc(receipt!);
+          context.pop();
+          _showSnackBar('Tạo đơn thành công!', Colors.green);
+        },
+      );
+    }
   }
 
   // hiển thị danh sách trống

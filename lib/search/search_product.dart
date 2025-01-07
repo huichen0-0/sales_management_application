@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sales_management_application/search/searching_controller.dart';
 
-import '../../../products/product.dart';
+import '../products/product.dart';
 
 class ProductSearchBar extends StatefulWidget {
   final Widget backgroundWidget; // Widget nền (có thể tùy chỉnh)

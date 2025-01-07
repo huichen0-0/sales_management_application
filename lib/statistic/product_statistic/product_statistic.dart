@@ -74,10 +74,10 @@ class ProductStatistic {
         return totalProfit;
       //Tổng số lượng tồn kho
       case AppString.currentInventoryQuantity:
-        return currentInventoryQuantity ?? 0;
+        return currentInventoryQuantity ;
       //Tổng giá trị tồn kho
       case AppString.currentInventoryValue:
-        return currentInventoryValue ?? 0;
+        return currentInventoryValue ;
       default:
         return AppNum.zero;
     }

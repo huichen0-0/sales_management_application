@@ -7,6 +7,7 @@ import 'package:sales_management_application/repository/customer_repository.dart
 import 'package:sales_management_application/time_filter/time_filter_service.dart';
 
 import '../../config/constants.dart';
+import '../../sort/sorting_controller.dart';
 
 class CustomerController{
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -25,9 +26,15 @@ class CustomerController{
     List<Customer> customers = await customerService.getCustomerList(filter);
     List<Customer> result = [];
     for(Customer customer in customers) {
-      if (timeFilterService.isTimeFilterd(customer.createdAt, fromDate, toDate)) {
-        result.add(customer);
+      // if (timeFilterService.isTimeFilterd(customer.createdAt, fromDate, toDate)) {
+        // result.add(customer);
+      // }
+      if (selectedDisplay == AppString.totalSale) {
+        customer.amountSell = await customerService.getTotalPurchase(fromDate, toDate, customer);
+      } else {
+        customer.amountReturn = await customerService.getTotalRefund(fromDate, toDate, customer);
       }
+      result.add(customer);
     }
     return result;
   }
@@ -98,18 +105,6 @@ class CustomerController{
 
   void updateActive(String id, int newActive) {
     customerService.updateActive('Customer', id,  newActive);
-  }
-
-  num getGender(String sex) {
-    if (sex.toLowerCase() == 'nam') {
-      return 1;
-    } else if (sex.toLowerCase() == 'nữ') {
-      return 2;
-    } else if (sex.toLowerCase() == 'khác'){
-      return 3;
-    } else { //Nếu không chọn giới tính
-      return 4;
-    }
   }
 
   //Sửa thông tin khách hàng
@@ -270,6 +265,27 @@ class CustomerController{
     }
     return filter;
   }
+  // lấy dữ liệu dạng MAP
+  List<Map<String, dynamic>> convertToJSON(List<Customer>? data) => [
+    for (var receipt in data ?? <Customer>[]) receipt.toJson(),
+  ];
 
+  // chuyển sang danh sách object
+  List<Customer> convertFromJSON(List<Map<String, dynamic>> json) {
+    return json
+        .map((receiptJson) => Customer.fromJson(receiptJson))
+        .toList();
+  }
+  List<Customer> sort(
+      List<Customer> receipts,
+      String sortOption,
+      String sortAttribute
+      ) {
+    // Sắp xếp theo tùy chọn
+    final sortingController = SortingController(convertToJSON(receipts));
+    sortingController.updateSorting(sortOption, sortAttribute);
+
+    return convertFromJSON(sortingController.currentData);
+  }
 
 }

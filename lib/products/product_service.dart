@@ -19,11 +19,12 @@ class ProductService {
   }
 
   void deleteProduct(String id) {
-    firebaseService.updateData('Products', id, {'isDeleted': false});
+    firebaseService.updateData('Products', id, {'isDeleted': true});
   }
 
   Future<Product> getProduct(String productId) async {
     Product product = Product.fromJSON(await firebaseService.getDataByKey('Products', productId));
+    product.id = productId;
     return product;
   }
 
@@ -41,6 +42,7 @@ class ProductService {
   }
 
   bool isFilterd(Product product, ProductFilter filter) {
+    if(product.isDeleted) return false;
     if (filter.isAboveStockLimit && !product.isAboveMaxLimit()) {
       return false;
     }

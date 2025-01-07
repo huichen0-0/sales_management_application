@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sales_management_application/import/import_filter.dart';
 import 'package:sales_management_application/suppliers/supplier_filter.dart';
 import 'package:sales_management_application/time_filter/time_filter_controller.dart';
-import '../../../views/widgets/search_bars/search_note_screen.dart';
+import '../../../search/search_note_screen.dart';
 import '../../../views/widgets/sheets/display_bottom_sheet.dart';
 import '../helper/helper.dart';
 import '../views/widgets/cards/import_card.dart';

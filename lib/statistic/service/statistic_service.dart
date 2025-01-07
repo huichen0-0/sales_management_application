@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sales_management_application/import/import_receipt.dart';
 import 'package:sales_management_application/invoice/invoice_receipt.dart';
+import 'package:sales_management_application/products/product_service.dart';
 import 'package:sales_management_application/repository/firebase_repository.dart';
 import 'package:sales_management_application/return_import/model/return_import_receipt.dart';
 import 'package:sales_management_application/return_sale/return_sale_receipt.dart';
@@ -11,6 +12,7 @@ import 'package:sales_management_application/statistic/sale_statistic/sale_stati
 class StatisticService {
   FirebaseService firebaseService = FirebaseService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  ProductService productService = ProductService();
 
   Future<List<ProductStatistic>> getProductStatistics() async {
     List<ProductStatistic> productList = [];
@@ -132,10 +134,7 @@ class StatisticService {
       );
 
       productStatistic.totalImportedQuantity += item.quantity;
-
-      productStatistic.currentInventoryQuantity = item.product!.quantity;
-      productStatistic.currentInventoryValue =
-          item.product!.quantity * item.product!.capitalPrice;
+      
       await _saveOrUpdateProductStatistic(productStatistic);
     }
   }
@@ -162,10 +161,7 @@ class StatisticService {
       productStatistic.totalSoldQuantity += item.quantity;
       productStatistic.totalRevenue += item.quantity * item.saleValue;
       productStatistic.totalCost += item.capitalValue; // Cần đảm bảo có giá vốn
-
-      productStatistic.currentInventoryQuantity = item.product!.quantity;
-      productStatistic.currentInventoryValue =
-          item.product!.quantity * item.product!.capitalPrice;
+      
 
       await _saveOrUpdateProductStatistic(productStatistic);
     }
@@ -184,9 +180,7 @@ class StatisticService {
 
       productStatistic.totalImportedQuantity -= item.quantity;
 
-      productStatistic.currentInventoryQuantity = item.product!.quantity;
-      productStatistic.currentInventoryValue =
-          item.product!.quantity * item.product!.capitalPrice;
+      
       await _saveOrUpdateProductStatistic(productStatistic);
     }
   }
@@ -215,9 +209,7 @@ class StatisticService {
       productStatistic.totalRevenue -= item.saleValue; // Giá trị hoàn trả
       productStatistic.totalCost -= item.capitalValue;
 
-      productStatistic.currentInventoryQuantity = item.product!.quantity;
-      productStatistic.currentInventoryValue =
-          item.product!.quantity * item.product!.capitalPrice;
+      
       await _saveOrUpdateProductStatistic(productStatistic);
     }
   }

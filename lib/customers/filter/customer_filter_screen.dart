@@ -55,9 +55,9 @@ class _FilterCustomerScreenState extends State<FilterCustomerScreen> {
               // Tổng mua
               _buildRangeInputSection('Tổng bán', purchaseFromController, purchaseToController),
               const SizedBox(height: 16),
-              // Nợ hiện tại
-              _buildRangeInputSection('Nợ hiện tại', debtFromController, debtToController),
-              const SizedBox(height: 16),
+              // // Nợ hiện tại
+              // _buildRangeInputSection('Nợ hiện tại', debtFromController, debtToController),
+              // const SizedBox(height: 16),
               // giới tinhs
               _buildSexSection(),
               const SizedBox(height: 16),

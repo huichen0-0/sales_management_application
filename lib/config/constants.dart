@@ -220,8 +220,8 @@ class AppString {
   static const String totalRevenue = 'Tổng doanh thu';
   static const String totalCost = 'Tổng chi phí';
   static const String totalProfit = 'Tổng lợi nhuận';
-  static const String currentInventoryValue = 'Tổng tồn kho hiện tại';
-  static const String currentInventoryQuantity = 'Tổng giá trị kho hiện tại';
+  static const String currentInventoryValue = 'Tổng giá trị kho hiện tại';
+  static const String currentInventoryQuantity = 'Tổng tồn kho hiện tại';
 }
 
 class AppNum {

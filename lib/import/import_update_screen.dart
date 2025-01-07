@@ -11,7 +11,7 @@ import '../receipt/receipt.dart';
 import '../receipt/receipt_detail.dart';
 import '../suppliers/supplier.dart';
 import 'import_controller.dart';
-import '/views/widgets/search_bars/search_product.dart';
+import '/search/search_product.dart';
 import 'import_receipt.dart';
 
 class UpdateImportScreen extends StatefulWidget {
@@ -150,7 +150,9 @@ class _UpdateImportScreenState extends State<UpdateImportScreen> {
             context.push(AppPath.payment, extra: receipt).then((result) {
               if (result != null && result is Receipt) {
                 _controller.saveReceipt(receipt);
-                productController.addAmount(receipt);
+                if (result.status == 2) {
+                  productController.addAmount(receipt);
+                }
                 context.pop();
               }
             });

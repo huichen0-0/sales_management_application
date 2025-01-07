@@ -68,10 +68,16 @@ class CustomerService {
     if (filter.isActive == false && filter.isInactive == true && customer.status == 1) {
       return false;
     }
+    if (filter.isActive == false && filter.isInactive == false) {
+      return false;
+    }
     if (filter.isMan == true && filter.isWoman == false && customer.gender == 2) {
       return false;
     }
     if (filter.isMan == false && filter.isWoman == true && customer.gender == 1) {
+      return false;
+    }
+    if (filter.isMan == false && filter.isWoman == false) {
       return false;
     }
     return true;

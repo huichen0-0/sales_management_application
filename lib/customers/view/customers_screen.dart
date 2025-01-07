@@ -6,7 +6,7 @@ import 'package:sales_management_application/sort/sorting_controller.dart';
 import 'package:sales_management_application/customers/filter/customer_filter.dart';
 import 'package:sales_management_application/time_filter/time_filter_controller.dart';
 import 'package:sales_management_application/views/widgets/cards/customer_card.dart';
-import 'package:sales_management_application/views/widgets/search_bar.dart';
+import 'package:sales_management_application/search/search_bar.dart';
 import 'package:sales_management_application/views/widgets/sheets/display_bottom_sheet.dart';
 import 'package:sales_management_application/views/widgets/sheets/sorting_bottom_sheet.dart';
 import 'package:sales_management_application/views/widgets/sheets/time_filter_bottom_sheet.dart';
@@ -25,13 +25,12 @@ class _CustomerScreenState extends State<CustomerScreen> {
   final CustomerController _customerController = CustomerController();
   List<Customer> customers = [];
   List<Map<String, dynamic>> itemsToSearch = [];
-  SortingController _sortingController = SortingController([]);
   CustomerFilter filter = CustomerFilter(fromDate: null, toDate: null,
                                                   fromSellAmount: null, toSellAmount: null, 
                                                   fromDebtAmount: null, toDebtAmount: null,
                                                   isMan: true, isWoman: true,
                                                   isActive: true, isInactive: false);
-  String selectedSorting = AppString.newest; // Giá trị mặc định của sắp xếp
+  String selectedSorting = AppString.aZ; // Giá trị mặc định của sắp xếp
   String selectedDisplay = AppString.totalSale; // Giá trị mặc định của tổng mua
   String selectedOption = AppString.today; //giá trị mặc định của lọc thời gian
   double totalAmountSell = 0;
@@ -41,6 +40,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
   TimeFilterController timeFilterController = TimeFilterController();
   CustomerController customerController = CustomerController();
   _CustomerScreenState(this.filter);
+  String sortAttribute = 'amountSell';
 
   //Hàm lấy thông tin khách hàng
   Future<void> _fetchCustomers() async {
@@ -53,12 +53,14 @@ class _CustomerScreenState extends State<CustomerScreen> {
   }
 
   //Hàm lấy danh sách khách hàng dùng cho tìm kiếm
-  Future<void> _getListCustomersToSearch() async {
-    await _customerController.getListCustomerToSearch();
-    setState(() {
-      List<Customer> customerToSearch = _customerController.listCustomersToSearch;
-      itemsToSearch = _customerController.toMap(customerToSearch);
-    });
+  void _getListCustomersToSearch()  {
+     _customerController.getListCustomerToSearch().then((onValue) {
+       setState(() {
+         List<Customer> customerToSearch = _customerController
+             .listCustomersToSearch;
+         itemsToSearch = _customerController.toMap(customerToSearch);
+       });
+     });
   }
 
   //Hàm lọc danh sách khách hàng
@@ -82,11 +84,12 @@ class _CustomerScreenState extends State<CustomerScreen> {
   }
 
   //Hàm chuyển hướng đến giao diện thông tin chi tiết khách hàng
-  Future<void> goToDetailCustomer(Customer customer) async {
-    await context.push<String>('/customers/${customer.id}', extra: customer);
-    setState(() {
-      _fetchCustomers();
-      _getListCustomersToSearch();
+  void goToDetailCustomer(Customer customer) {
+    context.push('/customers/${customer.id}', extra: customer).then((result) {
+        setState(() {
+            _fetchCustomers();
+            _getListCustomersToSearch();
+        });
     });
   }
 
@@ -108,10 +111,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
   }
 
   void setTotalAmount(){
-    setState(() {
       totalAmountSell = customers.fold(0, (sum, item) => sum + item.amountSell);
       totalAmountReturn = customers.fold(0, (sum, item) => sum + item.amountReturn);
-    });
   }
 
   @override
@@ -121,12 +122,6 @@ class _CustomerScreenState extends State<CustomerScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: const Text('Khách hàng'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            context.go('/home');
-          },
-        ),
         actions: [
           /// tìm kiếm
           IconButton(
@@ -165,10 +160,9 @@ class _CustomerScreenState extends State<CustomerScreen> {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             customers = snapshot.data!;
+            setTotalAmount();
 
-            if (_sortingController!.currentData.isNotEmpty) {
-              customers = customerController.convertToCustomers(_sortingController!.currentData);
-            }
+            customers = customerController.sort(customers, selectedSorting, sortAttribute);
             return _buildItemList(context, customers);
           } else {
             return _buildEmptyView();
@@ -304,6 +298,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
           onSelectDisplay: (option) {
             setState(() {
               selectedDisplay = option;
+              option == AppString.totalSale ? sortAttribute = 'amountSell' : sortAttribute = 'amountReturn';
             });
           }
         );
@@ -345,16 +340,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
           onSelectSorting: (option) {
             setState(() {
               selectedSorting = option;
-              _sortingController = SortingController(_customerController.toMap(customers));
-              if(_sortingController != null){ // Kiểm tra đã khởi tạo _sortingController thành công chưa
-                _sortingController?.updateSorting(option, amountOption); // sortValue là tên cột của giá trị tiền muốn truyền vào
-                customers = _customerController.fromMap(_sortingController!.currentData);
-                setTotalAmount();
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Lỗi khi thực hiện sắp xếp, vui lòng thử lại sau!')),
-                );
-              }
+
             });
           },
         );

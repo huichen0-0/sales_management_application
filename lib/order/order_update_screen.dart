@@ -317,10 +317,6 @@ class UpdateOrderScreenState extends State<UpdateOrderScreen> {
                         index,
                         orderDetail.quantity + 1,
                       );
-                    // : _showSnackBar(
-                    //     'Số lượng mặt hàng "${orderDetail.product!.name}" đã đạt tối đa!',
-                    //     Colors.red,
-                    //   );
               }),
         ],
       ),
@@ -480,7 +476,7 @@ class UpdateOrderScreenState extends State<UpdateOrderScreen> {
 
   /// xử lý khi nhấn thanh toán
   void _handlePayment() {
-    final check = _order.details.any((i) => i.quantity > i.product!.quantity);
+    final check = _order.details.any((i) => i.quantity > i.product!.quantity ? true : false);
     if (check) {
       _showSnackBar(
             'Số lượng tồn kho không đủ để thanh toán',

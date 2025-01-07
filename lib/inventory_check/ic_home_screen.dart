@@ -164,7 +164,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                 InventoryCheckReceiptCard(
                   receipt: receipt,
                   onTap: (id) {
-                    return context.push('/inventory/$id', extra: [receipt.id, receipt.toJSON1()]);
+                    return context.push('/inventory/$id', extra: [receipt.id, receipt]);
                   },
                 ),
             ],

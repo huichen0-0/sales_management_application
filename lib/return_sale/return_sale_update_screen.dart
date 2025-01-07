@@ -63,7 +63,8 @@ class _UpdateReturnInvoiceScreenState extends State<UpdateReturnInvoiceScreen> {
               ) : null,
               onTap: () {
                 //đi tới trang xem KH chi tiết
-                if(_receipt.partnerId != '') context.push('${AppPath.customer}/${_receipt.partnerId}');
+                if(_receipt.partnerId != '')
+                  context.push('${AppPath.customer}/${_receipt.partnerId}', extra: _receipt.customer);
               },
             ),
           ),

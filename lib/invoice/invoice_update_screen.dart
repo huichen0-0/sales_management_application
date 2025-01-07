@@ -303,15 +303,15 @@ class UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
           IconButton(
               icon: const Icon(Icons.add),
               onPressed: () {
-                invoiceDetail.quantity < product.quantity
-                    ? _updateQuantity(
+                // invoiceDetail.quantity < product.quantity
+                    _updateQuantity(
                         index,
                         invoiceDetail.quantity.toInt() + 1,
-                      )
-                    : _showSnackBar(
-                        'Số lượng mặt hàng "${invoiceDetail.product!.name}" đã đạt tối đa!',
-                        Colors.red,
                       );
+                    // : _showSnackBar(
+                    //     'Số lượng mặt hàng "${invoiceDetail.product!.name}" đã đạt tối đa!',
+                    //     Colors.red,
+                    //   );
               }),
         ],
       ),

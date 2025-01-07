@@ -133,7 +133,9 @@ class _ReturnInvoiceDetailScreenState extends State<ReturnInvoiceDetailScreen> {
                   ) : null,
                   onTap: () {
                     //đi tới trang xem KH chi tiết
-                    if(receipt.partnerId != '') {
+                    if (receipt.customer!.status == 3) {
+                      _showSnackBar('Thông tin khách hàng đã bị xóa', Colors.red);
+                    } else if (receipt.partnerId != '') {
                       context.push('${AppPath.customer}/${receipt.partnerId}', extra: receipt.customer);
                     }
                   },

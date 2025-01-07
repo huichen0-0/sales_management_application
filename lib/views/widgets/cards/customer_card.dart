@@ -115,7 +115,7 @@ class SupplierCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              supplier.amount.toString(),
+              Helper.formatCurrency(supplier.amount),
               style: const TextStyle(fontWeight: FontWeight.bold),
             )
           //   FutureBuilder<String>(
@@ -200,7 +200,7 @@ class CustomerCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              amount.toString(),
+              Helper.formatCurrency(amount),
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
               ),

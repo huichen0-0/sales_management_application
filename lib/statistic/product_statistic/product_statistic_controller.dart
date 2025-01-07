@@ -31,11 +31,10 @@ class StatisticController {
     }
     for (var product in products) {
       // Kiểm tra xem đã có ProductStatistic cho product này trong result chưa
-      bool alreadyExists =
-          result.any((statistic) => statistic.productId == product.id);
+      ProductStatistic? existsStaistic =
+          result.where((statistic) => statistic.productId == product.id).firstOrNull;
 
-      if (!alreadyExists) {
-        result.add(ProductStatistic(
+      existsStaistic ??= ProductStatistic(
           id: '',
           productId: product.id,
           productName: product.name,
@@ -47,8 +46,10 @@ class StatisticController {
           currentInventoryQuantity: product.quantity,
           statisticDate: DateTime.now(),
           uid: '',
-        ));
-      }
+        );
+
+      existsStaistic.currentInventoryQuantity = product.quantity;
+      existsStaistic.currentInventoryValue = product.quantity * product.capitalPrice;
     }
 
     return _statisticService.getAggregateStatistics(result);

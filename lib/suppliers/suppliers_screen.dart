@@ -7,11 +7,12 @@ import 'package:sales_management_application/suppliers/supplier-controller.dart'
 import 'package:sales_management_application/suppliers/supplier.dart';
 import 'package:sales_management_application/time_filter/time_filter_controller.dart';
 import 'package:sales_management_application/views/widgets/cards/customer_card.dart';
-import 'package:sales_management_application/views/widgets/search_bar.dart';
 import 'package:sales_management_application/views/widgets/sheets/display_bottom_sheet.dart';
 import 'package:sales_management_application/views/widgets/sheets/sorting_bottom_sheet.dart';
 import 'package:sales_management_application/views/widgets/sheets/time_filter_bottom_sheet.dart';
 import 'package:sales_management_application/suppliers/supplier_service.dart';
+import '../helper/helper.dart';
+import '../search/search_bar.dart';
 import 'supplier_filter.dart';
 
 class SupplierScreen extends StatefulWidget {
@@ -34,7 +35,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
   List<Supplier> suppliers = [];
   List<Map<String, dynamic>> items = [];
   SupplierFilter filter = SupplierFilter();
-  double total = 0.0;
+  num total =0;
 
   _SupplierScreenState(this.filter);
 
@@ -105,6 +106,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
               } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                 suppliers = snapshot.data!;
 
+                total = getTotal();
                 if (_sortingController.currentData.isNotEmpty) {
                   suppliers = supplierController.convertToSupplier(
                       _sortingController.currentData);
@@ -156,7 +158,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
                 Icon(Icons.remove_shopping_cart, size: 100, color: Colors.blue),
                 SizedBox(height: 20),
                 Text(
-                  'Chưa có phiếu xuất hủy',
+                  'Chưa có NCC',
                   style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
               ],
@@ -208,7 +210,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
 
             //tổng tiền theo hiển thị TODO: thay đổi theo tùy chọn
             Text(
-              formatCurrency(total),
+              Helper.formatCurrency(total),
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -238,18 +240,12 @@ class _SupplierScreenState extends State<SupplierScreen> {
     );
   }
 
-  Future<double> getTotal() async {
+  num getTotal()  {
+    num result = 0;
     for(Supplier supplier in suppliers) {
-      if (selectedDisplay == AppString.allTime) {
-        total += supplier.amount;
-      } else {
-        final result = (await supplierController.getTotalAmount(
-            fromDate!, toDate!, selectedDisplay, supplier));
-        total += result;
-        supplier.amount = result;
-      }
+        result += supplier.amount;
     }
-    return total;
+    return result;
   }
 
   /// Hiển thị Bottom Sheet cho tùy chọn hiển thị theo
@@ -262,7 +258,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
           onSelectDisplay: (option) {
             setState(() {
               selectedDisplay = option;
-              _sortingController.updateSorting(option, 'amount');
+              // _sortingController.updateSorting(option, 'amount');
             });
           },
         );

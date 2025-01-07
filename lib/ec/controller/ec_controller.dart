@@ -5,7 +5,7 @@ import 'package:sales_management_application/ec/ec_service.dart';
 import 'package:sales_management_application/inventory_check/inventory_service.dart';
 import 'package:sales_management_application/products/product_service.dart';
 import 'package:sales_management_application/time_filter/time_filter_service.dart';
-import 'package:sales_management_application/views/widgets/search_bars/search_note_screen.dart';
+import 'package:sales_management_application/search/search_note_screen.dart';
 import 'package:sales_management_application/views/widgets/cards/export_cancel_card.dart';
 
 import '../export_receipt.dart';

@@ -72,7 +72,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: const Text('Thêm hàng hóa'),
+        title: const Text('Cập nhật hàng hóa'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {

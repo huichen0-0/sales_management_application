@@ -16,13 +16,20 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
   String sex = '';
   final CustomerController _customerController = CustomerController();
 
-  _CustomerDetailScreenState(this.customer);
+  _CustomerDetailScreenState(this.customer) {
+    if(customer.gender == 1){
+      sex = 'Nam';
+    } else if (customer.gender == 2){
+      sex = 'Nữ';
+    } else if (customer.gender == 3){
+      sex = 'Khác';
+    } else {
+      sex = '';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Lấy ID khách hàng từ GoRouterState
-    final customerId = GoRouterState.of(context).pathParameters['id']!;
-    // fetchCustomerDetails(customerId);
 
     return Scaffold(
         backgroundColor: Colors.white,
@@ -33,7 +40,21 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
             ///nút sửa
             IconButton(
               onPressed: () {
-                context.push('/customers/${customer.id}/edit', extra: this.customer);
+                context.push('/customers/${customer.id}/edit', extra: customer)
+                .then((result) {
+                  setState(() {
+                    customer = result as Customer;
+                    if(customer.gender == 1){
+                      sex = 'Nam';
+                    } else if (customer.gender == 2){
+                      sex = 'Nữ';
+                    } else if (customer.gender == 3){
+                      sex = 'Khác';
+                    } else {
+                      sex = '';
+                    }
+                  });
+                });
               },
               icon: const Icon(Icons.edit),
             ),
@@ -234,7 +255,10 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
               ),
               onPressed: () {
                 _customerController.deleteCustomer(customer);
-                context.go('/customers');
+                context.pop();
+
+                context.pop();
+                _showSnackBar('Xóa khách hàng thành công!', Colors.green);
               },
             ),
           ],
@@ -243,7 +267,15 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
       },
     );
   }
-
+  void _showSnackBar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
   /// Hàm hiển thị hộp thoại xác nhận khi thay đổi trạng thái
   void _showConfirmationDialog(String customerId, bool newValue) {
     // Nội dung thông báo tùy thuộc vào trạng thái mới

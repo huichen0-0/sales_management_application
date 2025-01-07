@@ -147,7 +147,7 @@ class _FilterSupplierScreenState extends State<FilterSupplierScreen> {
   void _resetFilters() {
     setState(() {
       isActive = true;
-      isInactive = false;
+      isInactive = true;
       lowerbound.clear();
       upperbound.clear();
     });

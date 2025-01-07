@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sales_management_application/import/import_controller.dart';
 import '../../../helper/helper.dart';
 import '../../../products/product.dart';
 import '../../../products/product_controller.dart';
@@ -196,7 +197,7 @@ class _UpdateReturnImportScreenState extends State<UpdateReturnImportScreen> {
                       if (result != null && result is Receipt) {
                         _controller.saveReceipt(_receipt);
                         productController.subAmount(_receipt);
-                        context.pop();
+                        context.pop(true);
                       }
                     });
                   } else {

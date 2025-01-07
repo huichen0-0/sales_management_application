@@ -17,7 +17,7 @@ class ImportService {
 
   void save(ImportReceipt receipt, String path) {
     receipt.createdAt = DateTime.now();
-    if (receipt.uid == null || receipt.uid!.isEmpty) {
+    if (receipt.uid == '' || receipt.uid!.isEmpty) {
       receipt.uid = _auth.currentUser!.uid;
       firebaseService.insertData('ImportReceipt', receipt.toJson2());
     } else {

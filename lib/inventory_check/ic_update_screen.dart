@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sales_management_application/authentication/forgot_password_screen.dart';
 import 'package:sales_management_application/inventory_check/inventory_controller.dart';
 import 'package:sales_management_application/products/product_controller.dart';
-import 'package:sales_management_application/views/widgets/search_bars/search_product.dart';
+import 'package:sales_management_application/search/search_product.dart';
 import '../helper/helper.dart';
 import '../views/widgets/dialogs/confirmation_dialog.dart';
 import 'inventory_check_detail.dart';

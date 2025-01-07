@@ -13,7 +13,7 @@ class Product {
   String? description=''; // Mô tả sản phẩm
   String notes=''; // Ghi chú
   bool isActive = true; // Trạng thái hoạt động
-  bool isDeleted = true;
+  bool isDeleted = false;
   DateTime? createdAt; // Ngày tạo sản phẩm
   String? uid='';
 
@@ -34,7 +34,7 @@ class Product {
     this.description,
     required this.notes,
     this.isActive = true,
-    this.isDeleted = true,
+    this.isDeleted = false,
     this.createdAt,
     this.uid
   });

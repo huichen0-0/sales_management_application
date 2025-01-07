@@ -35,6 +35,7 @@ class SupplierService {
 
   Future<Supplier> getSupplierByKey(String id) async {
     Supplier supplier = Supplier.fromJson(await firebaseService.getDataByKey('Suppliers', id));
+    supplier.id = id;
     return supplier;
   }
 
@@ -54,6 +55,9 @@ class SupplierService {
   }
 
   bool isFilterd(Supplier supplier, SupplierFilter filter) {
+    if (supplier.isDeleted == true) {
+      return false;
+    }
     if (filter.purchaseUpperBound != 0 || filter.purchaseLowerBound != 0) {
       if (supplier.amount < (filter.purchaseLowerBound as num) ||
           supplier.amount > (filter.purchaseUpperBound as num)) {
@@ -66,6 +70,8 @@ class SupplierService {
     if (filter.isActive == false && filter.isInactive == true && supplier.isActive == true) {
       return false;
     }
+    if(!filter.isInactive && !filter.isActive) return false;
+
     return true;
   }
 

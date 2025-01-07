@@ -115,7 +115,17 @@ class _ImportDetailScreenState extends State<ImportDetailScreen> {
             ),
             onTap: () {
               //đi tới trang xem ncc chi tiết
-              context.push('${AppPath.supplier}/${_receipt!.partnerId}', extra: [_receipt!.partnerId, _receipt!.supplier!.toJson()]);
+              if (_receipt!.supplier!.isDeleted == true) {
+                _showSnackBar('Thông tin nhà cung cấp đã bị xóa', Colors.red);
+              } else {
+                context.push('${AppPath.supplier}/${_receipt!.partnerId}',
+                    extra: [_receipt!.partnerId, _receipt!.supplier!.toJson()])
+                    .then((result) {
+                      setState(() {
+                        _receipt?.supplier?.isDeleted = true;
+                      });
+                });
+              }
             },
           ),
           ListView.builder(
@@ -203,9 +213,9 @@ class _ImportDetailScreenState extends State<ImportDetailScreen> {
                     context
                         .push(AppPath.payment, extra: receipt)
                         .then((result) {
-                      if (result != null && result is Receipt) {
+                      if (result != null && result is ImportReceipt) {
                         //TODO: insert hóa đơn nhập vào db
-                        _controller.updateReceipt(updatedItem: receipt);
+                        _controller.saveReceipt(result);
                         context.pop();
                       }
                     });
@@ -219,7 +229,13 @@ class _ImportDetailScreenState extends State<ImportDetailScreen> {
             onPressed: //đã trả hàng thì vô hiệu nút
                 !receipt.returned
                     ? () async {
-                        context.push(AppPath.returnImportAdd, extra: receipt);
+                        context.push(AppPath.returnImportAdd, extra: receipt)
+                        .then((result) {
+                          if (result != null && result is bool && result == true) {
+                            receipt.returned = true;
+                            _controller.saveReceipt(receipt);
+                          }
+                        });
                       }
                     : null, // TODO: xử lý nút
             style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),

@@ -116,7 +116,15 @@ class _ReturnImportDetailScreenState extends State<ReturnImportDetailScreen> {
                   ),
                   onTap: () {
                     //đi tới trang xem ncc chi tiết
-                    context.push('${AppPath.supplier}/${receipt.partnerId}', extra: [receipt.partnerId, Supplier.empty().toJson()]);
+                    if (receipt!.supplier!.isDeleted == true) {
+                      _showSnackBar('Thông tin khách hàng đã bị xóa', Colors.red);
+                    } else {
+                      context.push('${AppPath.supplier}/${receipt.partnerId}',
+                          extra: [
+                            receipt.partnerId,
+                            Supplier.empty().toJson()
+                          ]);
+                    }
                   },
                 ),
                 ListTile(

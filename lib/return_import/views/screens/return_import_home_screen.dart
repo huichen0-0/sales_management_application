@@ -3,7 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sales_management_application/time_filter/time_filter_controller.dart';
 import '../../../helper/helper.dart';
-import '../../../views/widgets/search_bars/search_note_screen.dart';
+import '../../../search/search_note_screen.dart';
 import '../../../views/widgets/sheets/display_bottom_sheet.dart';
 import '../../controller/return_import_controller.dart';
 import '../../model/return_import_receipt.dart';

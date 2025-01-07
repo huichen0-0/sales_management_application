@@ -261,13 +261,25 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
               ),
               onPressed: () {
                 supplierController.deleteSupplier(supplier);
-                context.go('/suppliers', extra: null);
+            context.pop();
+
+            context.pop();
+            _showSnackBar('Xóa NCC thành công!', Colors.green);
               },
             ),
           ],
           actionsAlignment: MainAxisAlignment.spaceEvenly,
         );
       },
+    );
+  }
+  void _showSnackBar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        duration: const Duration(seconds: 2),
+      ),
     );
   }
 

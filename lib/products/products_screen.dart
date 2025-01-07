@@ -6,7 +6,7 @@ import 'package:sales_management_application/sort/sorting_controller.dart';
 import 'package:sales_management_application/products/product_service.dart';
 import 'package:sales_management_application/products/product_filter.dart';
 import 'package:sales_management_application/views/widgets/cards/customer_card.dart';
-import 'package:sales_management_application/views/widgets/search_bar.dart';
+import 'package:sales_management_application/search/search_bar.dart';
 import 'package:sales_management_application/views/widgets/sheets/display_bottom_sheet.dart';
 import 'package:sales_management_application/views/widgets/sheets/sorting_bottom_sheet.dart';
 

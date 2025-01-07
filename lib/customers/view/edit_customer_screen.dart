@@ -105,6 +105,15 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
                   updateCustomer.name = nameController.text;
                   updateCustomer.address = addressController.text;
                   updateCustomer.email = emailController.text;
+                  if (sexController.text.toLowerCase() == 'nam') {
+                    updateCustomer.gender = 1;
+                  } else if (sexController.text.toLowerCase() == 'nữ') {
+                    updateCustomer.gender = 2;
+                  } else if (sexController.text.toLowerCase() == 'khác'){
+                    updateCustomer.gender = 3;
+                  } else { //Nếu không chọn giới tính
+                    updateCustomer.gender = 4;
+                  }
                   updateCustomer.note = notesController.text;
                   updateCustomer.phoneNumber = phoneController.text;
                   _editCustomer(updateCustomer);
@@ -135,7 +144,7 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
       content: 'Bạn có chắc muốn lưu lại thông tin không?',
       onConfirm: () {
         _customerController.editCustomerInfo(_customer);
-        context.pop();
+        context.pop(_customer);
         _showSnackBar('Sửa thông tin khách hàng thành công!', Colors.green);
       },
     );

@@ -231,7 +231,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
               onPressed: () {
                 productController.deleteProduct(product);
-                context.go('/products');
+                _showSnackBar('Xóa hàng hóa thành công!', Colors.green);
+                context.pop();
+                context.pop();
               },
             ),
           ],
@@ -299,6 +301,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     // Cập nhật trạng thái dựa trên lựa chọn của người dùng
                     productController.updateActive(id, !product.isActive);
                     product.isActive = !product.isActive;
+                    _showSnackBar('Thay đổi trạng thái thành công!', Colors.green);
               });
                 Navigator.of(context).pop(); // Đóng hộp thoại
               },
@@ -307,6 +310,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           actionsAlignment: MainAxisAlignment.spaceEvenly,
         );
       },
+    );
+  }
+  void _showSnackBar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        duration: const Duration(seconds: 2),
+      ),
     );
   }
 }

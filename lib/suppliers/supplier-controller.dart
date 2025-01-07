@@ -12,12 +12,12 @@ class SupplierController {
     List<Supplier> suppliers = await supplierService.getSupplierList(filter);
     List<Supplier> result = [];
     for(Supplier i in suppliers) {
-      if (timeFilterService.isTimeFilterd(i.createdAt, fromDate, toDate)) {
+      // if (timeFilterService.isTimeFilterd(i.createdAt, fromDate, toDate)) {
+        i.amount = await  getTotalAmount(fromDate, toDate, selectedDisplay, i);
         result.add(i);
-        // i.amount = await  getTotalAmount(fromDate, toDate, selectedDisplay, i);
-      }
+      // }
     }
-    return suppliers;
+    return result;
   }
 
   Future<List<Supplier>> getSupplierToSearch(SupplierFilter filter) async {

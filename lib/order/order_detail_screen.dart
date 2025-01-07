@@ -89,7 +89,12 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   ),
                   onTap: () {
                     //đi tới trang xem kh chi tiết
-                    context.push('${AppPath.customer}/${_order.customerId}', extra: _order.customer);
+                    if (_order.customer!.status == 3) {
+                      _showSnackBar('Thông tin khách hàng đã bị xóa', Colors.red);
+                    } else {
+                      context.push('${AppPath.customer}/${_order.customerId}',
+                          extra: _order.customer);
+                    }
                   },
                 ),
                 ListView.builder(

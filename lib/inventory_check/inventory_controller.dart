@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sales_management_application/time_filter/time_filter_service.dart';
 import 'package:sales_management_application/views/widgets/cards/inventory_receipt_card.dart';
-import 'package:sales_management_application/views/widgets/search_bars/search_note_screen.dart';
+import 'package:sales_management_application/search/search_note_screen.dart';
 import 'inventory_check_detail.dart';
 import '../products/product.dart';
 import 'inventory_check_receipt.dart';

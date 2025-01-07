@@ -22,7 +22,7 @@ class DisplaySupplierBottomSheet extends StatelessWidget {
         children: [
           ListTile(
             title: const Text(AppString.totalPurchase),
-            trailing: const Text('0'), //TODO: cần lấy giá trị từ db
+            trailing: const Text(''), //TODO: cần lấy giá trị từ db
             onTap: () {
               onSelectDisplay(AppString.totalPurchase);
               Navigator.pop(context);
@@ -30,7 +30,7 @@ class DisplaySupplierBottomSheet extends StatelessWidget {
           ),
           ListTile(
             title: const Text(AppString.totalRefund),
-            trailing: const Text('0'), //TODO: cần lấy giá trị từ db
+            trailing: const Text(''), //TODO: cần lấy giá trị từ db
             onTap: () {
               onSelectDisplay(AppString.totalRefund);
               Navigator.pop(context);
@@ -63,7 +63,7 @@ class DisplayCustomerBottomSheet extends StatelessWidget {
         children: [
           ListTile(
             title: const Text(AppString.totalSale),
-            trailing: const Text('0'), //TODO: cần lấy giá trị từ db
+            trailing: const Text(''), //TODO: cần lấy giá trị từ db
             onTap: () {
               onSelectDisplay(AppString.totalSale);
               Navigator.pop(context);
@@ -71,7 +71,7 @@ class DisplayCustomerBottomSheet extends StatelessWidget {
           ),
           ListTile(
             title: const Text(AppString.totalRefund),
-            trailing: const Text('0'), //TODO: cần lấy giá trị từ db
+            trailing: const Text(''), //TODO: cần lấy giá trị từ db
             onTap: () {
               onSelectDisplay(AppString.totalRefund);
               Navigator.pop(context);

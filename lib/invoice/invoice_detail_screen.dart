@@ -119,7 +119,9 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
                   : null,
               onTap: () {
                 //đi tới trang xem KH chi tiết
-                if (_receipt.partnerId != '')
+                if (_receipt.customer!.status == 3) {
+                  _showSnackBar('Thông tin khách hàng đã bị xóa', Colors.red);
+                } else if (_receipt.partnerId != '')
                   context.push('${AppPath.customer}/${_receipt.partnerId}', extra: _receipt.customer);
               },
             ),
