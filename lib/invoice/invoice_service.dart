@@ -1,16 +1,22 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sales_management_application/invoice/invoice_filter.dart';
 import 'package:sales_management_application/invoice/invoice_receipt.dart';
 import 'package:sales_management_application/repository/firebase_repository.dart';
+
+import '../helper/helper.dart';
 
 class InvoiceService {
   FirebaseService firebaseService = FirebaseService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   void saveReceipt(InvoiceReceipt receipt) {
-    receipt.createdAt = DateTime.now();
+    DateTime now =  DateTime.now();
+    receipt.createdAt = now;
     if (receipt.uid.isEmpty) {
       receipt.uid = _auth.currentUser!.uid;
+      receipt.invoiceId = 'HD${Helper.formatDateTime(now)}';
       firebaseService.insertData('Invoice', receipt.toJson2());
     } else {
       firebaseService.updateData('Invoice', receipt.id, receipt.toJson2());

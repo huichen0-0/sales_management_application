@@ -208,7 +208,7 @@ class OrderController {
         createdAt: DateTime.now(),
         details: [],
         returned: false,
-        uid: ''
+        uid: '', invoiceId: ''
     );
     for(var detail in order.details) {
       invoice.details.add(

@@ -28,7 +28,7 @@ class _ImportScreenState extends State<ImportScreen> {
   String _selectedSorting = AppString.newest;
 
   //biến lưu tùy chọn loọc thời gian
-  String _selectedOption = AppString.allTime;
+  String _selectedOption = AppString.today;
 
   //Biến lưu tùy chọn hiển thị
   String _selectedDisplay = AppString.totalAmount;
@@ -89,7 +89,10 @@ class _ImportScreenState extends State<ImportScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push(AppPath.importAdd),
+        onPressed: () => context.push(AppPath.importAdd).then((result){
+          setState(() {
+          });
+        }),
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add),
       ),
@@ -127,30 +130,63 @@ class _ImportScreenState extends State<ImportScreen> {
 
   Widget _buildEmptyView() {
     return ListView(
-        children: [
-          TextButton.icon(
-            icon: const Icon(Icons.calendar_today, color: Colors.black),
-            label: Text(_selectedOption,
-                style: const TextStyle(color: Colors.black)),
-            onPressed: () {
-              _showTimeFilterOptions();
-            },
-          ),
-          const SizedBox(height: 32),
-          const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+      padding: const EdgeInsets.all(8.0),
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton.icon(
+              icon: const Icon(Icons.calendar_today, color: Colors.black),
+              label: Text(_selectedOption,
+                  style: const TextStyle(color: Colors.black)),
+              onPressed: () {
+                _showTimeFilterOptions();
+              },
+            ),
+
+            ///nút lọc hiển thị TODO: cần xử lý áp dụng
+            Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.remove_shopping_cart, size: 100, color: Colors.blue),
-                SizedBox(height: 20),
                 Text(
-                  'Chưa có phiếu xuất hủy',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  _selectedDisplay,
+                  style: const TextStyle(color: Colors.black),
+                ),
+                //tổng tiền theo hiển thị TODO: thay đổi theo tùy chọn
+                const Text(
+                  '0',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                 ),
               ],
             ),
+
+
+          ],
+        ),
+        const SizedBox(height: 10),
+        const Text(
+          '0 phiếu nhập hàng',
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 60),
+
+        const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.remove_shopping_cart, size: 100, color: Colors.blue),
+              SizedBox(height: 30),
+              Text(
+                'Chưa có phiếu nhập hàng',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            ],
           ),
-        ]
+        )
+      ],
     );
   }
 
@@ -173,30 +209,36 @@ class _ImportScreenState extends State<ImportScreen> {
             ),
 
             ///nút lọc hiển thị TODO: cần xử lý áp dụng
-            TextButton.icon(
-              onPressed: () {
-                // Mở Bottom Sheet để chọn Tổng mua
-                _showDisplayOptions(context);
-              },
-              label: Text(
-                _selectedDisplay,
-                style: const TextStyle(color: Colors.black),
-              ),
-              icon: const Icon(
-                Icons.keyboard_arrow_down,
-                color: Colors.black,
-              ),
-              iconAlignment: IconAlignment.end,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton.icon(
+                  onPressed: () {
+                    // Mở Bottom Sheet để chọn Tổng mua
+                    _showDisplayOptions(context);
+                  },
+                  label: Text(
+                    _selectedDisplay,
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Colors.black,
+                  ),
+                  iconAlignment: IconAlignment.end,
+                ),
+
+                Text(
+                  totalDisplayValue,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
 
             //tổng tiền theo hiển thị TODO: thay đổi theo tùy chọn
-            Text(
-              totalDisplayValue,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
+
           ],
         ),
         const SizedBox(height: 10),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sales_management_application/home/profile_screen.dart';
 import 'package:sales_management_application/home/widgets_screen.dart';
 import 'package:sales_management_application/order/order_filter.dart';
 import 'package:sales_management_application/products/product_filter.dart';
@@ -20,10 +21,10 @@ class _MainScreenState extends State<MainScreen> {
   //danh sách trang trên nav
   final List<Widget> _pages = [
     const WidgetScreen(),
-    InvoiceScreen(filter: InvoiceFilter(), customerId: '',),
+    InvoiceScreen(filter: InvoiceFilter()),
     OrderScreen(filter: OrderFilter()),
     ProductScreen(ProductFilter()),
-    const WidgetScreen(),
+    ProfileScreen(),
   ];
 
   @override

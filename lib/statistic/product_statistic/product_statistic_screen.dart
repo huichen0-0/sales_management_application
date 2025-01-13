@@ -107,16 +107,20 @@ class ProductStatisticScreenState extends State<ProductStatisticScreen> {
                   style: const TextStyle(color: Colors.black)),
               onPressed: () => _showTimeFilterOptions(),
             ),
-            TextButton.icon(
-              onPressed: () => _showDisplayOptions(context),
-              label: Text(_selectedDisplay,
-                  style: const TextStyle(color: Colors.black)),
-              icon: const Icon(Icons.keyboard_arrow_down, color: Colors.black),
-            ),
-            Text(
-              Helper.formatCurrency(
-                  _aggregateStatistic.getAttribute(_selectedDisplay)),
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            Column(
+              children: [
+                TextButton.icon(
+                  onPressed: () => _showDisplayOptions(context),
+                  label: Text(_selectedDisplay,
+                      style: const TextStyle(color: Colors.black)),
+                  icon: const Icon(Icons.keyboard_arrow_down, color: Colors.black),
+                ),
+                Text(
+                  Helper.formatCurrency(
+                      _aggregateStatistic.getAttribute(_selectedDisplay)),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+              ],
             ),
           ],
         ),

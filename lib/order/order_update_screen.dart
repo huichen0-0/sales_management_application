@@ -190,7 +190,7 @@ class UpdateOrderScreenState extends State<UpdateOrderScreen> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: widget.existingOrder != null
-            ? const Text('Tạo đơn đặt hàng')
+            ? const Text('Tạo đơn đặt hàng', style: TextStyle(fontSize: 10),)
             : const Text('Cập nhật đơn đặt hàng'),
       ),
       body: _buildBody(),
@@ -370,14 +370,12 @@ class UpdateOrderScreenState extends State<UpdateOrderScreen> {
                     ? _order.customer!.name
                     : AppString.selectCustomer,
                 style: const TextStyle(
-                  fontSize: 16,
                   fontWeight: FontWeight.w500,
                   color: Colors.black,
                 ),
               ),
               const Icon(
                 Icons.arrow_forward_ios,
-                size: 16,
                 color: Colors.grey,
               ),
             ],
@@ -385,11 +383,6 @@ class UpdateOrderScreenState extends State<UpdateOrderScreen> {
         ),
         Text(
             'Tổng [${_order.totalQuantity}]  ${Helper.formatCurrency(_order.totalAmount)}'),
-        if (_order.details.isNotEmpty)
-          TextButton(
-            onPressed: _clearOrderDetails,
-            child: const Text('Bỏ chọn', style: TextStyle(color: Colors.blue)),
-          ),
       ],
     );
   }
@@ -465,7 +458,7 @@ class UpdateOrderScreenState extends State<UpdateOrderScreen> {
       onConfirm: () {
         final success = _orderController.saveTemporary(_order);
         if (success) {
-          context.pop();
+          context.pop(true);
           _showSnackBar(AppString.successTemporary, Colors.green);
         } else {
           _showSnackBar(AppString.error, Colors.red);
@@ -491,7 +484,7 @@ class UpdateOrderScreenState extends State<UpdateOrderScreen> {
             _orderController.saveComplete(_order);
             invoiceController.saveReceipt(result);
             _productController.subAmount(result);
-            context.pop();
+            context.pop(true);
           }
         },
       );

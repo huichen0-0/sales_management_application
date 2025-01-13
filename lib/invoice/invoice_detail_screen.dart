@@ -33,9 +33,6 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
   @override
   void initState() {
     super.initState();
-    // if (widget.receipt.id == '') {
-    //   _receiptFuture = _controller.getReceiptByIdAsync(widget.receiptId);
-    // }
   }
 
   @override
@@ -69,6 +66,7 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
 
     return Scaffold(
       appBar: _buildAppBar(),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -78,6 +76,7 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Text(_receipt.invoiceId),
                 Text(
                   createdAt,
                   style: const TextStyle(color: Colors.grey),
@@ -178,14 +177,8 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
   // hien thi appbar
   AppBar _buildAppBar() {
     return AppBar(
-      title: const Text(AppString.detailInvoiceReceipt),
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: () {
-          // context.go('/suppliers');
-          context.pop();
-        },
-      ),
+      backgroundColor: Colors.blue,
+      title: const Text(AppString.detailReceipt),
       //chỉ cho chỉnh sửa phiếu tạm
       actions: _receipt.status == 1
           ? [
@@ -194,7 +187,7 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
                 onPressed: () {
                   context.push('${AppPath.invoice}/${widget.receiptId}/edit', extra: _receipt);
                 },
-                icon: const Icon(Icons.edit),
+                icon: const Icon(Icons.edit, color: Colors.white),
               ),
 
               ///nút xóa
@@ -202,7 +195,7 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
                 onPressed: () {
                   _handleCancelReceipt();
                 },
-                icon: const Icon(Icons.delete),
+                icon: const Icon(Icons.delete, color: Colors.white),
               ),
             ]
           : null,
@@ -224,29 +217,32 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
                         .then((result) {
                       if (result != null && result is Receipt) {
                         //TODO: insert hóa đơn nhập vào db
-                        // _controller.updateReceiptReturned(receipt);
-                        context.pop();
+                       setState(() {
+                         _controller.saveReceipt(result as InvoiceReceipt);
+                       });
                       }
                     });
                   }
                 : null,
             // TODO: xử lý nút
             style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-            child: const Text(AppString.payOffDebt),
+            child: const Text(AppString.payOffDebt, style: TextStyle(color: Colors.white)),
           ),
           ElevatedButton(
             onPressed: //đã trả hàng thì vô hiệu nút
                 !receipt.returned
                     ? () {
-                        context.push(AppPath.returnInvoiceAdd, extra: _receipt).then((result){
-                          setState(() {
+                        context.push<bool>(AppPath.returnInvoiceAdd, extra: _receipt).then((result){
+                          if(result != null && result == true) {
+                            setState(() {
                             _receipt.returned = true;
                           });
+                          }
                         });
                       }
                     : null, // TODO: xử lý nút
             style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-            child: const Text(AppString.returnInvoice),
+            child: const Text(AppString.returnInvoice, style: TextStyle(color: Colors.white)),
           ),
         ],
       ),

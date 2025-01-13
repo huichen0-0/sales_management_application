@@ -5,6 +5,7 @@ import '../payment/payment.dart';
 
 class InvoiceReceipt extends Receipt {
   Customer? customer; //nhà cung cấp
+  String invoiceId;
   //TODO:khi tạo phiếu trả hàng ở trạng thái hoàn thành, cập nhật returned=true
   bool returned; //đã trả hàng?
 
@@ -18,10 +19,12 @@ class InvoiceReceipt extends Receipt {
     this.customer,
     required super.details,
     required this.returned,
+    required this.invoiceId
   });
 
   InvoiceReceipt.empty()
       : returned = false,
+        invoiceId = '',
         super(
           id: '',
           partnerId: '',
@@ -37,6 +40,9 @@ class InvoiceReceipt extends Receipt {
   factory InvoiceReceipt.fromJson(Map<dynamic, dynamic> json) => InvoiceReceipt(
     id: json['id'],
     partnerId: json['partnerId'],
+    invoiceId: json['invoiceId'] != null
+        ? json['invoiceId']
+        : '',
     customer: json['customer'] != null
         ? Customer.fromJson(json['customer'])
         : null,
@@ -66,6 +72,7 @@ class InvoiceReceipt extends Receipt {
     'totalSaleValue': totalSaleValue, //tổng tiền
     'totalPaid': amountPaid, //đã trả
     'saleDue': saleDue, //còn nợ
+    'invoiceId': invoiceId,
     'uid': uid
   };
 
@@ -73,6 +80,7 @@ class InvoiceReceipt extends Receipt {
   Map<String, dynamic> toJson2() => {
     'id': id,
     'partnerId': partnerId,
+    'invoiceId': invoiceId,
     'details': details.map((detail) => detail.toJson2()).toList(),
     'payments': payments.map((payments) => payments.toJson()).toList(),
     'createdAt': createdAt.toIso8601String(),

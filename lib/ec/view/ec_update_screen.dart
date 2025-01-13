@@ -392,7 +392,7 @@ class _UpdateExportCancellationScreenState extends State<UpdateExportCancellatio
             ),
             // Trường nhập số lượng
             SizedBox(
-              width: 100,
+              width: 60,
               child: TextField(
                 controller: controller,
                 textAlign: TextAlign.center,

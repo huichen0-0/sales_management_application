@@ -66,7 +66,8 @@ class SalePaymentScreenState extends State<SalePaymentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(AppString.pay)),
+      appBar: AppBar(title: const Text(AppString.pay, style: TextStyle(color: Colors.white),), backgroundColor: Colors.blue,),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -242,14 +243,14 @@ class SalePaymentScreenState extends State<SalePaymentScreen> {
                 _handleSaveTemporary();
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-              child: const Text(AppString.saveTemporary),
+              child: const Text(AppString.saveTemporary,  style: TextStyle(color: Colors.white)),
             ),
           ElevatedButton(
             onPressed: () {
               _handleCompletePayment();
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-            child: const Text(AppString.complete),
+            child: const Text(AppString.complete, style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -261,7 +262,7 @@ class SalePaymentScreenState extends State<SalePaymentScreen> {
       SnackBar(
         content: Text(message),
         backgroundColor: color,
-        duration: const Duration(seconds: 2),
+        duration: const Duration(seconds: 1),
       ),
     );
   }

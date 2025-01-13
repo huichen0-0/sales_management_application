@@ -55,7 +55,8 @@ class _ReturnInvoiceDetailScreenState extends State<ReturnInvoiceDetailScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text(AppString.detailReturnInvoice),
+            backgroundColor: Colors.blue,
+            title: const Text(AppString.detailReceipt, style: TextStyle(color: Colors.white)),
             //chỉ cho chỉnh sửa phiếu tạm
             actions: receipt.status == AppNum.one
                 ? [
@@ -72,7 +73,7 @@ class _ReturnInvoiceDetailScreenState extends State<ReturnInvoiceDetailScreen> {
                   });
                   ;
                 },
-                icon: const Icon(Icons.edit),
+                icon: const Icon(Icons.edit, color: Colors.white,),
               ),
 
               ///nút xóa
@@ -80,7 +81,7 @@ class _ReturnInvoiceDetailScreenState extends State<ReturnInvoiceDetailScreen> {
                 onPressed: () {
                   _handleCancelReceipt(receipt);
                 },
-                icon: const Icon(Icons.delete),
+                icon: const Icon(Icons.delete, color: Colors.white,),
               ),
             ]
                 : null,

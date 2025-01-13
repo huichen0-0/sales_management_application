@@ -69,7 +69,10 @@ class _ExportCancellationScreenState extends State<ExportCancellationScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed:() =>
-            context.push('/ec/add'),
+            context.push('/ec/add').then((result){
+              setState(() {
+              });
+            }),
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add),
       ),
@@ -117,26 +120,45 @@ class _ExportCancellationScreenState extends State<ExportCancellationScreen> {
   // Widget hiển thị khi không có phiếu xuất hủy
   Widget _buildEmptyView() {
     return ListView(
+      padding: const EdgeInsets.all(8.0),
       children: [
-        _buildTimeFilterRow(context),
-        const SizedBox(height: 32),
-        const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.remove_shopping_cart, size: 100, color: Colors.blue),
-            SizedBox(height: 20),
-            Text(
-              'Chưa có phiếu xuất hủy',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                TextButton.icon(
+                  icon: const Icon(Icons.calendar_today, color: Colors.black),
+                  label: Text(selectedOption,
+                      style: const TextStyle(color: Colors.black)),
+                  onPressed: () {
+                    _showTimeFilterOptions(context);
+                  },
+                ),
+              ],
             ),
-          ],
+
+        const SizedBox(height: 10),
+        const Text(
+          '0 phiếu xuất hủy',
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
         ),
-      ),
-      ]
+        const SizedBox(height: 60),
+
+        const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.remove_shopping_cart, size: 100, color: Colors.blue),
+              SizedBox(height: 30),
+              Text(
+                'Chưa có phiếu xuất hủy',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            ],
+          ),
+        )
+      ],
     );
   }
-
   // Widget hiển thị danh sách phiếu xuất hủy Widget _buildItemList(
   Widget _buildItemList(BuildContext context, List<ExportCancellationReceipt> items) {
     final groupedItems = groupBy(items, (item) => Helper.formatDate(item.createdAt));
@@ -179,7 +201,7 @@ class _ExportCancellationScreenState extends State<ExportCancellationScreen> {
   //Hiển thị nút lọc thời gian
   Row _buildTimeFilterRow(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         /// Nút lọc thời gian
         TextButton.icon(

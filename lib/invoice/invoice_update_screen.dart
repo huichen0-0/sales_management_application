@@ -180,10 +180,12 @@ class UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.blue,
         title: widget.existingInvoice == null
-            ? const Text('Tạo hóa đơn bán hàng')
-            : const Text('Cập nhật hóa đơn bán hàng'),
+            ? const Text(AppString.createReceipt, style: TextStyle(color: Colors.white),)
+            : const Text(AppString.updateReceipt, style: TextStyle(color: Colors.white)),
       ),
       body: _buildBody(),
       persistentFooterButtons: [
@@ -358,21 +360,18 @@ class UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 _invoice.partnerId.isNotEmpty
                     ? _invoice.customer!.name
                     : AppString.retailCustomer,
                 style: const TextStyle(
-                  fontSize: 16,
                   fontWeight: FontWeight.w500,
                   color: Colors.black,
                 ),
               ),
               const Icon(
                 Icons.arrow_forward_ios,
-                size: 16,
                 color: Colors.grey,
               ),
             ],
@@ -380,11 +379,7 @@ class UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
         ),
         Text(
             'Tổng [${_invoice.totalQuantity}]  ${Helper.formatCurrency(_invoice.totalSaleValue)}'),
-        if (_invoice.details.isNotEmpty)
-          TextButton(
-            onPressed: _clearReceiptDetails,
-            child: const Text('Bỏ chọn', style: TextStyle(color: Colors.blue)),
-          ),
+
       ],
     );
   }

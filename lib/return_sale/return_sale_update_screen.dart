@@ -41,8 +41,8 @@ class _UpdateReturnInvoiceScreenState extends State<UpdateReturnInvoiceScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: Text(_receipt.id == ''
-            ? AppString.createReturnInvoice
-            : AppString.updateReturnInvoice),
+            ? AppString.createReceipt
+            : AppString.updateReceipt, style: const TextStyle(color: Colors.white)),
       ),
       body: Column(
         children: [
@@ -63,8 +63,9 @@ class _UpdateReturnInvoiceScreenState extends State<UpdateReturnInvoiceScreen> {
               ) : null,
               onTap: () {
                 //đi tới trang xem KH chi tiết
-                if(_receipt.partnerId != '')
+                if(_receipt.partnerId != '') {
                   context.push('${AppPath.customer}/${_receipt.partnerId}', extra: _receipt.customer);
+                }
               },
             ),
           ),
@@ -181,7 +182,7 @@ class _UpdateReturnInvoiceScreenState extends State<UpdateReturnInvoiceScreen> {
                   }
                   invoiceController.updateReceiptReturned(receipt.invoiceReceiptId, true);
                   returnInvoiceController.saveReceipt(receipt);
-                  context.pop(receipt);
+                  context.pop(true);
                 }
               });
             } else {
@@ -204,7 +205,7 @@ class _UpdateReturnInvoiceScreenState extends State<UpdateReturnInvoiceScreen> {
               borderRadius: BorderRadius.circular(8.0),
             ),
           ),
-          child: const Text(AppString.pay),
+          child: const Text(AppString.pay, style: TextStyle(color: Colors.white)),
         ),
       )
           : null,

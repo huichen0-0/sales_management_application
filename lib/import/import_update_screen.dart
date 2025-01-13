@@ -427,7 +427,7 @@ class _UpdateImportScreenState extends State<UpdateImportScreen> {
             ),
             // Trường nhập số lượng
             SizedBox(
-              width: 100,
+              width: 60,
               child: TextField(
                 controller: controller,
                 textAlign: TextAlign.center,

@@ -38,17 +38,22 @@ class InvoiceReceiptCard extends StatelessWidget {
     return Card(
       child: ListTile(
         leading: Text(createdAt),
-        title: Text(
-          receipt.customer?.name ?? AppString.retailCustomer,
-          style:
-              const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+        title: Column(
+          children: [
+            Text(receipt.invoiceId),
+            Text(
+              receipt.customer?.name ?? AppString.retailCustomer,
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+            ),
+          ],
         ),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               totalDisplayValue,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             Text(
               status, // Hiển thị trạng thái
@@ -73,16 +78,12 @@ class InvoiceReceiptCard extends StatelessWidget {
             if (firstDetail != null)
               Text(
                 '${firstDetail.product!.name} x${firstDetail.quantity} ${firstDetail.product!.unit}',
-                style: const TextStyle(
-                  fontSize: 12,
-                ),
               ),
             // Hiển thị số mặt hàng bổ sung nếu có
             if (additionalItems > AppNum.zero)
               Text(
                 '+$additionalItems mặt hàng khác',
                 style: const TextStyle(
-                  fontSize: 12,
                   color: Colors.grey,
                 ),
               ),

@@ -28,7 +28,7 @@ class InvoiceScreenState extends State<InvoiceScreen> {
   String _selectedSorting = AppString.newest;
 
   //biến lưu tùy chọn loọc thơời gian
-  String _selectedOption = AppString.allTime;
+  String _selectedOption = AppString.today;
 
   //Biến lưu tùy chọn hiển thị
   String _selectedDisplay = AppString.totalSaleValue;
@@ -66,7 +66,7 @@ class InvoiceScreenState extends State<InvoiceScreen> {
       toDate = widget.date;
     }
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.white,
       appBar: _buildAppBar(context),
       body: FutureBuilder<List<InvoiceReceipt>>(
         future: _controller.getData(filter, widget.customerId, fromDate, toDate),
@@ -86,9 +86,12 @@ class InvoiceScreenState extends State<InvoiceScreen> {
         },
       ),
       floatingActionButton: widget.date == null ? FloatingActionButton(
-        onPressed: () => context.push(AppPath.invoiceAdd),
+        onPressed: () => context.push(AppPath.invoiceAdd).then((result){
+          setState(() {
+          });
+        }),
         backgroundColor: Colors.blue,
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add , color: Colors.white),
       ) : null,
     );
   }
@@ -133,19 +136,24 @@ class InvoiceScreenState extends State<InvoiceScreen> {
             ),
 
             ///nút lọc hiển thị TODO: cần xử lý áp dụng
-             Text(
-              _selectedDisplay,
-              style: const TextStyle(color: Colors.black),
-            ),
+             Column(
+               children: [
+                 Text(
+                  _selectedDisplay,
+                  style: const TextStyle(color: Colors.black),
+                             ),
+                 const Text(
+                   '0',
+                   style: TextStyle(
+                     fontWeight: FontWeight.bold,
+                     fontSize: 18,
+                   ),
+                 ),
+               ],
+             ),
 
             //tổng tiền theo hiển thị TODO: thay đổi theo tùy chọn
-            const Text(
-              '0',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
+
           ],
         ),
         const SizedBox(height: 10),
@@ -153,16 +161,16 @@ class InvoiceScreenState extends State<InvoiceScreen> {
           '0 hóa đơn',
           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 30),
+        const SizedBox(height: 60),
 
         const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.remove_shopping_cart, size: 100, color: Colors.blue),
-              SizedBox(height: 20),
+              SizedBox(height: 30),
               Text(
-                AppString.emptyOrder,
+                'Chưa có hóa đơn',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
             ],
@@ -192,27 +200,31 @@ class InvoiceScreenState extends State<InvoiceScreen> {
               },
             ),
 
-            TextButton.icon(
-              onPressed: () {
-                // Mở Bottom Sheet để chọn Tổng mua
-                _showDisplayOptions(context);
-              },
-              label: Text(
-                _selectedDisplay,
-                style: const TextStyle(color: Colors.black),
-              ),
-              icon: const Icon(
-                Icons.keyboard_arrow_down,
-                color: Colors.black,
-              ),
-              iconAlignment: IconAlignment.end,
-            ),
-            Text(
-              totalDisplayValue,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
+            Column(
+              children: [
+                TextButton.icon(
+                  onPressed: () {
+                    // Mở Bottom Sheet để chọn Tổng mua
+                    _showDisplayOptions(context);
+                  },
+                  label: Text(
+                    _selectedDisplay,
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Colors.black,
+                  ),
+                  iconAlignment: IconAlignment.end,
+                ),
+
+                Text(
+                  totalDisplayValue,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

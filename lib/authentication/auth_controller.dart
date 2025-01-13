@@ -94,6 +94,23 @@ class AuthController extends ChangeNotifier{
     notifyListeners(); // Thông báo để cập nhật UI
   }
 
+  Future<bool> updateUserInfo(Users updatedUser) async {
+    User? currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      try {
+        await _database
+            .child('User')
+            .child(currentUser.uid)
+            .update(updatedUser.toJson());
+        return true; // Trả về true nếu cập nhật thành công
+      } catch (error) {
+        print('Lỗi khi cập nhật thông tin người dùng: $error');
+        return false; // Trả về false nếu có lỗi
+      }
+    }
+    return false; // Trả về false nếu không có người dùng đăng nhập
+  }
+
   //Quên mật khẩu
   Future<void> resetPassword(String email) async {
     await _auth.sendPasswordResetEmail(email: email);

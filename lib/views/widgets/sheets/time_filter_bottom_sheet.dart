@@ -42,17 +42,17 @@ class _TimeFilterBottomSheetState extends State<TimeFilterBottomSheet> {
             'Lọc theo thời gian',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          ListTile(
-            title: const Text(AppString.allTime),
-            trailing: widget.selectedOption == AppString.allTime
-                ? const Icon(Icons.check, color: Colors.blue)
-                : null, // Hiển thị dấu check nếu là mặc định
-            onTap: () {
-              // trả về null để xác định là lâý tất cả
-              widget.onOptionSelected(AppString.allTime, null, DateTime.now());
-              Navigator.pop(context);
-            },
-          ),
+          // ListTile(
+          //   title: const Text(AppString.allTime),
+          //   trailing: widget.selectedOption == AppString.allTime
+          //       ? const Icon(Icons.check, color: Colors.blue)
+          //       : null, // Hiển thị dấu check nếu là mặc định
+          //   onTap: () {
+          //     // trả về null để xác định là lâý tất cả
+          //     widget.onOptionSelected(AppString.allTime, null, DateTime.now());
+          //     Navigator.pop(context);
+          //   },
+          // ),
           ListTile(
             title: const Text(AppString.today),
             trailing: widget.selectedOption == AppString.today

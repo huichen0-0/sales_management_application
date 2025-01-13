@@ -27,7 +27,7 @@ class ReturnImportScreenState extends State<ReturnImportScreen> {
   String _selectedSorting = AppString.newest;
 
   //biến lưu tùy chọn loọc thơời gian
-  String _selectedOption = AppString.allTime;
+  String _selectedOption = AppString.today;
 
   //Biến lưu tùy chọn hiển thị
   String _selectedDisplay = AppString.totalReturnAmount;
@@ -111,29 +111,62 @@ class ReturnImportScreenState extends State<ReturnImportScreen> {
 
   Widget _buildEmptyView() {
     return ListView(
-        children: [
-          TextButton.icon(
-            icon: const Icon(Icons.calendar_today, color: Colors.black),
-            label: Text(_selectedOption,
-                style: const TextStyle(color: Colors.black)),
-            onPressed: () {
-              _showTimeFilterOptions();
-            },
-          ),
-          const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+      padding: const EdgeInsets.all(8.0),
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+           TextButton.icon(
+              icon: const Icon(Icons.calendar_today, color: Colors.black),
+              label: Text(_selectedOption,
+                  style: const TextStyle(color: Colors.black)),
+              onPressed: () {
+                _showTimeFilterOptions();
+              },
+            ),
+
+            ///nút lọc hiển thị TODO: cần xử lý áp dụng
+            Column(
               children: [
-                Icon(Icons.remove_shopping_cart, size: 100, color: Colors.blue),
-                SizedBox(height: 20),
                 Text(
-                  'Chưa có phiếu xuất hủy',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  _selectedDisplay,
+                  style: const TextStyle(color: Colors.black),
+                ),
+                const Text(
+                  '0',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                 ),
               ],
             ),
+
+            //tổng tiền theo hiển thị TODO: thay đổi theo tùy chọn
+
+          ],
+        ),
+        const SizedBox(height: 10),
+        const Text(
+          '0 phiếu trả hàng nhập',
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 60),
+
+        const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.remove_shopping_cart, size: 100, color: Colors.blue),
+              SizedBox(height: 30),
+              Text(
+                'Chưa có phiếu trả hàng nhập',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            ],
           ),
-        ]
+        )
+      ],
     );
   }
 
@@ -157,22 +190,27 @@ class ReturnImportScreenState extends State<ReturnImportScreen> {
             ),
 
             ///nút lọc hiển thị TODO: cần xử lý áp dụng
-            TextButton.icon(
-              onPressed: null,
-              label: Text(
-                _selectedDisplay,
-                style: const TextStyle(color: Colors.black),
-              ),
+            Column(
+              children: [
+                TextButton.icon(
+                  onPressed: null,
+                  label: Text(
+                    _selectedDisplay,
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                ),
+                Text(
+                  totalDisplayValue,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
             ),
 
             //tổng tiền theo hiển thị TODO: thay đổi theo tùy chọn
-            Text(
-              totalDisplayValue,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
+
           ],
         ),
         const SizedBox(height: 10),

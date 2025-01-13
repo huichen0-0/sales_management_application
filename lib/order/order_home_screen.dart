@@ -27,7 +27,7 @@ class OrderScreenState extends State<OrderScreen> {
   String _selectedSorting = AppString.newest;
 
   //biến lưu tùy chọn loọc thơời gian
-  String _selectedOption = AppString.allTime;
+  String _selectedOption = AppString.today;
 
   //biến lưu thời gian lọc
   DateTime? fromDate;
@@ -77,7 +77,10 @@ class OrderScreenState extends State<OrderScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push(AppPath.orderAdd),
+        onPressed: () => context.push(AppPath.orderAdd).then((result){
+            setState(() {
+          });
+        }),
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add),
       ),
@@ -124,18 +127,20 @@ class OrderScreenState extends State<OrderScreen> {
             ),
 
             ///nút lọc hiển thị TODO: cần xử lý áp dụng
-            const Text(
-              '${AppString.totalAmount}:',
-              style: TextStyle(color: Colors.black),
-            ),
-
-            //tổng tiền theo hiển thị TODO: thay đổi theo tùy chọn
-            const Text(
-              '0',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
+            const Column(
+              children: [
+                Text(
+                  AppString.totalAmount,
+                  style: TextStyle(color: Colors.black),
+                ),
+                Text(
+                  '0',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -144,14 +149,14 @@ class OrderScreenState extends State<OrderScreen> {
           '0 đơn đặt hàng',
           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 30),
+        const SizedBox(height: 60),
 
         const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.remove_shopping_cart, size: 100, color: Colors.blue),
-              SizedBox(height: 20),
+              SizedBox(height: 30),
               Text(
                 AppString.emptyOrder,
                 style: TextStyle(fontSize: 16, color: Colors.grey),
@@ -184,18 +189,21 @@ class OrderScreenState extends State<OrderScreen> {
             ),
 
             ///nút lọc hiển thị TODO: cần xử lý áp dụng
-            const Text(
-              '${AppString.totalAmount}:',
-              style: TextStyle(color: Colors.black),
-            ),
-
-            //tổng tiền theo hiển thị TODO: thay đổi theo tùy chọn
-            Text(
-              totalDisplayValue,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
+            Column(
+              children: [
+                const Text(
+                  AppString.totalAmount,
+                  style: TextStyle(color: Colors.black),
+                ),
+                //tổng tiền theo hiển thị TODO: thay đổi theo tùy chọn
+                Text(
+                  totalDisplayValue,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

@@ -68,7 +68,10 @@ class _InventoryScreenState extends State<InventoryScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed:() =>
-            context.push('/inventory/add'),
+            context.push('/inventory/add').then((result){
+              setState(() {
+              });
+            }),
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add),
       ),
@@ -111,26 +114,44 @@ class _InventoryScreenState extends State<InventoryScreen> {
     );
   }
 
-  // Widget hiển thị khi không có phiếu kiểm kho
   Widget _buildEmptyView() {
     return ListView(
-        children: [
-          _buildTimeFilterRow(context),
-          const SizedBox(height: 32),
-          const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.remove_shopping_cart, size: 100, color: Colors.blue),
-                SizedBox(height: 20),
-                Text(
-                  'Chưa có phiếu xuất hủy',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-              ],
+      padding: const EdgeInsets.all(8.0),
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            TextButton.icon(
+              icon: const Icon(Icons.calendar_today, color: Colors.black),
+              label: Text(selectedOption,
+                  style: const TextStyle(color: Colors.black)),
+              onPressed: () {
+                _showTimeFilterOptions();
+              },
             ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        const Text(
+          '0 phiếu trả hàng nhập',
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 60),
+
+        const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.remove_shopping_cart, size: 100, color: Colors.blue),
+              SizedBox(height: 30),
+              Text(
+                'Chưa có phiếu kiểm kho',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            ],
           ),
-        ]
+        )
+      ],
     );
   }
 
@@ -144,7 +165,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
       padding: const EdgeInsets.all(8.0),
       children: [
         //hiển thị nút lọc thời gian
-        _buildTimeFilterRow(context),
+        _buildTimeFilterRow(),
         const SizedBox(height: 10),
         //Hiển thị tổng phiếu
         Text(
@@ -173,9 +194,9 @@ class _InventoryScreenState extends State<InventoryScreen> {
     );
   }
   //Hiển thị nút lọc thời gian
-  Row _buildTimeFilterRow(BuildContext context) {
+  Row _buildTimeFilterRow() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         /// Nút lọc thời gian
         TextButton.icon(
@@ -188,7 +209,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
             style: const TextStyle(color: Colors.black),
           ),
           onPressed: () {
-            _showTimeFilterOptions(context);
+            _showTimeFilterOptions();
           },
         ),
       ],
@@ -196,7 +217,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
   }
 
   /// hiển thị Bottom Sheet cho tùy chọn lọc thời gian
-  void _showTimeFilterOptions(BuildContext context) {
+  void _showTimeFilterOptions() {
     showModalBottomSheet(
       context: context,
       builder: (context) {

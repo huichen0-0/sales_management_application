@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sales_management_application/authentication/auth_controller.dart';
+import 'package:sales_management_application/authentication/edit_profile_screen.dart';
 import 'package:sales_management_application/customers/model/customer.dart';
 import 'package:sales_management_application/customers/filter/customer_filter.dart';
 import 'package:sales_management_application/ec/ec_filter.dart';
@@ -88,17 +89,21 @@ import 'suppliers/supplier_filter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    // name: 'default',
-    // Cấu hình kết nối firebase
-    options: const FirebaseOptions(
-        apiKey: "AIzaSyCI8HdmbzR6Z22Sqws3ZfjOlp0MPHZWFnQ",
-        appId: "1:580063029367:android:230872dc2993339fb8fe72",
-        messagingSenderId: "580063029367",
-        projectId: "datn-2024-af1a7",
-        databaseURL:
-            "datn-2024-af1a7-default-rtdb.asia-southeast1.firebasedatabase.app/"),
-  );
+  // if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+  //     name: 'DATN-2024',
+      // Cấu hình kết nối firebase
+      options: const FirebaseOptions(
+          apiKey: "AIzaSyCI8HdmbzR6Z22Sqws3ZfjOlp0MPHZWFnQ",
+          appId: "1:580063029367:android:230872dc2993339fb8fe72",
+          messagingSenderId: "580063029367",
+          projectId: "datn-2024-af1a7",
+          databaseURL:
+          "datn-2024-af1a7-default-rtdb.asia-southeast1.firebasedatabase.app/"),
+    );
+  // } else {
+  //   Firebase.app(); // if already initialized, use that one
+  // }
   // runApp(const MyApp());
   runApp(
     ChangeNotifierProvider( //Kiểm tra trạng thái đăng nhập và thực hiện chuyển hướng cho tất cả giao diện
@@ -131,7 +136,7 @@ class MyApp extends StatelessWidget {
           builder: (context, state) => ForgotPasswordScreen(),
         ),
         GoRoute(
-          path: '/reset_password',
+          path: '/resetPassword',
           builder: (context, state) => ResetPasswordScreen(),
         ),
         GoRoute(
@@ -146,6 +151,11 @@ class MyApp extends StatelessWidget {
         GoRoute(
           path: '/home',
           builder: (context, state) => const MainScreen(),
+        ),
+        /// edit profile ///
+        GoRoute(
+          path: '/editProfile',
+          builder: (context, state) => const EditProfileScreen(),
         ),
         ///invoice
         GoRoute(

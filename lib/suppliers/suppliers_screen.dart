@@ -151,17 +151,20 @@ class _SupplierScreenState extends State<SupplierScreen> {
               _showTimeFilterOptions(context);
             },
           ),
-          const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.remove_shopping_cart, size: 100, color: Colors.blue),
-                SizedBox(height: 20),
-                Text(
-                  'Chưa có NCC',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-              ],
+          const SizedBox(height: 60),
+          const Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.person, size: 100, color: Colors.blue),
+                  SizedBox(height: 30),
+                  Text(
+                    'Chưa có nhà cung cấp',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                ],
+              ),
             ),
           ),
         ]

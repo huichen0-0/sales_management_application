@@ -28,7 +28,7 @@ class _ReturnInvoiceScreenState extends State<ReturnInvoiceScreen> {
   String _selectedSorting = AppString.newest;
 
   //biến lưu tùy chọn loọc thơời gian
-  String _selectedOption = AppString.allTime;
+  String _selectedOption = AppString.today;
 
   //Biến lưu tùy chọn hiển thị
   final _selectedDisplay = AppString.totalReturnAmount;
@@ -56,7 +56,6 @@ class _ReturnInvoiceScreenState extends State<ReturnInvoiceScreen> {
   @override
   void initState() {
     super.initState();
-    // _receiptsFuture = _controller.getData();
   }
 
   @override
@@ -134,18 +133,20 @@ class _ReturnInvoiceScreenState extends State<ReturnInvoiceScreen> {
             ),
 
             ///nút lọc hiển thị TODO: cần xử lý áp dụng
-            Text(
-              _selectedDisplay,
-              style: const TextStyle(color: Colors.black),
-            ),
-
-            //tổng tiền theo hiển thị TODO: thay đổi theo tùy chọn
-            const Text(
-              '0',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
+            Column(
+              children: [
+                Text(
+                  _selectedDisplay,
+                  style: const TextStyle(color: Colors.black),
+                ),
+                const Text(
+                  '0',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -154,14 +155,14 @@ class _ReturnInvoiceScreenState extends State<ReturnInvoiceScreen> {
           '0 phiếu xuất hủy',
           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 30),
+        const SizedBox(height: 60),
 
         const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.remove_shopping_cart, size: 100, color: Colors.blue),
-              SizedBox(height: 20),
+              SizedBox(height: 30),
               Text(
                 'Chưa có hóa đơn trả hàng',
                 style: TextStyle(fontSize: 16, color: Colors.grey),

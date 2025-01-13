@@ -40,6 +40,7 @@ class _ImportDetailScreenState extends State<ImportDetailScreen> {
 
         return Scaffold(
           appBar: _buildAppBar(),
+          backgroundColor: Colors.white,
           body: _receipt!.uid == '' ?
           FutureBuilder<ImportReceipt>(
             future: _controller.getReceiptById(widget.id),
@@ -175,7 +176,7 @@ class _ImportDetailScreenState extends State<ImportDetailScreen> {
   // hien thi appbar
   AppBar _buildAppBar() {
     return AppBar(
-      title: const Text(AppString.detailImportReceipt),
+      title: const Text(AppString.detailImportReceipt, style: TextStyle(color: Colors.white)),
       //chỉ cho chỉnh sửa phiếu tạm
       actions: _receipt!.status == 1
           ? [

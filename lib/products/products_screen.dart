@@ -115,9 +115,7 @@ class _ProductScreenState extends State<ProductScreen> {
 
   /// widget hiển thị khi không có hàng hóa
   Widget _buildEmptyView() {
-    return ListView(
-        children: [
-
+    return
           const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -130,9 +128,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 ),
               ],
             ),
-          ),
-        ]
-    );
+          );
   }
 
   /// widget hiển thị khi có hàng hóa

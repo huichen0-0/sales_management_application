@@ -130,19 +130,16 @@ class AppString {
   static const String filterOrder = 'Bộ lọc đơn đặt hàng';
   static const String emptyOrder = 'Chưa có đơn đặt hàng';
   ///invoice
-  static const String invoice = 'Hóa đơn bán hàng';
+  static const String invoice = 'Hóa đơn';
   static const String searchInvoiceReceipt = 'Tìm kiếm hóa đơn bán hàng';
-  static const String createInvoiceReceipt = 'Tạo hóa đơn bán hàng';
-  static const String updateInvoiceReceipt = 'Cập nhật hóa đơn bán hàng';
-  static const String detailInvoiceReceipt = 'Chi tiết hóa đơn bán hàng';
+  static const String createReceipt = 'Tạo mới phiếu';
+  static const String updateReceipt = 'Cập nhật phiếu';
+  static const String detailReceipt = 'Chi tiết phiếu';
   static const String filterInvoiceReceipt = 'Bộ lọc hóa đơn bán hàng';
   static const String emptyInvoiceReceipt = 'Chưa có hóa đơn bán hàng';
   ///return sale
   static const String returnInvoice= 'Trả hàng';
   static const String searchReturnInvoice = 'Tìm kiếm hóa đơn trả hàng';
-  static const String createReturnInvoice = 'Tạo hóa đơn trả hàng';
-  static const String updateReturnInvoice= 'Cập nhật hóa đơn trả hàng';
-  static const String detailReturnInvoice= 'Chi tiết hóa đơn trả hàng';
   static const String filterReturnInvoice= 'Bộ lọc hóa đơn trả hàng';
   static const String emptyReturnInvoice = 'Chưa có hóa đơn trả hàng';
   ///import
